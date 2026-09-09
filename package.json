@@ -49,6 +49,8 @@
     "@poppinss/ts-exec": "^1.4.4",
     "@types/luxon": "^3.7.5",
     "@types/node": "~26.2.0",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.7",
     "@vitejs/plugin-react": "^6.1.1",
     "eslint": "^10.9.0",
     "hot-hook": "^1.0.0",
@@ -67,13 +69,21 @@
     "@adonisjs/shield": "^9.0.0",
     "@adonisjs/vite": "^6.0.2",
     "@japa/api-client": "^3.2.1",
+    "@mantine/core": "^9.6.0",
+    "@mantine/hooks": "^9.6.0",
     "@tuyau/core": "^1.2.2",
     "@vinejs/vine": "^4.4.0",
     "better-sqlite3": "^13.0.3",
     "edge.js": "^6.5.1",
+    "i18next": "^26.4.2",
+    "i18next-browser-languagedetector": "^8.2.1",
     "luxon": "^3.7.2",
     "mysql2": "^3.24.3",
-    "reflect-metadata": "^0.2.2"
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-i18next": "^17.0.13",
+    "reflect-metadata": "^0.2.2",
+    "wouter": "^3.11.0"
   },
   "hotHook": {
     "boundaries": [

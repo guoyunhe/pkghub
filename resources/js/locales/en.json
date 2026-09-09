@@ -1,0 +1,21 @@
+{
+  "appName": "PkgHub",
+  "login": "Sign in",
+  "register": "Create account",
+  "logout": "Sign out",
+  "email": "Email address",
+  "password": "Password",
+  "confirmPassword": "Confirm password",
+  "name": "Name",
+  "noAccount": "New to PkgHub?",
+  "hasAccount": "Already have an account?",
+  "welcomeBack": "Welcome back",
+  "createAccount": "Create your account",
+  "passwordHint": "8 to 32 characters",
+  "passwordMismatch": "Passwords do not match",
+  "dashboardTitle": "Your package workspace",
+  "dashboardDescription": "You are signed in and ready to work.",
+  "memberSince": "Member since",
+  "loginFailed": "Unable to sign in. Check your email and password.",
+  "registerFailed": "Unable to create the account."
+}

@@ -1,0 +1,21 @@
+{
+  "appName": "PkgHub",
+  "login": "登录",
+  "register": "注册账号",
+  "logout": "退出登录",
+  "email": "邮箱地址",
+  "password": "密码",
+  "confirmPassword": "确认密码",
+  "name": "名称",
+  "noAccount": "还没有 PkgHub 账号？",
+  "hasAccount": "已有账号？",
+  "welcomeBack": "欢迎回来",
+  "createAccount": "创建你的账号",
+  "passwordHint": "8 至 32 个字符",
+  "passwordMismatch": "两次密码不一致",
+  "dashboardTitle": "你的软件包工作区",
+  "dashboardDescription": "已成功登录，可以开始使用。",
+  "memberSince": "注册于",
+  "loginFailed": "无法登录，请检查邮箱和密码。",
+  "registerFailed": "无法创建账号。"
+}

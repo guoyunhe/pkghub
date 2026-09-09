@@ -9,7 +9,7 @@ export default defineConfig({
        * Entry points of your application. Each entrypoint will
        * result in a separate bundle.
        */
-      entryPoints: ['resources/js/app.js'],
+      entryPoints: ['resources/js/index.tsx'],
 
       /**
        * Paths to watch and reload the browser on file change
@@ -18,6 +18,11 @@ export default defineConfig({
     }),
     react(),
   ],
+  resolve: {
+    alias: {
+      '@generated': `${import.meta.dirname}/.adonisjs/client/`,
+    },
+  },
   server: {
     watch: {
       ignored: ['**/storage/**', '**/tmp/**'],

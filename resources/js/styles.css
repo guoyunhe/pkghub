@@ -1,0 +1,45 @@
+:root {
+  color: #1f2933;
+  background: #f6f4ef;
+  font-family: 'Noto Sans', 'Source Han Sans SC', sans-serif;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+}
+
+.auth-page {
+  padding-top: 12vh;
+}
+.brand,
+.eyebrow {
+  color: #d05a19;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+.auth-page h1 {
+  margin-top: 8px;
+}
+.loading-screen {
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
+}
+.header-content {
+  height: 100%;
+}
+.dashboard {
+  padding-top: 10vh;
+}
+.dashboard h1 {
+  margin: 8px 0;
+}
+.account-summary {
+  border-left: 3px solid #d05a19;
+  margin-top: 48px;
+  padding-left: 20px;
+}
+.account-summary > * + * {
+  margin-top: 6px;
+}
