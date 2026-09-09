@@ -13,23 +13,18 @@ import { controllers } from '#generated/controllers'
 
 router
   .group(() => {
-    router
-      .group(() => {
-        router.post('signup', [controllers.NewAccount, 'store'])
-        router.post('login', [controllers.AccessTokens, 'store'])
-      })
-      .prefix('auth')
-      .as('auth')
+    // health check route
+    router.get('/', () => ({ hello: 'world' }))
 
     router
       .group(() => {
-        router.get('profile', [controllers.Profile, 'show'])
-        router.post('logout', [controllers.AccessTokens, 'destroy'])
+        router.post('register', [controllers.Auth, 'register'])
+        router.post('login', [controllers.Auth, 'login'])
+        router.post('logout', [controllers.Auth, 'logout']).use(middleware.auth())
+        router.get('user', [controllers.Auth, 'user']).use(middleware.auth())
       })
-      .prefix('account')
-      .as('profile')
-      .use(middleware.auth())
+      .prefix('auth')
   })
-  .prefix('/api/v1')
+  .prefix('/api')
 
 router.on('*').render('app')
