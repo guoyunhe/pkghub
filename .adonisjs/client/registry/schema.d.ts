@@ -1,58 +1,96 @@
 /* eslint-disable prettier/prettier */
 /// <reference path="../manifest.d.ts" />
 
-import type { ExtractBody, ExtractErrorResponse, ExtractQuery, ExtractQueryForGet, ExtractResponse } from '@tuyau/core/types'
-import type { InferInput, SimpleError } from '@vinejs/vine/types'
+import type {
+  ExtractBody,
+  ExtractErrorResponse,
+  ExtractQuery,
+  ExtractQueryForGet,
+  ExtractResponse,
+} from '@tuyau/core/types';
+import type { InferInput, SimpleError } from '@vinejs/vine/types';
 
-export type ParamValue = string | number | bigint | boolean
+export type ParamValue = string | number | bigint | boolean;
 
 export interface Registry {
+  'drive.fs.serve': {
+    methods: ['GET', 'HEAD'];
+    pattern: '/uploads/*';
+    types: {
+      body: {};
+      paramsTuple: [ParamValue];
+      params: { '*': ParamValue[] };
+      query: {};
+      response: unknown;
+      errorResponse: unknown;
+    };
+  };
   'auth.register': {
-    methods: ["POST"]
-    pattern: '/api/auth/register'
+    methods: ['POST'];
+    pattern: '/api/auth/register';
     types: {
-      body: ExtractBody<InferInput<(typeof import('#validators/user').registerValidator)>>
-      paramsTuple: []
-      params: {}
-      query: ExtractQuery<InferInput<(typeof import('#validators/user').registerValidator)>>
-      response: ExtractResponse<Awaited<ReturnType<import('#controllers/auth_controller').default['register']>>>
-      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/auth_controller').default['register']>>> | { status: 422; response: { errors: SimpleError[] } }
-    }
-  }
+      body: ExtractBody<InferInput<typeof import('#validators/user').registerValidator>>;
+      paramsTuple: [];
+      params: {};
+      query: ExtractQuery<InferInput<typeof import('#validators/user').registerValidator>>;
+      response: ExtractResponse<
+        Awaited<ReturnType<import('#controllers/auth_controller').default['register']>>
+      >;
+      errorResponse:
+        | ExtractErrorResponse<
+            Awaited<ReturnType<import('#controllers/auth_controller').default['register']>>
+          >
+        | { status: 422; response: { errors: SimpleError[] } };
+    };
+  };
   'auth.login': {
-    methods: ["POST"]
-    pattern: '/api/auth/login'
+    methods: ['POST'];
+    pattern: '/api/auth/login';
     types: {
-      body: ExtractBody<InferInput<(typeof import('#validators/user').loginValidator)>>
-      paramsTuple: []
-      params: {}
-      query: ExtractQuery<InferInput<(typeof import('#validators/user').loginValidator)>>
-      response: ExtractResponse<Awaited<ReturnType<import('#controllers/auth_controller').default['login']>>>
-      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/auth_controller').default['login']>>> | { status: 422; response: { errors: SimpleError[] } }
-    }
-  }
+      body: ExtractBody<InferInput<typeof import('#validators/user').loginValidator>>;
+      paramsTuple: [];
+      params: {};
+      query: ExtractQuery<InferInput<typeof import('#validators/user').loginValidator>>;
+      response: ExtractResponse<
+        Awaited<ReturnType<import('#controllers/auth_controller').default['login']>>
+      >;
+      errorResponse:
+        | ExtractErrorResponse<
+            Awaited<ReturnType<import('#controllers/auth_controller').default['login']>>
+          >
+        | { status: 422; response: { errors: SimpleError[] } };
+    };
+  };
   'auth.logout': {
-    methods: ["POST"]
-    pattern: '/api/auth/logout'
+    methods: ['POST'];
+    pattern: '/api/auth/logout';
     types: {
-      body: {}
-      paramsTuple: []
-      params: {}
-      query: {}
-      response: ExtractResponse<Awaited<ReturnType<import('#controllers/auth_controller').default['logout']>>>
-      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/auth_controller').default['logout']>>>
-    }
-  }
+      body: {};
+      paramsTuple: [];
+      params: {};
+      query: {};
+      response: ExtractResponse<
+        Awaited<ReturnType<import('#controllers/auth_controller').default['logout']>>
+      >;
+      errorResponse: ExtractErrorResponse<
+        Awaited<ReturnType<import('#controllers/auth_controller').default['logout']>>
+      >;
+    };
+  };
   'auth.user': {
-    methods: ["GET","HEAD"]
-    pattern: '/api/auth/user'
+    methods: ['GET', 'HEAD'];
+    pattern: '/api/auth/user';
     types: {
-      body: {}
-      paramsTuple: []
-      params: {}
-      query: {}
-      response: ExtractResponse<Awaited<ReturnType<import('#controllers/auth_controller').default['user']>>>
-      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/auth_controller').default['user']>>>
-    }
-  }
+      body: {};
+      paramsTuple: [];
+      params: {};
+      query: {};
+      response: ExtractResponse<
+        Awaited<ReturnType<import('#controllers/auth_controller').default['user']>>
+      >;
+      errorResponse: ExtractErrorResponse<
+        Awaited<ReturnType<import('#controllers/auth_controller').default['user']>>
+      >;
+    };
+  };
 }

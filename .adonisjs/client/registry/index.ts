@@ -1,47 +1,73 @@
 /* eslint-disable prettier/prettier */
-import type { AdonisEndpoint } from '@tuyau/core/types'
-import type { Registry } from './schema.d.ts'
-import type { ApiDefinition } from './tree.d.ts'
+import type { AdonisEndpoint } from '@tuyau/core/types';
 
-const placeholder: any = {}
+import type { Registry } from './schema.d.ts';
+import type { ApiDefinition } from './tree.d.ts';
+
+const placeholder: any = {};
 
 const routes = {
+  'drive.fs.serve': {
+    methods: ['GET', 'HEAD'],
+    pattern: '/uploads/*',
+    tokens: [
+      { old: '/uploads/*', type: 0, val: 'uploads', end: '' },
+      { old: '/uploads/*', type: 2, val: '*', end: '' },
+    ],
+    types: placeholder as Registry['drive.fs.serve']['types'],
+  },
   'auth.register': {
-    methods: ["POST"],
+    methods: ['POST'],
     pattern: '/api/auth/register',
-    tokens: [{"old":"/api/auth/register","type":0,"val":"api","end":""},{"old":"/api/auth/register","type":0,"val":"auth","end":""},{"old":"/api/auth/register","type":0,"val":"register","end":""}],
+    tokens: [
+      { old: '/api/auth/register', type: 0, val: 'api', end: '' },
+      { old: '/api/auth/register', type: 0, val: 'auth', end: '' },
+      { old: '/api/auth/register', type: 0, val: 'register', end: '' },
+    ],
     types: placeholder as Registry['auth.register']['types'],
   },
   'auth.login': {
-    methods: ["POST"],
+    methods: ['POST'],
     pattern: '/api/auth/login',
-    tokens: [{"old":"/api/auth/login","type":0,"val":"api","end":""},{"old":"/api/auth/login","type":0,"val":"auth","end":""},{"old":"/api/auth/login","type":0,"val":"login","end":""}],
+    tokens: [
+      { old: '/api/auth/login', type: 0, val: 'api', end: '' },
+      { old: '/api/auth/login', type: 0, val: 'auth', end: '' },
+      { old: '/api/auth/login', type: 0, val: 'login', end: '' },
+    ],
     types: placeholder as Registry['auth.login']['types'],
   },
   'auth.logout': {
-    methods: ["POST"],
+    methods: ['POST'],
     pattern: '/api/auth/logout',
-    tokens: [{"old":"/api/auth/logout","type":0,"val":"api","end":""},{"old":"/api/auth/logout","type":0,"val":"auth","end":""},{"old":"/api/auth/logout","type":0,"val":"logout","end":""}],
+    tokens: [
+      { old: '/api/auth/logout', type: 0, val: 'api', end: '' },
+      { old: '/api/auth/logout', type: 0, val: 'auth', end: '' },
+      { old: '/api/auth/logout', type: 0, val: 'logout', end: '' },
+    ],
     types: placeholder as Registry['auth.logout']['types'],
   },
   'auth.user': {
-    methods: ["GET","HEAD"],
+    methods: ['GET', 'HEAD'],
     pattern: '/api/auth/user',
-    tokens: [{"old":"/api/auth/user","type":0,"val":"api","end":""},{"old":"/api/auth/user","type":0,"val":"auth","end":""},{"old":"/api/auth/user","type":0,"val":"user","end":""}],
+    tokens: [
+      { old: '/api/auth/user', type: 0, val: 'api', end: '' },
+      { old: '/api/auth/user', type: 0, val: 'auth', end: '' },
+      { old: '/api/auth/user', type: 0, val: 'user', end: '' },
+    ],
     types: placeholder as Registry['auth.user']['types'],
   },
-} as const satisfies Record<string, AdonisEndpoint>
+} as const satisfies Record<string, AdonisEndpoint>;
 
-export { routes }
+export { routes };
 
 export const registry = {
   routes,
   $tree: {} as ApiDefinition,
-}
+};
 
 declare module '@tuyau/core/types' {
   export interface UserRegistry {
-    routes: typeof routes
-    $tree: ApiDefinition
+    routes: typeof routes;
+    $tree: ApiDefinition;
   }
 }
