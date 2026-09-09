@@ -17,6 +17,11 @@ type AuthResponse = {
   token: string
 }
 
+type ErrorResponse = {
+  message?: string
+  errors?: Array<{ message?: string }>
+}
+
 const tokenKey = 'pkghub.auth-token'
 const apiUrl = import.meta.env.VITE_API_URL ?? '/api'
 
@@ -43,10 +48,10 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
       ...init.headers,
     },
   })
-  const body = (await response.json()) as { data?: T; message?: string }
+  const body = (await response.json().catch(() => ({}))) as { data?: T } & ErrorResponse
 
   if (!response.ok) {
-    throw new Error(body.message ?? 'Request failed')
+    throw new Error(body.message ?? body.errors?.[0]?.message ?? 'Request failed')
   }
 
   return body.data ?? (body as T)
