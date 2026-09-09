@@ -1,12 +1,36 @@
+import { get } from 'node:https'
+
+import drive from '@adonisjs/drive/services/main'
 import { BaseSeeder } from '@adonisjs/lucid/seeders'
 import { XMLParser } from 'fast-xml-parser'
+import sharp from 'sharp'
 
 import App from '#models/app'
+import Image from '#models/image'
 
-const appstreamUrls = [
-  'https://raw.githubusercontent.com/libretro/RetroArch/refs/heads/master/com.libretro.RetroArch.metainfo.xml',
-  'https://raw.githubusercontent.com/keepassxreboot/keepassxc/develop/share/linux/org.keepassxc.KeePassXC.appdata.xml',
-  'https://git.eden-emu.dev/eden-emu/eden/raw/branch/master/dist/dev.eden_emu.eden.metainfo.xml',
+const applications = [
+  {
+    appstreamUrl:
+      'https://raw.githubusercontent.com/libretro/RetroArch/refs/heads/master/com.libretro.RetroArch.metainfo.xml',
+    desktopUrl:
+      'https://raw.githubusercontent.com/libretro/RetroArch/refs/heads/master/com.libretro.RetroArch.desktop',
+    iconUrl:
+      'https://raw.githubusercontent.com/libretro/RetroArch/refs/heads/master/media/com.libretro.RetroArch.svg',
+  },
+  {
+    appstreamUrl:
+      'https://raw.githubusercontent.com/keepassxreboot/keepassxc/develop/share/linux/org.keepassxc.KeePassXC.appdata.xml',
+    iconUrl:
+      'https://raw.githubusercontent.com/keepassxreboot/keepassxc/develop/share/branding/scalable/keepassxc.svg',
+  },
+  {
+    appstreamUrl:
+      'https://git.eden-emu.dev/eden-emu/eden/raw/branch/master/dist/dev.eden_emu.eden.metainfo.xml',
+    desktopUrl:
+      'https://git.eden-emu.dev/eden-emu/eden/raw/branch/master/dist/dev.eden_emu.eden.desktop',
+    iconUrl:
+      'https://git.eden-emu.dev/eden-emu/eden/raw/commit/20f9aa4cfecf6b17735e0c8d7faa21e5d9388cfd/dist/dev.eden_emu.eden.svg',
+  },
 ]
 
 type XmlNode = string | { '#text'?: string; '@_xml:lang'?: string }
@@ -22,6 +46,7 @@ const parser = new XMLParser({
   ignoreAttributes: false,
   isArray: (tagName) => ['name', 'summary', 'release'].includes(tagName),
 })
+const requestHeaders = { Accept: '*/*', 'User-Agent': 'curl/8.0' }
 
 function text(node: XmlNode | undefined) {
   return typeof node === 'string' ? node.trim() : node?.['#text']?.trim()
@@ -61,19 +86,71 @@ function parseAppStream(xml: string) {
 
 export default class AppSeeder extends BaseSeeder {
   async run() {
-    for (const appstreamUrl of appstreamUrls) {
-      const response = await fetch(appstreamUrl)
-      if (!response.ok) {
-        throw new Error(`Unable to download AppStream XML: ${appstreamUrl} (${response.status})`)
-      }
-
-      const appstreamXml = await response.text()
+    for (const { appstreamUrl, desktopUrl, iconUrl } of applications) {
+      const appstreamData = await this.download(appstreamUrl, 'AppStream XML')
+      const appstreamXml = appstreamData.toString('utf8')
       const application = parseAppStream(appstreamXml)
+      const desktop = desktopUrl ? await this.downloadDesktop(desktopUrl) : null
 
-      await App.updateOrCreate(
+      const app = await App.updateOrCreate(
         { appstreamId: application.appstreamId },
-        { ...application, appstreamUrl, appstreamXml, desktop: null },
+        { ...application, appstreamUrl, appstreamXml, desktopUrl: desktopUrl ?? null, desktop },
       )
+      await this.updateIcon(app, iconUrl)
     }
+  }
+
+  private async downloadDesktop(desktopUrl: string) {
+    const desktop = await this.download(desktopUrl, 'desktop file')
+    return desktop.toString('utf8')
+  }
+
+  private async updateIcon(app: App, iconUrl: string) {
+    const data = await this.download(iconUrl, 'icon')
+    const metadata = await sharp(data).metadata()
+    if (metadata.format !== 'svg' && metadata.format !== 'png') {
+      throw new Error(`Icon must be SVG or PNG: ${iconUrl}`)
+    }
+    if (
+      metadata.format === 'png' &&
+      (!metadata.width || !metadata.height || Math.min(metadata.width, metadata.height) < 512)
+    ) {
+      throw new Error(`PNG icon must be at least 512px: ${iconUrl}`)
+    }
+
+    const extension = metadata.format
+    const path = `icons/${app.appstreamId}.${extension}`
+    await drive.use().put(path, data)
+
+    const icon = app.iconId ? await Image.find(app.iconId) : null
+    const attributes = {
+      path,
+      size: data.length,
+      width: metadata.width ?? 0,
+      height: metadata.height ?? 0,
+      mimeType: metadata.format === 'svg' ? 'image/svg+xml' : 'image/png',
+      userId: null,
+    }
+    const image = icon ? await icon.merge(attributes).save() : await Image.create(attributes)
+
+    if (app.iconId !== image.id) {
+      await app.merge({ iconId: image.id }).save()
+    }
+  }
+
+  private download(url: string, resource: string) {
+    return new Promise<Buffer>((resolve, reject) => {
+      get(url, { headers: requestHeaders }, (response) => {
+        if (!response.statusCode || response.statusCode < 200 || response.statusCode >= 300) {
+          response.resume()
+          reject(new Error(`Unable to download ${resource}: ${url} (${response.statusCode})`))
+          return
+        }
+
+        const chunks: Buffer[] = []
+        response.on('data', (chunk: Buffer) => chunks.push(chunk))
+        response.on('end', () => resolve(Buffer.concat(chunks)))
+      }).on('error', reject)
+    })
   }
 }
