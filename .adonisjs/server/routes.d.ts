@@ -14,33 +14,46 @@ export type ScannedRoutes = {
     'images.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'images.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'images.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'apps.index': { paramsTuple?: []; params?: {} }
+    'apps.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'apps.store': { paramsTuple?: []; params?: {} }
+    'apps.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'apps.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
   }
   GET: {
     'drive.fs.serve': { paramsTuple: [...ParamValue[]]; params: {'*': ParamValue[]} }
     'auth.user': { paramsTuple?: []; params?: {} }
     'images.index': { paramsTuple?: []; params?: {} }
     'images.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'apps.index': { paramsTuple?: []; params?: {} }
+    'apps.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
   }
   HEAD: {
     'drive.fs.serve': { paramsTuple: [...ParamValue[]]; params: {'*': ParamValue[]} }
     'auth.user': { paramsTuple?: []; params?: {} }
     'images.index': { paramsTuple?: []; params?: {} }
     'images.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'apps.index': { paramsTuple?: []; params?: {} }
+    'apps.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
   }
   POST: {
     'auth.register': { paramsTuple?: []; params?: {} }
     'auth.login': { paramsTuple?: []; params?: {} }
     'auth.logout': { paramsTuple?: []; params?: {} }
     'images.store': { paramsTuple?: []; params?: {} }
+    'apps.store': { paramsTuple?: []; params?: {} }
   }
   PUT: {
     'images.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'apps.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
   }
   PATCH: {
     'images.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'apps.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
   }
   DELETE: {
     'images.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'apps.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
   }
 }
 declare module '@adonisjs/core/types/http' {

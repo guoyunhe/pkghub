@@ -28,10 +28,10 @@ export class AppSchema extends BaseModel {
   declare id: number
   @column()
   declare license: string | null
-  @column()
-  declare name: string
-  @column()
-  declare summary: string
+  @column({ prepare: (value)=>value ? JSON.stringify(value) : value, consume: (value)=>typeof value === 'string' ? JSON.parse(value) : value })
+  declare name: Record<string, string>
+  @column({ prepare: (value)=>value ? JSON.stringify(value) : value, consume: (value)=>typeof value === 'string' ? JSON.parse(value) : value })
+  declare summary: Record<string, string>
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null
   @column()

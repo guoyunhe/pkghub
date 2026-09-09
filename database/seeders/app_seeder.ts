@@ -1,7 +1,6 @@
-import { get } from 'node:https'
-
 import { BaseSeeder } from '@adonisjs/lucid/seeders'
 import { XMLParser } from 'fast-xml-parser'
+import xior, { isXiorError } from 'xior'
 
 import App from '#models/app'
 import Image from '#models/image'
@@ -119,18 +118,14 @@ export default class AppSeeder extends BaseSeeder {
   }
 
   private download(url: string, resource: string) {
-    return new Promise<Buffer>((resolve, reject) => {
-      get(url, { headers: requestHeaders }, (response) => {
-        if (!response.statusCode || response.statusCode < 200 || response.statusCode >= 300) {
-          response.resume()
-          reject(new Error(`Unable to download ${resource}: ${url} (${response.statusCode})`))
-          return
-        }
-
-        const chunks: Buffer[] = []
-        response.on('data', (chunk: Buffer) => chunks.push(chunk))
-        response.on('end', () => resolve(Buffer.concat(chunks)))
-      }).on('error', reject)
-    })
+    return xior
+      .get<ArrayBuffer>(url, { responseType: 'arraybuffer', headers: requestHeaders })
+      .then((response) => Buffer.from(response.data))
+      .catch((error: unknown) => {
+        const status = isXiorError(error) ? error.response?.status : undefined
+        throw new Error(`Unable to download ${resource}: ${url}${status ? ` (${status})` : ''}`, {
+          cause: error,
+        })
+      })
   }
 }

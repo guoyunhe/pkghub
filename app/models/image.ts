@@ -1,10 +1,9 @@
 import { readFile } from 'node:fs/promises'
-import { get as httpGet } from 'node:http'
-import { get as httpsGet } from 'node:https'
 
 import { Exception } from '@adonisjs/core/exceptions'
 import drive from '@adonisjs/drive/services/main'
 import sharp, { type FitEnum, type FormatEnum } from 'sharp'
+import xior from 'xior'
 
 import { ImageSchema } from '#database/schema'
 
@@ -119,27 +118,11 @@ export default class Image extends ImageSchema {
     }
   }
 
-  private static download(url: string) {
-    return new Promise<Buffer>((resolve, reject) => {
-      const parsedUrl = new URL(url)
-      const request =
-        parsedUrl.protocol === 'https:' ? httpsGet : parsedUrl.protocol === 'http:' ? httpGet : null
-      if (!request) {
-        reject(new Error(`Unsupported image URL protocol: ${parsedUrl.protocol}`))
-        return
-      }
-
-      request(url, { headers: { Accept: 'image/*', 'User-Agent': 'curl/8.0' } }, (response) => {
-        if (!response.statusCode || response.statusCode < 200 || response.statusCode >= 300) {
-          response.resume()
-          reject(new Error(`Unable to download image: ${url} (${response.statusCode})`))
-          return
-        }
-
-        const chunks: Buffer[] = []
-        response.on('data', (chunk: Buffer) => chunks.push(chunk))
-        response.on('end', () => resolve(Buffer.concat(chunks)))
-      }).on('error', reject)
+  private static async download(url: string) {
+    const response = await xior.get<ArrayBuffer>(url, {
+      responseType: 'arraybuffer',
+      headers: { Accept: 'image/*', 'User-Agent': 'curl/8.0' },
     })
+    return Buffer.from(response.data)
   }
 }

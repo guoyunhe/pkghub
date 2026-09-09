@@ -43,11 +43,5 @@ export default {
         description: jsonColumn('Record<string, string>'),
       },
     },
-    tags: {
-      columns: {
-        name: jsonColumn('Record<string, string>'),
-        for_influencer: booleanColumn,
-      },
-    },
   },
 } satisfies SchemaRules

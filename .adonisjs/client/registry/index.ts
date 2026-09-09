@@ -66,6 +66,36 @@ const routes = {
     tokens: [{"old":"/api/images/:id","type":0,"val":"api","end":""},{"old":"/api/images/:id","type":0,"val":"images","end":""},{"old":"/api/images/:id","type":1,"val":"id","end":""}],
     types: placeholder as Registry['images.destroy']['types'],
   },
+  'apps.index': {
+    methods: ["GET","HEAD"],
+    pattern: '/api/apps',
+    tokens: [{"old":"/api/apps","type":0,"val":"api","end":""},{"old":"/api/apps","type":0,"val":"apps","end":""}],
+    types: placeholder as Registry['apps.index']['types'],
+  },
+  'apps.show': {
+    methods: ["GET","HEAD"],
+    pattern: '/api/apps/:id',
+    tokens: [{"old":"/api/apps/:id","type":0,"val":"api","end":""},{"old":"/api/apps/:id","type":0,"val":"apps","end":""},{"old":"/api/apps/:id","type":1,"val":"id","end":""}],
+    types: placeholder as Registry['apps.show']['types'],
+  },
+  'apps.store': {
+    methods: ["POST"],
+    pattern: '/api/apps',
+    tokens: [{"old":"/api/apps","type":0,"val":"api","end":""},{"old":"/api/apps","type":0,"val":"apps","end":""}],
+    types: placeholder as Registry['apps.store']['types'],
+  },
+  'apps.update': {
+    methods: ["PUT","PATCH"],
+    pattern: '/api/apps/:id',
+    tokens: [{"old":"/api/apps/:id","type":0,"val":"api","end":""},{"old":"/api/apps/:id","type":0,"val":"apps","end":""},{"old":"/api/apps/:id","type":1,"val":"id","end":""}],
+    types: placeholder as Registry['apps.update']['types'],
+  },
+  'apps.destroy': {
+    methods: ["DELETE"],
+    pattern: '/api/apps/:id',
+    tokens: [{"old":"/api/apps/:id","type":0,"val":"api","end":""},{"old":"/api/apps/:id","type":0,"val":"apps","end":""},{"old":"/api/apps/:id","type":1,"val":"id","end":""}],
+    types: placeholder as Registry['apps.destroy']['types'],
+  },
 } as const satisfies Record<string, AdonisEndpoint>
 
 export { routes }

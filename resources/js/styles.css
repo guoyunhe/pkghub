@@ -43,3 +43,68 @@ body {
 .account-summary > * + * {
   margin-top: 6px;
 }
+.apps-page {
+  margin: 0 auto;
+  max-width: 1120px;
+  padding: 72px 24px;
+}
+.apps-header {
+  align-items: end;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 36px;
+}
+.apps-header h1 {
+  margin: 6px 0;
+}
+.apps-grid {
+  border-top: 1px solid #d9d4ca;
+}
+.app-item {
+  align-items: center;
+  border-bottom: 1px solid #d9d4ca;
+  display: grid;
+  gap: 18px;
+  grid-template-columns: 56px minmax(0, 1fr) auto;
+  padding: 20px 0;
+}
+.app-icon {
+  height: 56px;
+  object-fit: contain;
+  width: 56px;
+}
+.app-icon-empty {
+  background: #e4dfd4;
+}
+.app-copy h3 {
+  margin: 0 0 4px;
+}
+.app-meta {
+  display: flex;
+  gap: 8px;
+  margin-top: 9px;
+}
+.app-meta span {
+  border: 1px solid #d9d4ca;
+  font-size: 12px;
+  padding: 2px 6px;
+}
+@media (max-width: 600px) {
+  .apps-page {
+    padding: 44px 18px;
+  }
+  .apps-header {
+    align-items: start;
+    gap: 16px;
+  }
+  .app-item {
+    grid-template-columns: 48px minmax(0, 1fr);
+  }
+  .app-icon {
+    height: 48px;
+    width: 48px;
+  }
+  .app-actions {
+    grid-column: 2;
+  }
+}

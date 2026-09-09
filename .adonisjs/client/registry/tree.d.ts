@@ -20,4 +20,11 @@ export interface ApiDefinition {
     update: typeof routes['images.update']
     destroy: typeof routes['images.destroy']
   }
+  apps: {
+    index: typeof routes['apps.index']
+    show: typeof routes['apps.show']
+    store: typeof routes['apps.store']
+    update: typeof routes['apps.update']
+    destroy: typeof routes['apps.destroy']
+  }
 }

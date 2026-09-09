@@ -27,6 +27,12 @@ router
       .prefix('auth')
 
     router.resource('images', controllers.Images).apiOnly().use('*', middleware.auth())
+    router.get('apps', [controllers.Apps, 'index'])
+    router.get('apps/:id', [controllers.Apps, 'show'])
+    router
+      .resource('apps', controllers.Apps)
+      .only(['store', 'update', 'destroy'])
+      .use('*', middleware.auth())
   })
   .prefix('/api')
 

@@ -50,6 +50,7 @@
     "@adonisjs/session": "^8.1.0",
     "@adonisjs/shield": "^9.0.0",
     "@adonisjs/vite": "^6.0.2",
+    "@guoyunhe/react-storage": "^2.0.3",
     "@japa/api-client": "^3.2.1",
     "@mantine/core": "^9.6.0",
     "@mantine/form": "^9.6.0",
