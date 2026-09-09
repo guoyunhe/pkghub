@@ -8,20 +8,20 @@ import {
   Text,
   TextInput,
   Title,
-} from '@mantine/core'
-import { useForm } from '@mantine/form'
-import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useLocation } from 'wouter'
+} from '@mantine/core';
+import { useForm } from '@mantine/form';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useLocation } from 'wouter';
 
-import { useAuth } from '../auth'
-import { login } from '../services/auth'
+import { useAuth } from '../auth';
+import { login } from '../services/auth';
 
 export default function LoginPage() {
-  const { t } = useTranslation()
-  const [, navigate] = useLocation()
-  const { setUser } = useAuth()
-  const [loading, setLoading] = useState(false)
+  const { t } = useTranslation();
+  const [, navigate] = useLocation();
+  const { setUser } = useAuth();
+  const [loading, setLoading] = useState(false);
   const form = useForm({
     mode: 'uncontrolled',
     initialValues: { email: '', password: '' },
@@ -29,34 +29,34 @@ export default function LoginPage() {
       email: (value) => (/^\S+@\S+$/.test(value) ? null : t('invalidEmail')),
       password: (value) => (value ? null : t('required')),
     },
-  })
+  });
 
   async function handleSubmit(values: typeof form.values) {
-    form.setFieldError('form', null)
-    setLoading(true)
+    form.setFieldError('form', null);
+    setLoading(true);
     try {
-      setUser(await login(values))
-      navigate('/')
+      setUser(await login(values));
+      navigate('/');
     } catch (error) {
-      form.setFieldError('form', error instanceof Error ? error.message : t('loginFailed'))
+      form.setFieldError('form', error instanceof Error ? error.message : t('loginFailed'));
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
   return (
-    <Container size={420} className="auth-page">
-      <Text className="brand">{t('appName')}</Text>
+    <Container size={420} className='auth-page'>
+      <Text className='brand'>{t('appName')}</Text>
       <Title order={1}>{t('welcomeBack')}</Title>
-      <Text c="dimmed" mt={6}>
+      <Text c='dimmed' mt={6}>
         {t('noAccount')} <Anchor onClick={() => navigate('/register')}>{t('register')}</Anchor>
       </Text>
-      <Paper withBorder p="xl" mt="xl" radius="sm">
+      <Paper withBorder p='xl' mt='xl' radius='sm'>
         <form onSubmit={form.onSubmit(handleSubmit)}>
           <Stack>
             <TextInput
               label={t('email')}
-              type="email"
+              type='email'
               key={form.key('email')}
               {...form.getInputProps('email')}
             />
@@ -66,16 +66,16 @@ export default function LoginPage() {
               {...form.getInputProps('password')}
             />
             {form.errors.form && (
-              <Text c="red" size="sm">
+              <Text c='red' size='sm'>
                 {form.errors.form}
               </Text>
             )}
-            <Button type="submit" color="orange" loading={loading}>
+            <Button type='submit' color='orange' loading={loading}>
               {t('login')}
             </Button>
           </Stack>
         </form>
       </Paper>
     </Container>
-  )
+  );
 }

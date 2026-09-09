@@ -1,15 +1,14 @@
-import { defineConfig } from '@adonisjs/core/bodyparser'
+import { defineConfig } from '@adonisjs/core/bodyparser';
 
 const bodyParserConfig = defineConfig({
   /**
-   * Parse request bodies for these HTTP methods.
-   * Keep this aligned with methods that receive payloads in your routes.
+   * Parse request bodies for these HTTP methods. Keep this aligned with methods that receive
+   * payloads in your routes.
    */
   allowedMethods: ['POST', 'PUT', 'PATCH', 'DELETE'],
 
   /**
-   * Config for the "application/x-www-form-urlencoded"
-   * content-type parser.
+   * Config for the "application/x-www-form-urlencoded" content-type parser.
    */
   form: {
     /**
@@ -44,8 +43,8 @@ const bodyParserConfig = defineConfig({
   },
 
   /**
-   * Config for the "multipart/form-data" content-type parser.
-   * File uploads are handled by the multipart parser.
+   * Config for the "multipart/form-data" content-type parser. File uploads are handled by the
+   * multipart parser.
    */
   multipart: {
     /**
@@ -73,6 +72,6 @@ const bodyParserConfig = defineConfig({
      */
     types: ['multipart/form-data'],
   },
-})
+});
 
-export default bodyParserConfig
+export default bodyParserConfig;

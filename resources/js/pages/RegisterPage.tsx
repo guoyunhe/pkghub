@@ -8,20 +8,20 @@ import {
   Text,
   TextInput,
   Title,
-} from '@mantine/core'
-import { useForm } from '@mantine/form'
-import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useLocation } from 'wouter'
+} from '@mantine/core';
+import { useForm } from '@mantine/form';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useLocation } from 'wouter';
 
-import { useAuth } from '../auth'
-import { register } from '../services/auth'
+import { useAuth } from '../auth';
+import { register } from '../services/auth';
 
 export default function RegisterPage() {
-  const { t } = useTranslation()
-  const [, navigate] = useLocation()
-  const { setUser } = useAuth()
-  const [loading, setLoading] = useState(false)
+  const { t } = useTranslation();
+  const [, navigate] = useLocation();
+  const { setUser } = useAuth();
+  const [loading, setLoading] = useState(false);
   const form = useForm({
     mode: 'uncontrolled',
     initialValues: { name: '', email: '', password: '', passwordConfirmation: '' },
@@ -32,29 +32,29 @@ export default function RegisterPage() {
       passwordConfirmation: (value, values) =>
         value === values.password ? null : t('passwordMismatch'),
     },
-  })
+  });
 
   async function handleSubmit(values: typeof form.values) {
-    form.setFieldError('form', null)
-    setLoading(true)
+    form.setFieldError('form', null);
+    setLoading(true);
     try {
-      setUser(await register(values))
-      navigate('/')
+      setUser(await register(values));
+      navigate('/');
     } catch (error) {
-      form.setFieldError('form', error instanceof Error ? error.message : t('registerFailed'))
+      form.setFieldError('form', error instanceof Error ? error.message : t('registerFailed'));
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
   return (
-    <Container size={420} className="auth-page">
-      <Text className="brand">{t('appName')}</Text>
+    <Container size={420} className='auth-page'>
+      <Text className='brand'>{t('appName')}</Text>
       <Title order={1}>{t('createAccount')}</Title>
-      <Text c="dimmed" mt={6}>
+      <Text c='dimmed' mt={6}>
         {t('hasAccount')} <Anchor onClick={() => navigate('/login')}>{t('login')}</Anchor>
       </Text>
-      <Paper withBorder p="xl" mt="xl" radius="sm">
+      <Paper withBorder p='xl' mt='xl' radius='sm'>
         <form onSubmit={form.onSubmit(handleSubmit)}>
           <Stack>
             <TextInput
@@ -65,7 +65,7 @@ export default function RegisterPage() {
             />
             <TextInput
               label={t('email')}
-              type="email"
+              type='email'
               key={form.key('email')}
               {...form.getInputProps('email')}
             />
@@ -83,16 +83,16 @@ export default function RegisterPage() {
               {...form.getInputProps('passwordConfirmation')}
             />
             {form.errors.form && (
-              <Text c="red" size="sm">
+              <Text c='red' size='sm'>
                 {form.errors.form}
               </Text>
             )}
-            <Button type="submit" color="orange" loading={loading}>
+            <Button type='submit' color='orange' loading={loading}>
               {t('register')}
             </Button>
           </Stack>
         </form>
       </Paper>
     </Container>
-  )
+  );
 }

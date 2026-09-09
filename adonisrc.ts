@@ -1,6 +1,6 @@
-import { indexEntities } from '@adonisjs/core'
-import { defineConfig } from '@adonisjs/core/app'
-import { generateRegistry } from '@tuyau/core/hooks'
+import { indexEntities } from '@adonisjs/core';
+import { defineConfig } from '@adonisjs/core/app';
+import { generateRegistry } from '@tuyau/core/hooks';
 
 export default defineConfig({
   /*
@@ -55,7 +55,7 @@ export default defineConfig({
     () => import('#providers/api_provider'),
     () => import('@adonisjs/vite/vite_provider'),
     () => import('@adonisjs/core/providers/edge_provider'),
-    () => import('@adonisjs/i18n/i18n_provider')
+    () => import('@adonisjs/i18n/i18n_provider'),
   ],
 
   /*
@@ -106,18 +106,19 @@ export default defineConfig({
   | the production build.
   |
   */
-  metaFiles: [{
-    pattern: 'public/**',
-    reloadServer: false,
-  },
-  {
-    pattern: 'resources/views/**/*.edge',
-    reloadServer: false,
-  },
-  {
-    pattern: 'resources/lang/**/*.{json,yaml,yml}',
-    reloadServer: false,
-  }
+  metaFiles: [
+    {
+      pattern: 'public/**',
+      reloadServer: false,
+    },
+    {
+      pattern: 'resources/views/**/*.edge',
+      reloadServer: false,
+    },
+    {
+      pattern: 'resources/lang/**/*.{json,yaml,yml}',
+      reloadServer: false,
+    },
   ],
 
   hooks: {
@@ -127,6 +128,6 @@ export default defineConfig({
       }),
       generateRegistry(),
     ],
-    buildStarting: [() => import('@adonisjs/vite/build_hook')]
+    buildStarting: [() => import('@adonisjs/vite/build_hook')],
   },
-})
+});

@@ -1,6 +1,7 @@
-import env from '#start/env'
-import app from '@adonisjs/core/services/app'
-import { defineConfig } from '@adonisjs/lucid'
+import app from '@adonisjs/core/services/app';
+import { defineConfig } from '@adonisjs/lucid';
+
+import env from '#start/env';
 
 const dbConfig = defineConfig({
   /**
@@ -50,8 +51,7 @@ const dbConfig = defineConfig({
     },
 
     /**
-     * PostgreSQL connection.
-     * Install package to switch: npm install pg
+     * PostgreSQL connection. Install package to switch: npm install pg
      */
     // pg: {
     //   client: 'pg',
@@ -70,8 +70,7 @@ const dbConfig = defineConfig({
     // },
 
     /**
-     * MySQL / MariaDB connection.
-     * Install package to switch: npm install mysql2
+     * MySQL / MariaDB connection. Install package to switch: npm install mysql2
      */
     mysql: {
       client: 'mysql2',
@@ -90,8 +89,7 @@ const dbConfig = defineConfig({
     },
 
     /**
-     * Microsoft SQL Server connection.
-     * Install package to switch: npm install tedious
+     * Microsoft SQL Server connection. Install package to switch: npm install tedious
      */
     // mssql: {
     //   client: 'mssql',
@@ -110,8 +108,7 @@ const dbConfig = defineConfig({
     // },
 
     /**
-     * libSQL (Turso) connection.
-     * Install package to switch: npm install @libsql/client
+     * LibSQL (Turso) connection. Install package to switch: npm install @libsql/client
      */
     // libsql: {
     //   client: 'libsql',
@@ -127,6 +124,6 @@ const dbConfig = defineConfig({
     //   debug: app.inDev,
     // },
   },
-})
+});
 
-export default dbConfig
+export default dbConfig;

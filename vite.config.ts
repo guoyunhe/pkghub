@@ -1,13 +1,12 @@
-import { defineConfig } from 'vite'
-import adonisjs from '@adonisjs/vite/client'
-import react from '@vitejs/plugin-react'
+import adonisjs from '@adonisjs/vite/client';
+import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vite';
 
 export default defineConfig({
   plugins: [
     adonisjs({
       /**
-       * Entry points of your application. Each entrypoint will
-       * result in a separate bundle.
+       * Entry points of your application. Each entrypoint will result in a separate bundle.
        */
       entryPoints: ['resources/js/index.tsx'],
 
@@ -28,4 +27,4 @@ export default defineConfig({
       ignored: ['**/storage/**', '**/tmp/**'],
     },
   },
-})
+});

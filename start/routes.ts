@@ -7,24 +7,25 @@
 |
 */
 
-import { middleware } from '#start/kernel'
-import router from '@adonisjs/core/services/router'
-import { controllers } from '#generated/controllers'
+import router from '@adonisjs/core/services/router';
+
+import { controllers } from '#generated/controllers';
+import { middleware } from '#start/kernel';
 
 router
   .group(() => {
     // health check route
-    router.get('/', () => ({ hello: 'world' }))
+    router.get('/', () => ({ hello: 'world' }));
 
     router
       .group(() => {
-        router.post('register', [controllers.Auth, 'register'])
-        router.post('login', [controllers.Auth, 'login'])
-        router.post('logout', [controllers.Auth, 'logout']).use(middleware.auth())
-        router.get('user', [controllers.Auth, 'user']).use(middleware.auth())
+        router.post('register', [controllers.Auth, 'register']);
+        router.post('login', [controllers.Auth, 'login']);
+        router.post('logout', [controllers.Auth, 'logout']).use(middleware.auth());
+        router.get('user', [controllers.Auth, 'user']).use(middleware.auth());
       })
-      .prefix('auth')
+      .prefix('auth');
   })
-  .prefix('/api')
+  .prefix('/api');
 
-router.on('*').render('app')
+router.on('*').render('app');

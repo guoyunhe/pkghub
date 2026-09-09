@@ -1,9 +1,8 @@
-import { defineConfig } from '@adonisjs/shield'
+import { defineConfig } from '@adonisjs/shield';
 
 const shieldConfig = defineConfig({
   /**
-   * Configure CSP policies for your app. Refer documentation
-   * to learn more.
+   * Configure CSP policies for your app. Refer documentation to learn more.
    */
   csp: {
     /**
@@ -23,8 +22,7 @@ const shieldConfig = defineConfig({
   },
 
   /**
-   * Configure CSRF protection options. Refer documentation
-   * to learn more.
+   * Configure CSRF protection options. Refer documentation to learn more.
    */
   csrf: {
     /**
@@ -33,8 +31,7 @@ const shieldConfig = defineConfig({
     enabled: false,
 
     /**
-     * Route patterns to exclude from CSRF checks.
-     * Useful for external webhooks or API endpoints.
+     * Route patterns to exclude from CSRF checks. Useful for external webhooks or API endpoints.
      */
     exceptRoutes: [],
 
@@ -50,8 +47,7 @@ const shieldConfig = defineConfig({
   },
 
   /**
-   * Control how your website should be embedded inside
-   * iframes.
+   * Control how your website should be embedded inside iframes.
    */
   xFrame: {
     /**
@@ -81,8 +77,7 @@ const shieldConfig = defineConfig({
   },
 
   /**
-   * Disable browsers from sniffing content types and rely only
-   * on the response content-type header.
+   * Disable browsers from sniffing content types and rely only on the response content-type header.
    */
   contentTypeSniffing: {
     /**
@@ -90,6 +85,6 @@ const shieldConfig = defineConfig({
      */
     enabled: true,
   },
-})
+});
 
-export default shieldConfig
+export default shieldConfig;

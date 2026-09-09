@@ -1,5 +1,6 @@
-import env from '#start/env'
-import { defineConfig, drivers } from '@adonisjs/core/encryption'
+import { defineConfig, drivers } from '@adonisjs/core/encryption';
+
+import env from '#start/env';
 
 const encryptionConfig = defineConfig({
   /**
@@ -10,8 +11,7 @@ const encryptionConfig = defineConfig({
   list: {
     gcm: drivers.aes256gcm({
       /**
-       * Keys used for encryption/decryption.
-       * First key encrypts, all keys are tried for decryption.
+       * Keys used for encryption/decryption. First key encrypts, all keys are tried for decryption.
        */
       keys: [env.get('APP_KEY')],
 
@@ -21,13 +21,12 @@ const encryptionConfig = defineConfig({
       id: 'gcm',
     }),
   },
-})
+});
 
-export default encryptionConfig
+export default encryptionConfig;
 
 /**
- * Inferring types for the list of encryptors you have configured
- * in your application.
+ * Inferring types for the list of encryptors you have configured in your application.
  */
 declare module '@adonisjs/core/types' {
   export interface EncryptorsList extends InferEncryptors<typeof encryptionConfig> {}
