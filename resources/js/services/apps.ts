@@ -25,6 +25,11 @@ export async function getApps() {
   return data.data
 }
 
+export async function getApp(id: number) {
+  const { data } = await api.get<{ data: Data.App }>(`/apps/${id}`)
+  return data.data
+}
+
 export async function createApp(payload: AppPayload) {
   const { data } = await api.post<{ data: Data.App }>('/apps', payload, { headers: authHeaders() })
   return data.data

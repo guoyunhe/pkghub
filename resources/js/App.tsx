@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Redirect, Route, Switch, useLocation } from 'wouter'
 
 import { AuthProvider, useAuth } from './auth'
+import AppFormPage from './pages/AppFormPage'
 import AppsPage from './pages/AppsPage'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
@@ -88,6 +89,8 @@ function AppRoutes() {
     <Switch>
       <Route path='/login' component={LoginPage} />
       <Route path='/register' component={RegisterPage} />
+      <Route path='/apps/new' component={AppFormPage} />
+      <Route path='/apps/:id/edit' component={AppFormPage} />
       <Route path='/apps' component={AppsPage} />
       <Route path='/'>
         <AppsPage />

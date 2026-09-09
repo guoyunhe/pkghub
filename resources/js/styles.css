@@ -89,6 +89,24 @@ body {
   font-size: 12px;
   padding: 2px 6px;
 }
+.app-form-page {
+  margin: 0 auto;
+  max-width: 760px;
+  padding: 72px 24px;
+}
+.app-form-header {
+  align-items: end;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 32px;
+}
+.app-form-header h1 {
+  margin: 6px 0 0;
+}
+.app-form {
+  border-top: 1px solid #d9d4ca;
+  padding-top: 24px;
+}
 @media (max-width: 600px) {
   .apps-page {
     padding: 44px 18px;
@@ -106,5 +124,8 @@ body {
   }
   .app-actions {
     grid-column: 2;
+  }
+  .app-form-page {
+    padding: 44px 18px;
   }
 }
