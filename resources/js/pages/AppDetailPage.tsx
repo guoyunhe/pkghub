@@ -7,6 +7,8 @@ import { Link, useRoute } from 'wouter'
 import { useAuth } from '../auth'
 import { getApp } from '../services/apps'
 
+import styles from './AppDetailPage.module.css'
+
 function localized(translations: Record<string, string>, language: string) {
   return (
     translations[language] ??
@@ -38,14 +40,14 @@ export default function AppDetailPage() {
 
   if (error) {
     return (
-      <main className='app-detail-page'>
+      <main className={styles.page}>
         <Alert color='red'>{error}</Alert>
       </main>
     )
   }
   if (!app || !ready) {
     return (
-      <div className='loading-screen'>
+      <div className={styles.loading}>
         <Loader color='orange' />
       </div>
     )
@@ -54,8 +56,8 @@ export default function AppDetailPage() {
   const name = localized(app.name, i18n.language)
 
   return (
-    <main className='app-detail-page'>
-      <header className='app-detail-header'>
+    <main className={styles.page}>
+      <header className={styles.header}>
         <Button component={Link} href='/apps' variant='subtle'>
           Back to applications
         </Button>
@@ -66,14 +68,14 @@ export default function AppDetailPage() {
         )}
       </header>
 
-      <section className='app-detail-intro'>
+      <section className={styles.intro}>
         {app.icon ? (
-          <img alt='' className='app-detail-icon' src={app.icon.url} />
+          <img alt='' className={styles.icon} src={app.icon.url} />
         ) : (
-          <div className='app-detail-icon app-icon-empty' />
+          <div className={`${styles.icon} ${styles.emptyIcon}`} />
         )}
         <div>
-          <Text className='eyebrow'>Linux application</Text>
+          <Text className={styles.eyebrow}>Linux application</Text>
           <Title order={1}>{name}</Title>
           <Text c='dimmed' size='lg'>
             {localized(app.summary, i18n.language)}
@@ -81,7 +83,7 @@ export default function AppDetailPage() {
         </div>
       </section>
 
-      <section className='app-detail-metadata'>
+      <section className={styles.metadata}>
         <div>
           <Text size='sm' c='dimmed'>
             Version
@@ -103,7 +105,7 @@ export default function AppDetailPage() {
       </section>
 
       {(app.appstreamUrl || app.desktopUrl) && (
-        <section className='app-detail-sources'>
+        <section className={styles.sources}>
           <Title order={2}>Sources</Title>
           <Group gap='xs'>
             {app.appstreamUrl && (

@@ -6,6 +6,8 @@ import { Redirect, useLocation, useRoute } from 'wouter'
 import { useAuth } from '../auth'
 import { createApp, getApp, updateApp, type AppPayload } from '../services/apps'
 
+import styles from './AppFormPage.module.css'
+
 const emptyForm: AppPayload = { name: { en: '' }, summary: { en: '' } }
 
 function formFromApp(app: Data.App): AppPayload {
@@ -42,14 +44,14 @@ export default function AppFormPage() {
 
   if (!ready)
     return (
-      <div className='loading-screen'>
+      <div className={styles.loading}>
         <Loader color='orange' />
       </div>
     )
   if (!user) return <Redirect to='/login' />
   if (loading)
     return (
-      <div className='loading-screen'>
+      <div className={styles.loading}>
         <Loader color='orange' />
       </div>
     )
@@ -68,10 +70,10 @@ export default function AppFormPage() {
   }
 
   return (
-    <main className='app-form-page'>
-      <header className='app-form-header'>
+    <main className={styles.page}>
+      <header className={styles.header}>
         <div>
-          <Text className='eyebrow'>{appId ? 'Catalog entry' : 'New catalog entry'}</Text>
+          <Text className={styles.eyebrow}>{appId ? 'Catalog entry' : 'New catalog entry'}</Text>
           <Title order={1}>{appId ? 'Edit application' : 'Add application'}</Title>
         </div>
         <Button variant='default' onClick={() => navigate('/apps')}>
@@ -83,7 +85,7 @@ export default function AppFormPage() {
           {error}
         </Alert>
       )}
-      <Stack className='app-form'>
+      <Stack className={styles.form}>
         <TextInput
           label='Name (English)'
           required

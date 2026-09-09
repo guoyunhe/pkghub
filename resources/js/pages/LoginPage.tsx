@@ -17,6 +17,8 @@ import { useLocation } from 'wouter'
 import { useAuth } from '../auth'
 import { login } from '../services/auth'
 
+import styles from './AuthPage.module.css'
+
 export default function LoginPage() {
   const { t } = useTranslation()
   const [, navigate] = useLocation()
@@ -45,8 +47,8 @@ export default function LoginPage() {
   }
 
   return (
-    <Container size={420} className='auth-page'>
-      <Text className='brand'>{t('appName')}</Text>
+    <Container size={420} className={styles.page}>
+      <Text className={styles.brand}>{t('appName')}</Text>
       <Title order={1}>{t('welcomeBack')}</Title>
       <Text c='dimmed' mt={6}>
         {t('noAccount')} <Anchor onClick={() => navigate('/register')}>{t('register')}</Anchor>

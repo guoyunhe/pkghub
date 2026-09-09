@@ -7,6 +7,8 @@ import { Link, useLocation } from 'wouter'
 import { useAuth } from '../auth'
 import { deleteApp, getApps } from '../services/apps'
 
+import styles from './AppsPage.module.css'
+
 function localized(translations: Record<string, string>, language: string) {
   return (
     translations[language] ??
@@ -55,10 +57,10 @@ export default function AppsPage() {
   }
 
   return (
-    <main className='apps-page'>
-      <header className='apps-header'>
+    <main className={styles.page}>
+      <header className={styles.header}>
         <div>
-          <Text className='eyebrow'>Linux catalog</Text>
+          <Text className={styles.eyebrow}>Linux catalog</Text>
           <Title order={1}>Applications</Title>
           <Text c='dimmed'>Discover software metadata, launchers and upstream sources.</Text>
         </div>
@@ -91,32 +93,32 @@ export default function AppsPage() {
         </Alert>
       )}
       {loading ? (
-        <div className='loading-screen'>
+        <div className={styles.loading}>
           <Loader color='orange' />
         </div>
       ) : (
-        <section className='apps-grid'>
+        <section className={styles.grid}>
           {apps.map((app) => (
-            <article className='app-item' key={app.id}>
+            <article className={styles.item} key={app.id}>
               {app.icon ? (
-                <img alt='' className='app-icon' src={app.icon.url} />
+                <img alt='' className={styles.icon} src={app.icon.url} />
               ) : (
-                <div className='app-icon app-icon-empty' />
+                <div className={`${styles.icon} ${styles.emptyIcon}`} />
               )}
-              <div className='app-copy'>
+              <div className={styles.copy}>
                 <Title order={3}>
-                  <Link className='app-link' href={`/apps/${app.id}`}>
+                  <Link className={styles.link} href={`/apps/${app.id}`}>
                     {localized(app.name, i18n.language)}
                   </Link>
                 </Title>
                 <Text c='dimmed'>{localized(app.summary, i18n.language)}</Text>
-                <div className='app-meta'>
+                <div className={styles.metadata}>
                   {app.version && <span>{app.version}</span>}
                   {app.license && <span>{app.license}</span>}
                 </div>
               </div>
               {user && (
-                <Group gap='xs' className='app-actions'>
+                <Group gap='xs' className={styles.actions}>
                   <Button
                     component={Link}
                     href={`/apps/${app.id}/edit`}
