@@ -1,7 +1,6 @@
 import { Exception } from '@adonisjs/core/exceptions'
 import type { HttpContext } from '@adonisjs/core/http'
 import drive from '@adonisjs/drive/services/main'
-import sharp, { type FitEnum, type FormatEnum } from 'sharp'
 
 import Image from '#models/image'
 import ImageTransformer from '#transformers/image_transformer'
@@ -30,7 +29,10 @@ export default class ImagesController {
   }
 
   async store({ auth, request, response, serialize }: HttpContext) {
-    const image = await Image.create(await this.processUpload(request, auth.getUserOrFail().id))
+    const image = await Image.createFromRequestFile(this.imageFile(request), {
+      userId: auth.getUserOrFail().id,
+      ...this.parseOptions(request),
+    })
 
     response.created()
     return serialize(ImageTransformer.transform(image))
@@ -38,11 +40,7 @@ export default class ImagesController {
 
   async update({ auth, params, request, serialize }: HttpContext) {
     const image = await this.findUserImage(params.id, auth.getUserOrFail().id)
-    const replacement = await this.processUpload(request, image.userId!)
-
-    const oldPath = image.path
-    await image.merge(replacement).save()
-    await drive.use().delete(oldPath)
+    await Image.replaceFromRequestFile(image, this.imageFile(request), this.parseOptions(request))
 
     return serialize(ImageTransformer.transform(image))
   }
@@ -60,43 +58,16 @@ export default class ImagesController {
     return Image.query().where('id', id).where('user_id', userId).firstOrFail()
   }
 
-  private async processUpload(request: HttpContext['request'], userId: number) {
-    const upload = request.file('image', {
+  private imageFile(request: HttpContext['request']) {
+    const file = request.file('image', {
       size: `${MAX_IMAGE_SIZE / 1024 / 1024}mb`,
       extnames: imageExtensions,
     })
 
-    if (!upload?.tmpPath || !upload.isValid) {
+    if (!file) {
       throw new Exception('A valid image file is required', { status: 422 })
     }
-
-    const { width, height, fit, format } = this.parseOptions(request)
-    let processor = sharp(upload.tmpPath).rotate()
-
-    if (width || height) {
-      processor = processor.resize({ width, height, fit: fit as keyof FitEnum })
-    }
-    if (format) {
-      processor = processor.toFormat(format as keyof FormatEnum)
-    }
-
-    const output = await processor.toBuffer({ resolveWithObject: true })
-    if (output.info.size > MAX_IMAGE_SIZE) {
-      throw new Exception('The processed image exceeds the 10 MB size limit', { status: 422 })
-    }
-
-    const extension = output.info.format === 'jpeg' ? 'jpg' : output.info.format
-    const path = `images/${crypto.randomUUID()}.${extension}`
-    await drive.use().put(path, output.data)
-
-    return {
-      userId,
-      path,
-      size: output.info.size,
-      width: output.info.width,
-      height: output.info.height,
-      mimeType: `image/${output.info.format}`,
-    }
+    return file
   }
 
   private parseOptions(request: HttpContext['request']) {

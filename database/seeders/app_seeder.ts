@@ -1,9 +1,7 @@
 import { get } from 'node:https'
 
-import drive from '@adonisjs/drive/services/main'
 import { BaseSeeder } from '@adonisjs/lucid/seeders'
 import { XMLParser } from 'fast-xml-parser'
-import sharp from 'sharp'
 
 import App from '#models/app'
 import Image from '#models/image'
@@ -106,32 +104,14 @@ export default class AppSeeder extends BaseSeeder {
   }
 
   private async updateIcon(app: App, iconUrl: string) {
-    const data = await this.download(iconUrl, 'icon')
-    const metadata = await sharp(data).metadata()
-    if (metadata.format !== 'svg' && metadata.format !== 'png') {
-      throw new Error(`Icon must be SVG or PNG: ${iconUrl}`)
-    }
-    if (
-      metadata.format === 'png' &&
-      (!metadata.width || !metadata.height || Math.min(metadata.width, metadata.height) < 512)
-    ) {
-      throw new Error(`PNG icon must be at least 512px: ${iconUrl}`)
-    }
-
-    const extension = metadata.format
-    const path = `icons/${app.appstreamId}.${extension}`
-    await drive.use().put(path, data)
-
     const icon = app.iconId ? await Image.find(app.iconId) : null
-    const attributes = {
-      path,
-      size: data.length,
-      width: metadata.width ?? 0,
-      height: metadata.height ?? 0,
-      mimeType: metadata.format === 'svg' ? 'image/svg+xml' : 'image/png',
-      userId: null,
+    const options = {
+      acceptedFormats: ['svg', 'png'] as const,
+      minimumPngSize: 512,
     }
-    const image = icon ? await icon.merge(attributes).save() : await Image.create(attributes)
+    const image = icon
+      ? await Image.replaceFromUrl(icon, iconUrl, options)
+      : await Image.createFromUrl(iconUrl, options)
 
     if (app.iconId !== image.id) {
       await app.merge({ iconId: image.id }).save()
