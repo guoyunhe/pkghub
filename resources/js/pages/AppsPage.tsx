@@ -104,7 +104,11 @@ export default function AppsPage() {
                 <div className='app-icon app-icon-empty' />
               )}
               <div className='app-copy'>
-                <Title order={3}>{localized(app.name, i18n.language)}</Title>
+                <Title order={3}>
+                  <Link className='app-link' href={`/apps/${app.id}`}>
+                    {localized(app.name, i18n.language)}
+                  </Link>
+                </Title>
                 <Text c='dimmed'>{localized(app.summary, i18n.language)}</Text>
                 <div className='app-meta'>
                   {app.version && <span>{app.version}</span>}

@@ -79,6 +79,13 @@ body {
 .app-copy h3 {
   margin: 0 0 4px;
 }
+.app-link {
+  color: inherit;
+  text-decoration: none;
+}
+.app-link:hover {
+  color: #d05a19;
+}
 .app-meta {
   display: flex;
   gap: 8px;
@@ -107,6 +114,42 @@ body {
   border-top: 1px solid #d9d4ca;
   padding-top: 24px;
 }
+.app-detail-page {
+  margin: 0 auto;
+  max-width: 900px;
+  padding: 56px 24px 72px;
+}
+.app-detail-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 48px;
+}
+.app-detail-intro {
+  align-items: center;
+  display: grid;
+  gap: 28px;
+  grid-template-columns: 128px minmax(0, 1fr);
+}
+.app-detail-icon {
+  height: 128px;
+  object-fit: contain;
+  width: 128px;
+}
+.app-detail-intro h1 {
+  margin: 6px 0 10px;
+}
+.app-detail-metadata {
+  border-bottom: 1px solid #d9d4ca;
+  border-top: 1px solid #d9d4ca;
+  display: grid;
+  gap: 24px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 44px 0;
+  padding: 22px 0;
+}
+.app-detail-sources h2 {
+  margin-bottom: 16px;
+}
 @media (max-width: 600px) {
   .apps-page {
     padding: 44px 18px;
@@ -127,5 +170,19 @@ body {
   }
   .app-form-page {
     padding: 44px 18px;
+  }
+  .app-detail-page {
+    padding: 32px 18px 48px;
+  }
+  .app-detail-intro {
+    align-items: start;
+    grid-template-columns: 72px minmax(0, 1fr);
+  }
+  .app-detail-icon {
+    height: 72px;
+    width: 72px;
+  }
+  .app-detail-metadata {
+    grid-template-columns: 1fr;
   }
 }
