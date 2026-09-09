@@ -56,6 +56,54 @@ const routes = {
     ],
     types: placeholder as Registry['auth.user']['types'],
   },
+  'images.index': {
+    methods: ['GET', 'HEAD'],
+    pattern: '/api/images',
+    tokens: [
+      { old: '/api/images', type: 0, val: 'api', end: '' },
+      { old: '/api/images', type: 0, val: 'images', end: '' },
+    ],
+    types: placeholder as Registry['images.index']['types'],
+  },
+  'images.store': {
+    methods: ['POST'],
+    pattern: '/api/images',
+    tokens: [
+      { old: '/api/images', type: 0, val: 'api', end: '' },
+      { old: '/api/images', type: 0, val: 'images', end: '' },
+    ],
+    types: placeholder as Registry['images.store']['types'],
+  },
+  'images.show': {
+    methods: ['GET', 'HEAD'],
+    pattern: '/api/images/:id',
+    tokens: [
+      { old: '/api/images/:id', type: 0, val: 'api', end: '' },
+      { old: '/api/images/:id', type: 0, val: 'images', end: '' },
+      { old: '/api/images/:id', type: 1, val: 'id', end: '' },
+    ],
+    types: placeholder as Registry['images.show']['types'],
+  },
+  'images.update': {
+    methods: ['PUT', 'PATCH'],
+    pattern: '/api/images/:id',
+    tokens: [
+      { old: '/api/images/:id', type: 0, val: 'api', end: '' },
+      { old: '/api/images/:id', type: 0, val: 'images', end: '' },
+      { old: '/api/images/:id', type: 1, val: 'id', end: '' },
+    ],
+    types: placeholder as Registry['images.update']['types'],
+  },
+  'images.destroy': {
+    methods: ['DELETE'],
+    pattern: '/api/images/:id',
+    tokens: [
+      { old: '/api/images/:id', type: 0, val: 'api', end: '' },
+      { old: '/api/images/:id', type: 0, val: 'images', end: '' },
+      { old: '/api/images/:id', type: 1, val: 'id', end: '' },
+    ],
+    types: placeholder as Registry['images.destroy']['types'],
+  },
 } as const satisfies Record<string, AdonisEndpoint>;
 
 export { routes };

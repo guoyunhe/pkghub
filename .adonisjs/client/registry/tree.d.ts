@@ -13,4 +13,11 @@ export interface ApiDefinition {
     logout: (typeof routes)['auth.logout'];
     user: (typeof routes)['auth.user'];
   };
+  images: {
+    index: (typeof routes)['images.index'];
+    store: (typeof routes)['images.store'];
+    show: (typeof routes)['images.show'];
+    update: (typeof routes)['images.update'];
+    destroy: (typeof routes)['images.destroy'];
+  };
 }

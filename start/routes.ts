@@ -25,6 +25,8 @@ router
         router.get('user', [controllers.Auth, 'user']).use(middleware.auth());
       })
       .prefix('auth');
+
+    router.resource('images', controllers.Images).apiOnly().use('*', middleware.auth());
   })
   .prefix('/api');
 

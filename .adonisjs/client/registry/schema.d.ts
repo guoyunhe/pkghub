@@ -93,4 +93,84 @@ export interface Registry {
       >;
     };
   };
+  'images.index': {
+    methods: ['GET', 'HEAD'];
+    pattern: '/api/images';
+    types: {
+      body: {};
+      paramsTuple: [];
+      params: {};
+      query: {};
+      response: ExtractResponse<
+        Awaited<ReturnType<import('#controllers/images_controller').default['index']>>
+      >;
+      errorResponse: ExtractErrorResponse<
+        Awaited<ReturnType<import('#controllers/images_controller').default['index']>>
+      >;
+    };
+  };
+  'images.store': {
+    methods: ['POST'];
+    pattern: '/api/images';
+    types: {
+      body: {};
+      paramsTuple: [];
+      params: {};
+      query: {};
+      response: ExtractResponse<
+        Awaited<ReturnType<import('#controllers/images_controller').default['store']>>
+      >;
+      errorResponse: ExtractErrorResponse<
+        Awaited<ReturnType<import('#controllers/images_controller').default['store']>>
+      >;
+    };
+  };
+  'images.show': {
+    methods: ['GET', 'HEAD'];
+    pattern: '/api/images/:id';
+    types: {
+      body: {};
+      paramsTuple: [ParamValue];
+      params: { id: ParamValue };
+      query: {};
+      response: ExtractResponse<
+        Awaited<ReturnType<import('#controllers/images_controller').default['show']>>
+      >;
+      errorResponse: ExtractErrorResponse<
+        Awaited<ReturnType<import('#controllers/images_controller').default['show']>>
+      >;
+    };
+  };
+  'images.update': {
+    methods: ['PUT', 'PATCH'];
+    pattern: '/api/images/:id';
+    types: {
+      body: {};
+      paramsTuple: [ParamValue];
+      params: { id: ParamValue };
+      query: {};
+      response: ExtractResponse<
+        Awaited<ReturnType<import('#controllers/images_controller').default['update']>>
+      >;
+      errorResponse: ExtractErrorResponse<
+        Awaited<ReturnType<import('#controllers/images_controller').default['update']>>
+      >;
+    };
+  };
+  'images.destroy': {
+    methods: ['DELETE'];
+    pattern: '/api/images/:id';
+    types: {
+      body: {};
+      paramsTuple: [ParamValue];
+      params: { id: ParamValue };
+      query: {};
+      response: ExtractResponse<
+        Awaited<ReturnType<import('#controllers/images_controller').default['destroy']>>
+      >;
+      errorResponse: ExtractErrorResponse<
+        Awaited<ReturnType<import('#controllers/images_controller').default['destroy']>>
+      >;
+    };
+  };
 }

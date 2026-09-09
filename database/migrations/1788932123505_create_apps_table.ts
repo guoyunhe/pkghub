@@ -19,6 +19,8 @@ export default class extends BaseSchema {
 
       table.text('desktop').nullable();
 
+      table.integer('icon_id').nullable();
+
       table.timestamp('created_at').notNullable().defaultTo(this.now());
       table.timestamp('updated_at').nullable();
     });
