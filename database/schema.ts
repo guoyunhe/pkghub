@@ -6,6 +6,45 @@
 import { BaseModel, column } from '@adonisjs/lucid/orm';
 import { DateTime } from 'luxon';
 
+export class AppSchema extends BaseModel {
+  static $columns = [
+    'appstreamId',
+    'appstreamUrl',
+    'appstreamXml',
+    'createdAt',
+    'desktop',
+    'id',
+    'license',
+    'name',
+    'summary',
+    'updatedAt',
+    'version',
+  ] as const;
+  $columns = AppSchema.$columns;
+  @column()
+  declare appstreamId: string | null;
+  @column()
+  declare appstreamUrl: string | null;
+  @column()
+  declare appstreamXml: string | null;
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime;
+  @column()
+  declare desktop: string | null;
+  @column({ isPrimary: true })
+  declare id: number;
+  @column()
+  declare license: string | null;
+  @column()
+  declare name: string;
+  @column()
+  declare summary: string;
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null;
+  @column()
+  declare version: string | null;
+}
+
 export class AuthAccessTokenSchema extends BaseModel {
   static $columns = [
     'abilities',
@@ -23,7 +62,7 @@ export class AuthAccessTokenSchema extends BaseModel {
   @column()
   declare abilities: string;
   @column.dateTime({ autoCreate: true })
-  declare createdAt: DateTime | null;
+  declare createdAt: DateTime;
   @column.dateTime()
   declare expiresAt: DateTime | null;
   @column()
@@ -42,8 +81,60 @@ export class AuthAccessTokenSchema extends BaseModel {
   declare updatedAt: DateTime | null;
 }
 
+export class ImageSchema extends BaseModel {
+  static $columns = [
+    'createdAt',
+    'height',
+    'id',
+    'mimeType',
+    'path',
+    'size',
+    'updatedAt',
+    'width',
+  ] as const;
+  $columns = ImageSchema.$columns;
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime;
+  @column()
+  declare height: number;
+  @column({ isPrimary: true })
+  declare id: number;
+  @column()
+  declare mimeType: string;
+  @column()
+  declare path: string;
+  @column()
+  declare size: number;
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null;
+  @column()
+  declare width: number;
+}
+
+export class PkgSchema extends BaseModel {
+  static $columns = ['createdAt', 'id', 'updatedAt'] as const;
+  $columns = PkgSchema.$columns;
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime | null;
+  @column({ isPrimary: true })
+  declare id: number;
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null;
+}
+
+export class RepoSchema extends BaseModel {
+  static $columns = ['createdAt', 'id', 'updatedAt'] as const;
+  $columns = RepoSchema.$columns;
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime | null;
+  @column({ isPrimary: true })
+  declare id: number;
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null;
+}
+
 export class UserSchema extends BaseModel {
-  static $columns = ['createdAt', 'email', 'id', 'name', 'password', 'updatedAt'] as const;
+  static $columns = ['createdAt', 'email', 'id', 'name', 'password', 'role', 'updatedAt'] as const;
   $columns = UserSchema.$columns;
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime;
@@ -52,9 +143,11 @@ export class UserSchema extends BaseModel {
   @column({ isPrimary: true })
   declare id: number;
   @column()
-  declare name: string | null;
+  declare name: string;
   @column({ serializeAs: null })
   declare password: string;
+  @column()
+  declare role: string;
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null;
 }
