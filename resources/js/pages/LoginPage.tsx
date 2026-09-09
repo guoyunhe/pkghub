@@ -9,7 +9,8 @@ import {
   TextInput,
   Title,
 } from '@mantine/core'
-import { useState, type FormEvent } from 'react'
+import { useForm } from '@mantine/form'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation } from 'wouter'
 
@@ -20,20 +21,24 @@ export default function LoginPage() {
   const { t } = useTranslation()
   const [, navigate] = useLocation()
   const { setUser } = useAuth()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const form = useForm({
+    mode: 'uncontrolled',
+    initialValues: { email: '', password: '' },
+    validate: {
+      email: (value) => (/^\S+@\S+$/.test(value) ? null : t('invalidEmail')),
+      password: (value) => (value ? null : t('required')),
+    },
+  })
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    setError('')
+  async function handleSubmit(values: typeof form.values) {
+    form.setFieldError('form', null)
     setLoading(true)
     try {
-      setUser(await login({ email, password }))
+      setUser(await login(values))
       navigate('/')
     } catch (error) {
-      setError(error instanceof Error ? error.message : t('loginFailed'))
+      form.setFieldError('form', error instanceof Error ? error.message : t('loginFailed'))
     } finally {
       setLoading(false)
     }
@@ -47,24 +52,22 @@ export default function LoginPage() {
         {t('noAccount')} <Anchor onClick={() => navigate('/register')}>{t('register')}</Anchor>
       </Text>
       <Paper withBorder p="xl" mt="xl" radius="sm">
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={form.onSubmit(handleSubmit)}>
           <Stack>
             <TextInput
               label={t('email')}
               type="email"
-              value={email}
-              onChange={(event) => setEmail(event.currentTarget.value)}
-              required
+              key={form.key('email')}
+              {...form.getInputProps('email')}
             />
             <PasswordInput
               label={t('password')}
-              value={password}
-              onChange={(event) => setPassword(event.currentTarget.value)}
-              required
+              key={form.key('password')}
+              {...form.getInputProps('password')}
             />
-            {error && (
+            {form.errors.form && (
               <Text c="red" size="sm">
-                {error}
+                {form.errors.form}
               </Text>
             )}
             <Button type="submit" color="orange" loading={loading}>

@@ -12,6 +12,8 @@
   "welcomeBack": "Welcome back",
   "createAccount": "Create your account",
   "passwordHint": "8 to 32 characters",
+  "required": "This field is required",
+  "invalidEmail": "Enter a valid email address",
   "passwordMismatch": "Passwords do not match",
   "dashboardTitle": "Your package workspace",
   "dashboardDescription": "You are signed in and ready to work.",

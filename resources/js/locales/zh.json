@@ -12,6 +12,8 @@
   "welcomeBack": "欢迎回来",
   "createAccount": "创建你的账号",
   "passwordHint": "8 至 32 个字符",
+  "required": "此字段不能为空",
+  "invalidEmail": "请输入有效的邮箱地址",
   "passwordMismatch": "两次密码不一致",
   "dashboardTitle": "你的软件包工作区",
   "dashboardDescription": "已成功登录，可以开始使用。",

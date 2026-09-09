@@ -9,7 +9,8 @@ import {
   TextInput,
   Title,
 } from '@mantine/core'
-import { useState, type FormEvent } from 'react'
+import { useForm } from '@mantine/form'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation } from 'wouter'
 
@@ -20,23 +21,27 @@ export default function RegisterPage() {
   const { t } = useTranslation()
   const [, navigate] = useLocation()
   const { setUser } = useAuth()
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [passwordConfirmation, setPasswordConfirmation] = useState('')
-  const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const form = useForm({
+    mode: 'uncontrolled',
+    initialValues: { name: '', email: '', password: '', passwordConfirmation: '' },
+    validate: {
+      name: (value) => (value.trim() ? null : t('required')),
+      email: (value) => (/^\S+@\S+$/.test(value) ? null : t('invalidEmail')),
+      password: (value) => (value.length >= 8 ? null : t('passwordHint')),
+      passwordConfirmation: (value, values) =>
+        value === values.password ? null : t('passwordMismatch'),
+    },
+  })
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    if (password !== passwordConfirmation) return setError(t('passwordMismatch'))
-    setError('')
+  async function handleSubmit(values: typeof form.values) {
+    form.setFieldError('form', null)
     setLoading(true)
     try {
-      setUser(await register({ name, email, password, passwordConfirmation }))
+      setUser(await register(values))
       navigate('/')
     } catch (error) {
-      setError(error instanceof Error ? error.message : t('registerFailed'))
+      form.setFieldError('form', error instanceof Error ? error.message : t('registerFailed'))
     } finally {
       setLoading(false)
     }
@@ -50,40 +55,36 @@ export default function RegisterPage() {
         {t('hasAccount')} <Anchor onClick={() => navigate('/login')}>{t('login')}</Anchor>
       </Text>
       <Paper withBorder p="xl" mt="xl" radius="sm">
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={form.onSubmit(handleSubmit)}>
           <Stack>
             <TextInput
               label={t('name')}
-              value={name}
-              onChange={(event) => setName(event.currentTarget.value)}
-              required
+              key={form.key('name')}
+              {...form.getInputProps('name')}
               maxLength={32}
             />
             <TextInput
               label={t('email')}
               type="email"
-              value={email}
-              onChange={(event) => setEmail(event.currentTarget.value)}
-              required
+              key={form.key('email')}
+              {...form.getInputProps('email')}
             />
             <PasswordInput
               label={t('password')}
               description={t('passwordHint')}
-              value={password}
-              onChange={(event) => setPassword(event.currentTarget.value)}
-              required
+              key={form.key('password')}
+              {...form.getInputProps('password')}
               minLength={8}
               maxLength={32}
             />
             <PasswordInput
               label={t('confirmPassword')}
-              value={passwordConfirmation}
-              onChange={(event) => setPasswordConfirmation(event.currentTarget.value)}
-              required
+              key={form.key('passwordConfirmation')}
+              {...form.getInputProps('passwordConfirmation')}
             />
-            {error && (
+            {form.errors.form && (
               <Text c="red" size="sm">
-                {error}
+                {form.errors.form}
               </Text>
             )}
             <Button type="submit" color="orange" loading={loading}>
