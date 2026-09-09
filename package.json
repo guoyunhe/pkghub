@@ -59,6 +59,7 @@
     "better-sqlite3": "^13.0.3",
     "chalk": "^6.0.0",
     "edge.js": "^6.5.1",
+    "fast-xml-parser": "^5.11.1",
     "i18next": "^26.4.2",
     "i18next-browser-languagedetector": "^8.2.1",
     "luxon": "^3.7.2",
