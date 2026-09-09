@@ -25,6 +25,7 @@ export default function AppsPage() {
   const [apps, setApps] = useState<Data.App[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const isAdmin = user?.role === 'admin'
 
   async function loadApps() {
     try {
@@ -67,9 +68,11 @@ export default function AppsPage() {
         <Group gap='xs'>
           {ready && user ? (
             <>
-              <Button component={Link} href='/apps/new'>
-                Add application
-              </Button>
+              {isAdmin && (
+                <Button component={Link} href='/apps/new'>
+                  Add application
+                </Button>
+              )}
               <Button variant='default' onClick={() => void handleLogout()}>
                 Sign out
               </Button>
@@ -117,7 +120,7 @@ export default function AppsPage() {
                   {app.license && <span>{app.license}</span>}
                 </div>
               </div>
-              {user && (
+              {isAdmin && (
                 <Group gap='xs' className={styles.actions}>
                   <Button
                     component={Link}

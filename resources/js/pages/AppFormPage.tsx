@@ -49,6 +49,7 @@ export default function AppFormPage() {
       </div>
     )
   if (!user) return <Redirect to='/login' />
+  if (user.role !== 'admin') return <Redirect to='/apps' />
   if (loading)
     return (
       <div className={styles.loading}>

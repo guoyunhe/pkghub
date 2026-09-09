@@ -32,7 +32,7 @@ router
     router
       .resource('apps', controllers.Apps)
       .only(['store', 'update', 'destroy'])
-      .use('*', middleware.auth())
+      .use('*', [middleware.auth(), middleware.admin()])
   })
   .prefix('/api')
 

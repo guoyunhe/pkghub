@@ -61,7 +61,7 @@ export default function AppDetailPage() {
         <Button component={Link} href='/apps' variant='subtle'>
           Back to applications
         </Button>
-        {user && (
+        {user?.role === 'admin' && (
           <Button component={Link} href={`/apps/${app.id}/edit`} variant='default'>
             Edit application
           </Button>
