@@ -13,6 +13,14 @@ export default class extends BaseSchema {
       table.smallint('width').unsigned().notNullable();
       table.smallint('height').unsigned().notNullable();
 
+      table
+        .integer('user_id')
+        .unsigned()
+        .nullable()
+        .references('id')
+        .inTable('users')
+        .onDelete('SET NULL');
+
       table.timestamp('created_at').notNullable().defaultTo(this.now());
       table.timestamp('updated_at').nullable();
     });

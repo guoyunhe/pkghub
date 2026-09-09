@@ -90,6 +90,7 @@ export class ImageSchema extends BaseModel {
     'path',
     'size',
     'updatedAt',
+    'userId',
     'width',
   ] as const;
   $columns = ImageSchema.$columns;
@@ -107,6 +108,8 @@ export class ImageSchema extends BaseModel {
   declare size: number;
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null;
+  @column()
+  declare userId: number | null;
   @column()
   declare width: number;
 }
