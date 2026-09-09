@@ -1,23 +1,23 @@
 /* eslint-disable prettier/prettier */
-import type { routes } from './index.ts';
+import type { routes } from './index.ts'
 
 export interface ApiDefinition {
   drive: {
     fs: {
-      serve: (typeof routes)['drive.fs.serve'];
-    };
-  };
+      serve: typeof routes['drive.fs.serve']
+    }
+  }
   auth: {
-    register: (typeof routes)['auth.register'];
-    login: (typeof routes)['auth.login'];
-    logout: (typeof routes)['auth.logout'];
-    user: (typeof routes)['auth.user'];
-  };
+    register: typeof routes['auth.register']
+    login: typeof routes['auth.login']
+    logout: typeof routes['auth.logout']
+    user: typeof routes['auth.user']
+  }
   images: {
-    index: (typeof routes)['images.index'];
-    store: (typeof routes)['images.store'];
-    show: (typeof routes)['images.show'];
-    update: (typeof routes)['images.update'];
-    destroy: (typeof routes)['images.destroy'];
-  };
+    index: typeof routes['images.index']
+    store: typeof routes['images.store']
+    show: typeof routes['images.show']
+    update: typeof routes['images.update']
+    destroy: typeof routes['images.destroy']
+  }
 }
