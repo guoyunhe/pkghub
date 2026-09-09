@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { Link, useLocation } from 'wouter'
 
 import { useAuth } from '../auth'
-import { deleteApp, getApps } from '../services/apps'
+import { getApps } from '../services/apps'
 
 import styles from './AppsPage.module.css'
 
@@ -41,16 +41,6 @@ export default function AppsPage() {
   useEffect(() => {
     void loadApps()
   }, [])
-
-  async function remove(app: Data.App) {
-    if (!window.confirm(`Delete ${localized(app.name, i18n.language)}?`)) return
-    try {
-      await deleteApp(app.id)
-      setApps((current) => current.filter((item) => item.id !== app.id))
-    } catch (reason) {
-      setError(reason instanceof Error ? reason.message : 'Unable to delete application')
-    }
-  }
 
   async function handleLogout() {
     await logout()
@@ -120,26 +110,6 @@ export default function AppsPage() {
                   {app.license && <span>{app.license}</span>}
                 </div>
               </div>
-              {isAdmin && (
-                <Group gap='xs' className={styles.actions}>
-                  <Button
-                    component={Link}
-                    href={`/apps/${app.id}/edit`}
-                    variant='subtle'
-                    size='compact-sm'
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    color='red'
-                    variant='subtle'
-                    size='compact-sm'
-                    onClick={() => void remove(app)}
-                  >
-                    Delete
-                  </Button>
-                </Group>
-              )}
             </article>
           ))}
         </section>

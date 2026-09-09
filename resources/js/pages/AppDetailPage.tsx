@@ -2,10 +2,10 @@ import type { Data } from '@generated/data'
 import { Alert, Button, Group, Loader, Text, Title } from '@mantine/core'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link, useRoute } from 'wouter'
+import { Link, useLocation, useRoute } from 'wouter'
 
 import { useAuth } from '../auth'
-import { getApp } from '../services/apps'
+import { deleteApp, getApp } from '../services/apps'
 
 import styles from './AppDetailPage.module.css'
 
@@ -21,6 +21,7 @@ function localized(translations: Record<string, string>, language: string) {
 export default function AppDetailPage() {
   const { i18n } = useTranslation()
   const { ready, user } = useAuth()
+  const [, navigate] = useLocation()
   const [, params] = useRoute('/apps/:id')
   const appId = params?.id ? Number(params.id) : undefined
   const [app, setApp] = useState<Data.App | null>(null)
@@ -54,6 +55,17 @@ export default function AppDetailPage() {
   }
 
   const name = localized(app.name, i18n.language)
+  const isAdmin = user?.role === 'admin'
+
+  async function remove() {
+    if (!window.confirm(`Delete ${name}?`)) return
+    try {
+      await deleteApp(app.id)
+      navigate('/apps')
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : 'Unable to delete application')
+    }
+  }
 
   return (
     <main className={styles.page}>
@@ -61,10 +73,15 @@ export default function AppDetailPage() {
         <Button component={Link} href='/apps' variant='subtle'>
           Back to applications
         </Button>
-        {user?.role === 'admin' && (
-          <Button component={Link} href={`/apps/${app.id}/edit`} variant='default'>
-            Edit application
-          </Button>
+        {isAdmin && (
+          <Group gap='xs'>
+            <Button component={Link} href={`/apps/${app.id}/edit`} variant='default'>
+              Edit application
+            </Button>
+            <Button color='red' variant='subtle' onClick={() => void remove()}>
+              Delete
+            </Button>
+          </Group>
         )}
       </header>
 
