@@ -1,5 +1,8 @@
 import type { Data } from '@generated/data'
 
+import i18n from '../i18n'
+import xior, { isXiorError } from 'xior'
+
 export type AuthUser = Data.User
 
 export type LoginPayload = {
@@ -23,7 +26,20 @@ type ErrorResponse = {
 }
 
 const tokenKey = 'pkghub.auth-token'
-const apiUrl = import.meta.env.VITE_API_URL ?? '/api'
+const api = xior.create({
+  baseURL: import.meta.env.VITE_API_URL ?? '/api',
+  headers: { Accept: 'application/json' },
+})
+
+api.interceptors.request.use((config) => {
+  const token = getAuthToken()
+  config.headers = {
+    ...config.headers,
+    'Accept-Language': i18n.language,
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  }
+  return config
+})
 
 export function getAuthToken() {
   return localStorage.getItem(tokenKey)
@@ -37,49 +53,51 @@ function setAuthToken(token: string) {
   localStorage.setItem(tokenKey, token)
 }
 
-async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
-  const token = getAuthToken()
-  const response = await fetch(`${apiUrl}${path}`, {
-    ...init,
-    headers: {
-      Accept: 'application/json',
-      ...(init.body ? { 'Content-Type': 'application/json' } : {}),
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...init.headers,
-    },
-  })
-  const body = (await response.json().catch(() => ({}))) as { data?: T } & ErrorResponse
-
-  if (!response.ok) {
-    throw new Error(body.message ?? body.errors?.[0]?.message ?? 'Request failed')
+function getErrorMessage(error: unknown) {
+  if (isXiorError<ErrorResponse>(error)) {
+    const body = error.response?.data
+    if (body?.message ?? body?.errors?.[0]?.message) {
+      return body.message ?? body.errors?.[0]?.message
+    }
   }
-
-  return body.data ?? (body as T)
+  return error instanceof Error ? error.message : 'Request failed'
 }
 
 export async function login(payload: LoginPayload) {
-  const response = await request<AuthResponse>('/auth/login', {
-    method: 'POST',
-    body: JSON.stringify(payload),
-  })
-  setAuthToken(response.token)
-  return response.user
+  try {
+    const { data } = await api.post<{ data: AuthResponse }>('/auth/login', payload)
+    setAuthToken(data.data.token)
+    return data.data.user
+  } catch (error) {
+    throw new Error(getErrorMessage(error))
+  }
 }
 
 export async function register(payload: RegisterPayload) {
-  const response = await request<AuthResponse>('/auth/register', {
-    method: 'POST',
-    body: JSON.stringify(payload),
-  })
-  setAuthToken(response.token)
-  return response.user
+  try {
+    const { data } = await api.post<{ data: AuthResponse }>('/auth/register', payload)
+    setAuthToken(data.data.token)
+    return data.data.user
+  } catch (error) {
+    throw new Error(getErrorMessage(error))
+  }
 }
 
-export function getCurrentUser() {
-  return request<AuthUser>('/auth/user')
+export async function getCurrentUser() {
+  try {
+    const { data } = await api.get<{ data: AuthUser }>('/auth/user')
+    return data.data
+  } catch (error) {
+    throw new Error(getErrorMessage(error))
+  }
 }
 
 export async function logout() {
-  await request('/auth/logout', { method: 'POST' })
-  clearAuthToken()
+  try {
+    await api.post('/auth/logout')
+  } catch (error) {
+    throw new Error(getErrorMessage(error))
+  } finally {
+    clearAuthToken()
+  }
 }
