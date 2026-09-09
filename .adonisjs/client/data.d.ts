@@ -8,6 +8,7 @@ import type { InferData, InferVariants } from '@adonisjs/core/types/transformers
 import type UserTransformer from '#transformers/user_transformer'
 import type AppTransformer from '#transformers/app_transformer'
 import type PkgTransformer from '#transformers/pkg_transformer'
+import type RepoTransformer from '#transformers/repo_transformer'
 
 export namespace Data {
   export type User = InferData<UserTransformer>
@@ -21,5 +22,9 @@ export namespace Data {
   export type Pkg = InferData<PkgTransformer>
   export namespace Pkg {
     export type Variants = InferVariants<PkgTransformer>
+  }
+  export type Repo = InferData<RepoTransformer>
+  export namespace Repo {
+    export type Variants = InferVariants<RepoTransformer>
   }
 }
