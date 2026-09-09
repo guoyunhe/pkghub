@@ -87,25 +87,95 @@ export class ImageSchema extends BaseModel {
 }
 
 export class PkgSchema extends BaseModel {
-  static $columns = ['createdAt', 'id', 'updatedAt'] as const
+  static $columns = ['appId', 'arch', 'checksum', 'checksumType', 'createdAt', 'downloadUrl', 'id', 'installCommand', 'name', 'release', 'repoId', 'size', 'type', 'updatedAt', 'version'] as const
   $columns = PkgSchema.$columns
+  @column()
+  declare appId: number
+  @column()
+  declare arch: string | null
+  @column()
+  declare checksum: string | null
+  @column()
+  declare checksumType: string | null
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime | null
+  @column()
+  declare downloadUrl: string | null
   @column({ isPrimary: true })
   declare id: number
+  @column()
+  declare installCommand: string | null
+  @column()
+  declare name: string
+  @column()
+  declare release: string | null
+  @column()
+  declare repoId: number | null
+  @column()
+  declare size: number | null
+  @column()
+  declare type: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare version: string | null
+}
+
+export class PkgTargetSchema extends BaseModel {
+  static $columns = ['architecture', 'distribution', 'id', 'pkgId', 'release'] as const
+  $columns = PkgTargetSchema.$columns
+  @column()
+  declare architecture: string
+  @column()
+  declare distribution: string
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare pkgId: number
+  @column()
+  declare release: string
+}
+
+export class RepoSchema extends BaseModel {
+  static $columns = ['baseUrl', 'createdAt', 'enabled', 'id', 'keyFingerprint', 'keyUrl', 'name', 'priority', 'repositoryFile', 'type', 'updatedAt'] as const
+  $columns = RepoSchema.$columns
+  @column()
+  declare baseUrl: string | null
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime | null
+  @column()
+  declare enabled: boolean
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare keyFingerprint: string | null
+  @column()
+  declare keyUrl: string | null
+  @column()
+  declare name: string | null
+  @column()
+  declare priority: number | null
+  @column()
+  declare repositoryFile: string | null
+  @column()
+  declare type: string
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null
 }
 
-export class RepoSchema extends BaseModel {
-  static $columns = ['createdAt', 'id', 'updatedAt'] as const
-  $columns = RepoSchema.$columns
-  @column.dateTime({ autoCreate: true })
-  declare createdAt: DateTime | null
+export class RepoTargetSchema extends BaseModel {
+  static $columns = ['architecture', 'distribution', 'id', 'release', 'repoId'] as const
+  $columns = RepoTargetSchema.$columns
+  @column()
+  declare architecture: string
+  @column()
+  declare distribution: string
   @column({ isPrimary: true })
   declare id: number
-  @column.dateTime({ autoCreate: true, autoUpdate: true })
-  declare updatedAt: DateTime | null
+  @column()
+  declare release: string
+  @column()
+  declare repoId: number
 }
 
 export class UserSchema extends BaseModel {

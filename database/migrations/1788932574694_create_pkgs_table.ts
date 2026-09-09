@@ -7,12 +7,55 @@ export default class extends BaseSchema {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
 
+      table
+        .integer('app_id')
+        .unsigned()
+        .notNullable()
+        .references('id')
+        .inTable('apps')
+        .onDelete('CASCADE')
+
+      table.string('type').notNullable().index()
+      table.string('name').notNullable().index()
+      table.string('version').nullable()
+      table.string('release').nullable()
+      table.string('arch').nullable()
+      table
+        .integer('repo_id')
+        .unsigned()
+        .nullable()
+        .references('id')
+        .inTable('repos')
+        .onDelete('SET NULL')
+      table.string('download_url').nullable()
+      table.string('checksum').nullable()
+      table.string('checksum_type').nullable()
+      table.integer('size').unsigned().nullable()
+      table.text('install_command').nullable()
+
       table.timestamp('created_at')
       table.timestamp('updated_at')
+    })
+
+    this.schema.createTable('pkg_targets', (table) => {
+      table.increments('id')
+      table
+        .integer('pkg_id')
+        .unsigned()
+        .notNullable()
+        .references('id')
+        .inTable('pkgs')
+        .onDelete('CASCADE')
+      table.string('distribution').notNullable().defaultTo('*')
+      table.string('release').notNullable().defaultTo('*')
+      table.string('architecture').notNullable().defaultTo('*')
+      table.unique(['pkg_id', 'distribution', 'release', 'architecture'])
+      table.index(['distribution', 'release', 'architecture'])
     })
   }
 
   async down() {
+    this.schema.dropTable('pkg_targets')
     this.schema.dropTable(this.tableName)
   }
 }
