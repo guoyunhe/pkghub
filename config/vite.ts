@@ -1,4 +1,4 @@
-import { defineConfig } from '@adonisjs/vite';
+import { defineConfig } from '@adonisjs/vite'
 
 const viteBackendConfig = defineConfig({
   /**
@@ -16,6 +16,6 @@ const viteBackendConfig = defineConfig({
    * Feel free to change the value of the "assetsUrl" to point to a CDN in production.
    */
   assetsUrl: '/assets',
-});
+})
 
-export default viteBackendConfig;
+export default viteBackendConfig

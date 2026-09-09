@@ -1,9 +1,9 @@
-import factory from '@adonisjs/lucid/factories';
+import factory from '@adonisjs/lucid/factories'
 
-import Repo from '#models/repo';
+import Repo from '#models/repo'
 
 export const RepoFactory = factory
   .define(Repo, async ({ faker }) => {
-    return {};
+    return {}
   })
-  .build();
+  .build()

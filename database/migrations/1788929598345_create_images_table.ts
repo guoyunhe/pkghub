@@ -1,17 +1,17 @@
-import { BaseSchema } from '@adonisjs/lucid/schema';
+import { BaseSchema } from '@adonisjs/lucid/schema'
 
 export default class extends BaseSchema {
-  protected tableName = 'images';
+  protected tableName = 'images'
 
   async up() {
     this.schema.createTable(this.tableName, (table) => {
-      table.increments('id');
+      table.increments('id')
 
-      table.string('mime_type').notNullable();
-      table.string('path').notNullable().unique();
-      table.integer('size').unsigned().notNullable();
-      table.smallint('width').unsigned().notNullable();
-      table.smallint('height').unsigned().notNullable();
+      table.string('mime_type').notNullable()
+      table.string('path').notNullable().unique()
+      table.integer('size').unsigned().notNullable()
+      table.smallint('width').unsigned().notNullable()
+      table.smallint('height').unsigned().notNullable()
 
       table
         .integer('user_id')
@@ -19,14 +19,14 @@ export default class extends BaseSchema {
         .nullable()
         .references('id')
         .inTable('users')
-        .onDelete('SET NULL');
+        .onDelete('SET NULL')
 
-      table.timestamp('created_at').notNullable().defaultTo(this.now());
-      table.timestamp('updated_at').nullable();
-    });
+      table.timestamp('created_at').notNullable().defaultTo(this.now())
+      table.timestamp('updated_at').nullable()
+    })
   }
 
   async down() {
-    this.schema.dropTable(this.tableName);
+    this.schema.dropTable(this.tableName)
   }
 }

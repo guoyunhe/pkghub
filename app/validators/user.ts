@@ -1,10 +1,10 @@
-import vine from '@vinejs/vine';
+import vine from '@vinejs/vine'
 
 /**
  * Shared rules for email and password.
  */
-const email = () => vine.string().email().maxLength(254);
-const password = () => vine.string().minLength(8).maxLength(32);
+const email = () => vine.string().email().maxLength(254)
+const password = () => vine.string().minLength(8).maxLength(32)
 
 /**
  * Validator to use when performing self-register
@@ -14,7 +14,7 @@ export const registerValidator = vine.create({
   email: email().unique({ table: 'users', column: 'email' }),
   password: password(),
   passwordConfirmation: password().sameAs('password'),
-});
+})
 
 /**
  * Validator to use before validating user credentials during login
@@ -22,4 +22,4 @@ export const registerValidator = vine.create({
 export const loginValidator = vine.create({
   email: email(),
   password: vine.string(),
-});
+})

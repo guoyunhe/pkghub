@@ -8,20 +8,20 @@ import {
   Text,
   TextInput,
   Title,
-} from '@mantine/core';
-import { useForm } from '@mantine/form';
-import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useLocation } from 'wouter';
+} from '@mantine/core'
+import { useForm } from '@mantine/form'
+import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useLocation } from 'wouter'
 
-import { useAuth } from '../auth';
-import { login } from '../services/auth';
+import { useAuth } from '../auth'
+import { login } from '../services/auth'
 
 export default function LoginPage() {
-  const { t } = useTranslation();
-  const [, navigate] = useLocation();
-  const { setUser } = useAuth();
-  const [loading, setLoading] = useState(false);
+  const { t } = useTranslation()
+  const [, navigate] = useLocation()
+  const { setUser } = useAuth()
+  const [loading, setLoading] = useState(false)
   const form = useForm({
     mode: 'uncontrolled',
     initialValues: { email: '', password: '' },
@@ -29,18 +29,18 @@ export default function LoginPage() {
       email: (value) => (/^\S+@\S+$/.test(value) ? null : t('invalidEmail')),
       password: (value) => (value ? null : t('required')),
     },
-  });
+  })
 
   async function handleSubmit(values: typeof form.values) {
-    form.setFieldError('form', null);
-    setLoading(true);
+    form.setFieldError('form', null)
+    setLoading(true)
     try {
-      setUser(await login(values));
-      navigate('/');
+      setUser(await login(values))
+      navigate('/')
     } catch (error) {
-      form.setFieldError('form', error instanceof Error ? error.message : t('loginFailed'));
+      form.setFieldError('form', error instanceof Error ? error.message : t('loginFailed'))
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
   }
 
@@ -77,5 +77,5 @@ export default function LoginPage() {
         </form>
       </Paper>
     </Container>
-  );
+  )
 }

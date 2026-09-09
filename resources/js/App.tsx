@@ -1,13 +1,13 @@
-import { AppShell, Button, Container, Group, Loader, Menu, Text, Title } from '@mantine/core';
-import { useTranslation } from 'react-i18next';
-import { Redirect, Route, Switch, useLocation } from 'wouter';
+import { AppShell, Button, Container, Group, Loader, Menu, Text, Title } from '@mantine/core'
+import { useTranslation } from 'react-i18next'
+import { Redirect, Route, Switch, useLocation } from 'wouter'
 
-import { AuthProvider, useAuth } from './auth';
-import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
+import { AuthProvider, useAuth } from './auth'
+import LoginPage from './pages/LoginPage'
+import RegisterPage from './pages/RegisterPage'
 
 function LanguageMenu() {
-  const { i18n } = useTranslation();
+  const { i18n } = useTranslation()
 
   return (
     <Menu position='bottom-end' width={130}>
@@ -21,31 +21,31 @@ function LanguageMenu() {
         <Menu.Item onClick={() => i18n.changeLanguage('zh')}>中文</Menu.Item>
       </Menu.Dropdown>
     </Menu>
-  );
+  )
 }
 
 function ProtectedPage() {
-  const { t, i18n } = useTranslation();
-  const { ready, user, logout } = useAuth();
-  const [, navigate] = useLocation();
+  const { t, i18n } = useTranslation()
+  const { ready, user, logout } = useAuth()
+  const [, navigate] = useLocation()
 
   if (!ready) {
     return (
       <div className='loading-screen'>
         <Loader color='orange' />
       </div>
-    );
+    )
   }
-  if (!user) return <Redirect to='/login' />;
+  if (!user) return <Redirect to='/login' />
 
   async function handleLogout() {
-    await logout();
-    navigate('/login');
+    await logout()
+    navigate('/login')
   }
 
   const createdAt = user.createdAt
     ? new Intl.DateTimeFormat(i18n.language).format(new Date(user.createdAt))
-    : '-';
+    : '-'
 
   return (
     <AppShell header={{ height: 64 }} padding='md'>
@@ -79,7 +79,7 @@ function ProtectedPage() {
         </Container>
       </AppShell.Main>
     </AppShell>
-  );
+  )
 }
 
 function AppRoutes() {
@@ -91,7 +91,7 @@ function AppRoutes() {
         <ProtectedPage />
       </Route>
     </Switch>
-  );
+  )
 }
 
 export default function App() {
@@ -99,5 +99,5 @@ export default function App() {
     <AuthProvider>
       <AppRoutes />
     </AuthProvider>
-  );
+  )
 }

@@ -1,4 +1,4 @@
-import type { ColumnInfo, SchemaRules } from '@adonisjs/lucid/types/schema_generator';
+import type { ColumnInfo, SchemaRules } from '@adonisjs/lucid/types/schema_generator'
 
 /**
  * Factory for JSON column rules. Returns a `ColumnInfo` with JSON serialize/deserialize decorators
@@ -16,7 +16,7 @@ function jsonColumn(tsType: string): ColumnInfo {
         },
       },
     ],
-  };
+  }
 }
 
 /**
@@ -32,7 +32,7 @@ const booleanColumn: ColumnInfo = {
       },
     },
   ],
-};
+}
 
 export default {
   tables: {
@@ -50,4 +50,4 @@ export default {
       },
     },
   },
-} satisfies SchemaRules;
+} satisfies SchemaRules

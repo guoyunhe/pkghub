@@ -9,7 +9,7 @@
 |
 */
 
-import { Env } from '@adonisjs/core/env';
+import { Env } from '@adonisjs/core/env'
 
 export default await Env.create(new URL('../', import.meta.url), {
   // Node
@@ -42,4 +42,4 @@ export default await Env.create(new URL('../', import.meta.url), {
   |----------------------------------------------------------
   */
   DRIVE_DISK: Env.schema.enum(['fs'] as const),
-});
+})

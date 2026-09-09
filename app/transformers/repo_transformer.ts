@@ -1,9 +1,9 @@
-import { BaseTransformer } from '@adonisjs/core/transformers';
+import { BaseTransformer } from '@adonisjs/core/transformers'
 
-import Repo from '#models/repo';
+import Repo from '#models/repo'
 
 export default class RepoTransformer extends BaseTransformer<Repo> {
   toObject() {
-    return this.pick(this.resource, ['id']);
+    return this.pick(this.resource, ['id'])
   }
 }

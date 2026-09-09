@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 
 import {
   clearAuthToken,
@@ -6,44 +6,44 @@ import {
   getCurrentUser,
   logout as logoutRequest,
   type AuthUser,
-} from './services/auth';
+} from './services/auth'
 
 type AuthContextValue = {
-  user: AuthUser | null;
-  ready: boolean;
-  setUser: (user: AuthUser) => void;
-  logout: () => Promise<void>;
-};
+  user: AuthUser | null
+  ready: boolean
+  setUser: (user: AuthUser) => void
+  logout: () => Promise<void>
+}
 
-const AuthContext = createContext<AuthContextValue | null>(null);
+const AuthContext = createContext<AuthContextValue | null>(null)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<AuthUser | null>(null);
-  const [ready, setReady] = useState(!getAuthToken());
+  const [user, setUser] = useState<AuthUser | null>(null)
+  const [ready, setReady] = useState(!getAuthToken())
 
   useEffect(() => {
-    if (!getAuthToken()) return;
+    if (!getAuthToken()) return
 
     getCurrentUser()
       .then(setUser)
       .catch(clearAuthToken)
-      .finally(() => setReady(true));
-  }, []);
+      .finally(() => setReady(true))
+  }, [])
 
   async function logout() {
     try {
-      await logoutRequest();
+      await logoutRequest()
     } finally {
-      clearAuthToken();
-      setUser(null);
+      clearAuthToken()
+      setUser(null)
     }
   }
 
-  return <AuthContext value={{ user, ready, setUser, logout }}>{children}</AuthContext>;
+  return <AuthContext value={{ user, ready, setUser, logout }}>{children}</AuthContext>
 }
 
 export function useAuth() {
-  const context = useContext(AuthContext);
-  if (!context) throw new Error('useAuth must be used inside AuthProvider');
-  return context;
+  const context = useContext(AuthContext)
+  if (!context) throw new Error('useAuth must be used inside AuthProvider')
+  return context
 }

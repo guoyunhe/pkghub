@@ -1,7 +1,7 @@
-import app from '@adonisjs/core/services/app';
-import { defineConfig, stores } from '@adonisjs/session';
+import app from '@adonisjs/core/services/app'
+import { defineConfig, stores } from '@adonisjs/session'
 
-import env from '#start/env';
+import env from '#start/env'
 
 const sessionConfig = defineConfig({
   /**
@@ -70,6 +70,6 @@ const sessionConfig = defineConfig({
      */
     database: stores.database(),
   },
-});
+})
 
-export default sessionConfig;
+export default sessionConfig

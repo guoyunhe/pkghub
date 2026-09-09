@@ -1,7 +1,7 @@
-import app from '@adonisjs/core/services/app';
-import { defineConfig, services } from '@adonisjs/drive';
+import app from '@adonisjs/core/services/app'
+import { defineConfig, services } from '@adonisjs/drive'
 
-import env from '#start/env';
+import env from '#start/env'
 
 const driveConfig = defineConfig({
   default: env.get('DRIVE_DISK'),
@@ -18,9 +18,9 @@ const driveConfig = defineConfig({
       visibility: 'public',
     }),
   },
-});
+})
 
-export default driveConfig;
+export default driveConfig
 
 declare module '@adonisjs/drive/types' {
   export interface DriveDisks extends InferDriveDisks<typeof driveConfig> {}

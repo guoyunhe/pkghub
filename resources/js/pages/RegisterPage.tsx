@@ -8,20 +8,20 @@ import {
   Text,
   TextInput,
   Title,
-} from '@mantine/core';
-import { useForm } from '@mantine/form';
-import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useLocation } from 'wouter';
+} from '@mantine/core'
+import { useForm } from '@mantine/form'
+import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useLocation } from 'wouter'
 
-import { useAuth } from '../auth';
-import { register } from '../services/auth';
+import { useAuth } from '../auth'
+import { register } from '../services/auth'
 
 export default function RegisterPage() {
-  const { t } = useTranslation();
-  const [, navigate] = useLocation();
-  const { setUser } = useAuth();
-  const [loading, setLoading] = useState(false);
+  const { t } = useTranslation()
+  const [, navigate] = useLocation()
+  const { setUser } = useAuth()
+  const [loading, setLoading] = useState(false)
   const form = useForm({
     mode: 'uncontrolled',
     initialValues: { name: '', email: '', password: '', passwordConfirmation: '' },
@@ -32,18 +32,18 @@ export default function RegisterPage() {
       passwordConfirmation: (value, values) =>
         value === values.password ? null : t('passwordMismatch'),
     },
-  });
+  })
 
   async function handleSubmit(values: typeof form.values) {
-    form.setFieldError('form', null);
-    setLoading(true);
+    form.setFieldError('form', null)
+    setLoading(true)
     try {
-      setUser(await register(values));
-      navigate('/');
+      setUser(await register(values))
+      navigate('/')
     } catch (error) {
-      form.setFieldError('form', error instanceof Error ? error.message : t('registerFailed'));
+      form.setFieldError('form', error instanceof Error ? error.message : t('registerFailed'))
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
   }
 
@@ -94,5 +94,5 @@ export default function RegisterPage() {
         </form>
       </Paper>
     </Container>
-  );
+  )
 }

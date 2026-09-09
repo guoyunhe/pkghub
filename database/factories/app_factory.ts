@@ -1,9 +1,9 @@
-import factory from '@adonisjs/lucid/factories';
+import factory from '@adonisjs/lucid/factories'
 
-import App from '#models/app';
+import App from '#models/app'
 
 export const AppFactory = factory
   .define(App, async ({ faker }) => {
-    return {};
+    return {}
   })
-  .build();
+  .build()
