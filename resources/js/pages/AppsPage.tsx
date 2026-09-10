@@ -1,10 +1,12 @@
 import type { Data } from '@generated/data'
-import { Alert, Loader, Pagination, Text, Title } from '@mantine/core'
+import { Alert, Button, Loader, Pagination, Text, Title } from '@mantine/core'
 import { ArrowRightIcon } from '@phosphor-icons/react/ArrowRight'
+import { PlusIcon } from '@phosphor-icons/react/Plus'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useLocation, useSearchParams } from 'wouter'
 
+import { useAuth } from '../auth'
 import { getApps } from '../services/apps'
 import type { Paginated } from '../types/pagination'
 
@@ -21,6 +23,8 @@ function localized(translations: Record<string, string>, language: string) {
 
 export default function AppsPage() {
   const { t, i18n } = useTranslation()
+  const { ready, user } = useAuth()
+  const isAdmin = ready && user?.role === 'admin'
   const [, navigate] = useLocation()
   const [searchParams] = useSearchParams()
   const [result, setResult] = useState<Paginated<Data.App> | null>(null)
@@ -52,6 +56,15 @@ export default function AppsPage() {
           <Title order={1}>{t('apps.title')}</Title>
           <Text c='dimmed'>{t('apps.subtitle')}</Text>
         </div>
+        {isAdmin && (
+          <Button
+            component={Link}
+            href='/apps/new'
+            leftSection={<PlusIcon size={18} weight='bold' />}
+          >
+            {t('header.addApplication')}
+          </Button>
+        )}
       </header>
 
       {error && (

@@ -24,7 +24,8 @@
   "header": {
     "searchApplications": "搜索应用",
     "addApplication": "添加应用",
-    "repositories": "软件仓库",
+    "applications": "应用",
+    "repositories": "软件源",
     "packages": "软件包"
   },
   "common": {

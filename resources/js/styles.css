@@ -21,8 +21,8 @@ body {
   gap: 16px;
   height: 100%;
   margin: 0 auto;
-  max-width: 1120px;
   padding: 0 24px;
+  width: 100%;
 }
 
 .app-header__nav {

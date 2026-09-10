@@ -24,6 +24,7 @@
   "header": {
     "searchApplications": "Search applications",
     "addApplication": "Add application",
+    "applications": "Applications",
     "repositories": "Repositories",
     "packages": "Packages"
   },
