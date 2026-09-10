@@ -14,5 +14,12 @@ void i18n
     interpolation: { escapeValue: false },
     detection: { order: ['querystring', 'localStorage', 'navigator'], caches: ['localStorage'] },
   })
+  .then(() => {
+    document.documentElement.lang = i18n.language?.startsWith('zh') ? 'zh' : 'en'
+  })
+
+i18n.on('languageChanged', (language) => {
+  document.documentElement.lang = language.startsWith('zh') ? 'zh' : 'en'
+})
 
 export default i18n

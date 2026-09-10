@@ -1,10 +1,12 @@
-import { AppShell, Button, Group, Text, TextInput } from '@mantine/core'
+import { AppShell, Button, Group, Select, Text, TextInput } from '@mantine/core'
+import { GlobeIcon } from '@phosphor-icons/react/Globe'
 import { MagnifyingGlassIcon } from '@phosphor-icons/react/MagnifyingGlass'
 import { PlusIcon } from '@phosphor-icons/react/Plus'
 import { SignInIcon } from '@phosphor-icons/react/SignIn'
 import { SignOutIcon } from '@phosphor-icons/react/SignOut'
 import { UserPlusIcon } from '@phosphor-icons/react/UserPlus'
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Route, Switch } from 'wouter'
 import { Link, useLocation, useSearchParams } from 'wouter'
 
@@ -35,11 +37,13 @@ function AppRoutes() {
 }
 
 function AppHeader() {
+  const { t, i18n } = useTranslation()
   const { ready, user, logout } = useAuth()
   const [, navigate] = useLocation()
   const [searchParams] = useSearchParams()
   const query = searchParams.get('q') ?? ''
   const [searchQuery, setSearchQuery] = useState(query)
+  const currentLanguage = i18n.language?.startsWith('zh') ? 'zh' : 'en'
 
   useEffect(() => {
     setSearchQuery(query)
@@ -66,15 +70,32 @@ function AppHeader() {
           }}
         >
           <TextInput
-            aria-label='Search applications'
+            aria-label={t('header.searchApplications')}
             className='app-header__search'
             leftSection={<MagnifyingGlassIcon size={18} />}
-            placeholder='Search applications'
+            placeholder={t('header.searchApplications')}
             value={searchQuery}
             onChange={(event) => setSearchQuery(event.currentTarget.value)}
           />
         </form>
         <Group gap='xs'>
+          <Select
+            aria-label={t('language')}
+            className='app-header__lang'
+            allowDeselect={false}
+            checkIconPosition='right'
+            data={[
+              { value: 'en', label: 'EN' },
+              { value: 'zh', label: '中' },
+            ]}
+            leftSection={<GlobeIcon size={15} />}
+            value={currentLanguage}
+            variant='default'
+            w={84}
+            onChange={(language) => {
+              if (language) void i18n.changeLanguage(language)
+            }}
+          />
           {ready && user ? (
             <>
               {user.role === 'admin' && (
@@ -84,7 +105,7 @@ function AppHeader() {
                   leftSection={<PlusIcon size={18} weight='bold' />}
                   variant='light'
                 >
-                  Add application
+                  {t('header.addApplication')}
                 </Button>
               )}
               <Button
@@ -92,7 +113,7 @@ function AppHeader() {
                 variant='default'
                 onClick={() => void handleLogout()}
               >
-                Sign out
+                {t('logout')}
               </Button>
             </>
           ) : ready ? (
@@ -103,10 +124,10 @@ function AppHeader() {
                 leftSection={<SignInIcon size={18} />}
                 variant='default'
               >
-                Sign in
+                {t('login')}
               </Button>
               <Button component={Link} href='/register' leftSection={<UserPlusIcon size={18} />}>
-                Create account
+                {t('register')}
               </Button>
             </>
           ) : null}

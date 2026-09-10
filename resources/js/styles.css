@@ -47,6 +47,10 @@ body {
   width: 100%;
 }
 
+.app-header__lang {
+  flex: 0 0 auto;
+}
+
 @media (max-width: 600px) {
   .app-header__inner {
     padding: 0 18px;

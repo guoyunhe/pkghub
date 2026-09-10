@@ -20,7 +20,7 @@ function localized(translations: Record<string, string>, language: string) {
 }
 
 export default function SearchResultsPage() {
-  const { i18n } = useTranslation()
+  const { t, i18n } = useTranslation()
   const [, navigate] = useLocation()
   const [searchParams] = useSearchParams()
   const [result, setResult] = useState<Paginated<Data.App> | null>(null)
@@ -40,7 +40,7 @@ export default function SearchResultsPage() {
         if (active) setResult(results)
       } catch (reason) {
         if (active) {
-          setError(reason instanceof Error ? reason.message : 'Unable to search applications')
+          setError(reason instanceof Error ? reason.message : t('search.loadError'))
         }
       } finally {
         if (active) setLoading(false)
@@ -57,9 +57,9 @@ export default function SearchResultsPage() {
     <main className={styles.page}>
       <header className={styles.header}>
         <div>
-          <Text className={styles.eyebrow}>Application search</Text>
-          <Title order={1}>Search results</Title>
-          <Text c='dimmed'>Results for “{query}”.</Text>
+          <Text className={styles.eyebrow}>{t('search.eyebrow')}</Text>
+          <Title order={1}>{t('search.title')}</Title>
+          <Text c='dimmed'>{t('search.resultsFor', { query })}</Text>
         </div>
       </header>
 
@@ -73,7 +73,7 @@ export default function SearchResultsPage() {
           <Loader color='orange' />
         </div>
       ) : result?.data.length === 0 ? (
-        <Text c='dimmed'>No applications found.</Text>
+        <Text c='dimmed'>{t('search.notFound')}</Text>
       ) : (
         <>
           <section className={styles.grid}>

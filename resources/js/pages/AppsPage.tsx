@@ -20,7 +20,7 @@ function localized(translations: Record<string, string>, language: string) {
 }
 
 export default function AppsPage() {
-  const { i18n } = useTranslation()
+  const { t, i18n } = useTranslation()
   const [, navigate] = useLocation()
   const [searchParams] = useSearchParams()
   const [result, setResult] = useState<Paginated<Data.App> | null>(null)
@@ -34,7 +34,7 @@ export default function AppsPage() {
       setLoading(true)
       setResult(await getApps(query, page))
     } catch (reason) {
-      setError(reason instanceof Error ? reason.message : 'Unable to load applications')
+      setError(reason instanceof Error ? reason.message : t('apps.loadError'))
     } finally {
       setLoading(false)
     }
@@ -48,9 +48,9 @@ export default function AppsPage() {
     <main className={styles.page}>
       <header className={styles.header}>
         <div>
-          <Text className={styles.eyebrow}>Linux catalog</Text>
-          <Title order={1}>Applications</Title>
-          <Text c='dimmed'>Discover software metadata, launchers and upstream sources.</Text>
+          <Text className={styles.eyebrow}>{t('apps.eyebrow')}</Text>
+          <Title order={1}>{t('apps.title')}</Title>
+          <Text c='dimmed'>{t('apps.subtitle')}</Text>
         </div>
       </header>
 
@@ -66,7 +66,7 @@ export default function AppsPage() {
       ) : (
         <>
           {result?.data.length === 0 ? (
-            <Text c='dimmed'>No applications found.</Text>
+            <Text c='dimmed'>{t('apps.notFound')}</Text>
           ) : (
             <>
               <section className={styles.grid}>

@@ -3,6 +3,7 @@ import { Alert, Button, Group, Loader, Stack, Text, TextInput, Title } from '@ma
 import { FloppyDiskIcon } from '@phosphor-icons/react/FloppyDisk'
 import { XIcon } from '@phosphor-icons/react/X'
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Redirect, useLocation, useRoute } from 'wouter'
 
 import { useAuth } from '../auth'
@@ -25,6 +26,7 @@ function formFromApp(app: Data.App): AppPayload {
 }
 
 export default function AppFormPage() {
+  const { t } = useTranslation()
   const { ready, user } = useAuth()
   const [, navigate] = useLocation()
   const [, params] = useRoute('/apps/:id/edit')
@@ -38,9 +40,7 @@ export default function AppFormPage() {
     if (!appId) return
     getApp(appId)
       .then((app) => setForm(formFromApp(app)))
-      .catch((reason) =>
-        setError(reason instanceof Error ? reason.message : 'Unable to load application'),
-      )
+      .catch((reason) => setError(reason instanceof Error ? reason.message : t('form.loadError')))
       .finally(() => setLoading(false))
   }, [appId])
 
@@ -66,7 +66,7 @@ export default function AppFormPage() {
       else await createApp(form)
       navigate('/apps')
     } catch (reason) {
-      setError(reason instanceof Error ? reason.message : 'Unable to save application')
+      setError(reason instanceof Error ? reason.message : t('form.saveError'))
     } finally {
       setSaving(false)
     }
@@ -76,15 +76,15 @@ export default function AppFormPage() {
     <main className={styles.page}>
       <header className={styles.header}>
         <div>
-          <Text className={styles.eyebrow}>{appId ? 'Catalog entry' : 'New catalog entry'}</Text>
-          <Title order={1}>{appId ? 'Edit application' : 'Add application'}</Title>
+          <Text className={styles.eyebrow}>{appId ? t('form.editEntry') : t('form.newEntry')}</Text>
+          <Title order={1}>{appId ? t('form.editApp') : t('form.addApp')}</Title>
         </div>
         <Button
           leftSection={<XIcon size={18} />}
           variant='default'
           onClick={() => navigate('/apps')}
         >
-          Cancel
+          {t('common.cancel')}
         </Button>
       </header>
       {error && (
@@ -94,7 +94,7 @@ export default function AppFormPage() {
       )}
       <Stack className={styles.form}>
         <TextInput
-          label='Name (English)'
+          label={t('form.nameEn')}
           required
           value={form.name.en}
           onChange={(event) =>
@@ -102,14 +102,14 @@ export default function AppFormPage() {
           }
         />
         <TextInput
-          label='Name (Chinese)'
+          label={t('form.nameZh')}
           value={form.name.zh ?? ''}
           onChange={(event) =>
             setForm({ ...form, name: { ...form.name, zh: event.currentTarget.value } })
           }
         />
         <TextInput
-          label='Summary (English)'
+          label={t('form.summaryEn')}
           required
           value={form.summary.en}
           onChange={(event) =>
@@ -117,34 +117,34 @@ export default function AppFormPage() {
           }
         />
         <TextInput
-          label='Summary (Chinese)'
+          label={t('form.summaryZh')}
           value={form.summary.zh ?? ''}
           onChange={(event) =>
             setForm({ ...form, summary: { ...form.summary, zh: event.currentTarget.value } })
           }
         />
         <TextInput
-          label='Version'
+          label={t('form.version')}
           value={form.version ?? ''}
           onChange={(event) => setForm({ ...form, version: event.currentTarget.value })}
         />
         <TextInput
-          label='License'
+          label={t('form.license')}
           value={form.license ?? ''}
           onChange={(event) => setForm({ ...form, license: event.currentTarget.value })}
         />
         <TextInput
-          label='AppStream ID'
+          label={t('form.appstreamId')}
           value={form.appstreamId ?? ''}
           onChange={(event) => setForm({ ...form, appstreamId: event.currentTarget.value })}
         />
         <TextInput
-          label='AppStream URL'
+          label={t('form.appstreamUrl')}
           value={form.appstreamUrl ?? ''}
           onChange={(event) => setForm({ ...form, appstreamUrl: event.currentTarget.value })}
         />
         <TextInput
-          label='Desktop URL'
+          label={t('form.desktopUrl')}
           value={form.desktopUrl ?? ''}
           onChange={(event) => setForm({ ...form, desktopUrl: event.currentTarget.value })}
         />
@@ -154,7 +154,7 @@ export default function AppFormPage() {
             loading={saving}
             onClick={() => void save()}
           >
-            Save application
+            {t('form.save')}
           </Button>
         </Group>
       </Stack>

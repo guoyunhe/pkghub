@@ -1,8 +1,9 @@
 {
   "appName": "PkgHub",
-  "login": "Sign in",
-  "register": "Create account",
-  "logout": "Sign out",
+  "login": "Login",
+  "register": "Register",
+  "logout": "Logout",
+  "language": "Language",
   "email": "Email address",
   "password": "Password",
   "confirmPassword": "Confirm password",
@@ -18,6 +19,74 @@
   "dashboardTitle": "Your package workspace",
   "dashboardDescription": "You are signed in and ready to work.",
   "memberSince": "Member since",
-  "loginFailed": "Unable to sign in. Check your email and password.",
-  "registerFailed": "Unable to create the account."
+  "loginFailed": "Unable to log in. Check your email and password.",
+  "registerFailed": "Unable to create the account.",
+  "header": {
+    "searchApplications": "Search applications",
+    "addApplication": "Add application"
+  },
+  "common": {
+    "cancel": "Cancel",
+    "notSpecified": "Not specified"
+  },
+  "home": {
+    "eyebrow": "Linux catalog",
+    "applications": "Applications",
+    "viewAll": "View all",
+    "operatingSystems": "Operating systems",
+    "distributions": "Distributions",
+    "loadError": "Unable to load catalog"
+  },
+  "apps": {
+    "eyebrow": "Linux catalog",
+    "title": "Applications",
+    "subtitle": "Discover software metadata, launchers and upstream sources.",
+    "notFound": "No applications found.",
+    "loadError": "Unable to load applications"
+  },
+  "search": {
+    "eyebrow": "Application search",
+    "title": "Search results",
+    "resultsFor": "Results for “{{query}}”.",
+    "notFound": "No applications found.",
+    "loadError": "Unable to search applications"
+  },
+  "detail": {
+    "invalidId": "Invalid application ID",
+    "loadAppError": "Unable to load application",
+    "loadPackagesError": "Unable to load packages",
+    "backToApps": "Back to applications",
+    "editApp": "Edit application",
+    "deleteApp": "Delete",
+    "deleteConfirm": "Delete {{name}}?",
+    "deleteError": "Unable to delete application",
+    "eyebrow": "Linux application",
+    "version": "Version",
+    "license": "License",
+    "appstreamId": "AppStream ID",
+    "sources": "Sources",
+    "appstreamMetadata": "AppStream metadata",
+    "desktopEntry": "Desktop entry",
+    "packages": "Packages",
+    "noPackages": "No packages available.",
+    "download": "Download"
+  },
+  "form": {
+    "newEntry": "New catalog entry",
+    "editEntry": "Catalog entry",
+    "addApp": "Add application",
+    "editApp": "Edit application",
+    "loadError": "Unable to load application",
+    "saveError": "Unable to save application",
+    "nameEn": "Name (English)",
+    "nameZh": "Name (Chinese)",
+    "summaryEn": "Summary (English)",
+    "summaryZh": "Summary (Chinese)",
+    "version": "Version",
+    "license": "License",
+    "appstreamId": "AppStream ID",
+    "appstreamUrl": "AppStream URL",
+    "desktopUrl": "Desktop URL",
+    "save": "Save application"
+  }
 }

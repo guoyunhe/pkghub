@@ -1,8 +1,9 @@
 {
   "appName": "PkgHub",
   "login": "登录",
-  "register": "注册账号",
-  "logout": "退出登录",
+  "register": "注册",
+  "logout": "退出",
+  "language": "语言",
   "email": "邮箱地址",
   "password": "密码",
   "confirmPassword": "确认密码",
@@ -19,5 +20,73 @@
   "dashboardDescription": "已成功登录，可以开始使用。",
   "memberSince": "注册于",
   "loginFailed": "无法登录，请检查邮箱和密码。",
-  "registerFailed": "无法创建账号。"
+  "registerFailed": "无法创建账号。",
+  "header": {
+    "searchApplications": "搜索应用",
+    "addApplication": "添加应用"
+  },
+  "common": {
+    "cancel": "取消",
+    "notSpecified": "未指定"
+  },
+  "home": {
+    "eyebrow": "Linux 软件目录",
+    "applications": "应用程序",
+    "viewAll": "查看全部",
+    "operatingSystems": "操作系统",
+    "distributions": "发行版",
+    "loadError": "无法加载目录"
+  },
+  "apps": {
+    "eyebrow": "Linux 软件目录",
+    "title": "应用程序",
+    "subtitle": "发现软件元数据、启动器和上游来源。",
+    "notFound": "未找到应用。",
+    "loadError": "无法加载应用"
+  },
+  "search": {
+    "eyebrow": "应用搜索",
+    "title": "搜索结果",
+    "resultsFor": "“{{query}}”的搜索结果。",
+    "notFound": "未找到应用。",
+    "loadError": "无法搜索应用"
+  },
+  "detail": {
+    "invalidId": "无效的应用 ID",
+    "loadAppError": "无法加载应用",
+    "loadPackagesError": "无法加载软件包",
+    "backToApps": "返回应用列表",
+    "editApp": "编辑应用",
+    "deleteApp": "删除",
+    "deleteConfirm": "确定删除 {{name}} 吗？",
+    "deleteError": "无法删除应用",
+    "eyebrow": "Linux 应用",
+    "version": "版本",
+    "license": "许可证",
+    "appstreamId": "AppStream ID",
+    "sources": "来源",
+    "appstreamMetadata": "AppStream 元数据",
+    "desktopEntry": "桌面条目",
+    "packages": "软件包",
+    "noPackages": "暂无可用软件包。",
+    "download": "下载"
+  },
+  "form": {
+    "newEntry": "新建目录条目",
+    "editEntry": "目录条目",
+    "addApp": "添加应用",
+    "editApp": "编辑应用",
+    "loadError": "无法加载应用",
+    "saveError": "无法保存应用",
+    "nameEn": "名称（英文）",
+    "nameZh": "名称（中文）",
+    "summaryEn": "简介（英文）",
+    "summaryZh": "简介（中文）",
+    "version": "版本",
+    "license": "许可证",
+    "appstreamId": "AppStream ID",
+    "appstreamUrl": "AppStream URL",
+    "desktopUrl": "Desktop URL",
+    "save": "保存应用"
+  }
 }

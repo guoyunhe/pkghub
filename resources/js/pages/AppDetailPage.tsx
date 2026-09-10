@@ -26,7 +26,7 @@ function localized(translations: Record<string, string>, language: string) {
 }
 
 export default function AppDetailPage() {
-  const { i18n } = useTranslation()
+  const { t, i18n } = useTranslation()
   const { ready, user } = useAuth()
   const [, navigate] = useLocation()
   const [, params] = useRoute('/apps/:id')
@@ -40,13 +40,13 @@ export default function AppDetailPage() {
 
   useEffect(() => {
     if (!appId) {
-      setError('Invalid application ID')
+      setError(t('detail.invalidId'))
       return
     }
     getApp(appId)
       .then(setApp)
       .catch((reason) =>
-        setError(reason instanceof Error ? reason.message : 'Unable to load application'),
+        setError(reason instanceof Error ? reason.message : t('detail.loadAppError')),
       )
   }, [appId])
 
@@ -58,7 +58,7 @@ export default function AppDetailPage() {
     getAppPackages(appId, packagesPage)
       .then(setPackages)
       .catch((reason) =>
-        setPackagesError(reason instanceof Error ? reason.message : 'Unable to load packages'),
+        setPackagesError(reason instanceof Error ? reason.message : t('detail.loadPackagesError')),
       )
       .finally(() => setPackagesLoading(false))
   }, [appId, packagesPage])
@@ -83,12 +83,12 @@ export default function AppDetailPage() {
 
   async function remove() {
     if (!app) return
-    if (!window.confirm(`Delete ${name}?`)) return
+    if (!window.confirm(t('detail.deleteConfirm', { name }))) return
     try {
       await deleteApp(app.id)
       navigate('/apps')
     } catch (reason) {
-      setError(reason instanceof Error ? reason.message : 'Unable to delete application')
+      setError(reason instanceof Error ? reason.message : t('detail.deleteError'))
     }
   }
 
@@ -101,7 +101,7 @@ export default function AppDetailPage() {
           leftSection={<ArrowLeftIcon size={18} />}
           variant='subtle'
         >
-          Back to applications
+          {t('detail.backToApps')}
         </Button>
         {isAdmin && (
           <Group gap='xs'>
@@ -111,7 +111,7 @@ export default function AppDetailPage() {
               leftSection={<PencilSimpleIcon size={18} />}
               variant='default'
             >
-              Edit application
+              {t('detail.editApp')}
             </Button>
             <Button
               color='red'
@@ -119,7 +119,7 @@ export default function AppDetailPage() {
               variant='subtle'
               onClick={() => void remove()}
             >
-              Delete
+              {t('detail.deleteApp')}
             </Button>
           </Group>
         )}
@@ -132,7 +132,7 @@ export default function AppDetailPage() {
           <div className={`${styles.icon} ${styles.emptyIcon}`} />
         )}
         <div>
-          <Text className={styles.eyebrow}>Linux application</Text>
+          <Text className={styles.eyebrow}>{t('detail.eyebrow')}</Text>
           <Title order={1}>{name}</Title>
           <Text c='dimmed' size='lg'>
             {localized(app.summary, i18n.language)}
@@ -143,27 +143,27 @@ export default function AppDetailPage() {
       <section className={styles.metadata}>
         <div>
           <Text size='sm' c='dimmed'>
-            Version
+            {t('detail.version')}
           </Text>
-          <Text>{app.version ?? 'Not specified'}</Text>
+          <Text>{app.version ?? t('common.notSpecified')}</Text>
         </div>
         <div>
           <Text size='sm' c='dimmed'>
-            License
+            {t('detail.license')}
           </Text>
-          <Text>{app.license ?? 'Not specified'}</Text>
+          <Text>{app.license ?? t('common.notSpecified')}</Text>
         </div>
         <div>
           <Text size='sm' c='dimmed'>
-            AppStream ID
+            {t('detail.appstreamId')}
           </Text>
-          <Text>{app.appstreamId ?? 'Not specified'}</Text>
+          <Text>{app.appstreamId ?? t('common.notSpecified')}</Text>
         </div>
       </section>
 
       {(app.appstreamUrl || app.desktopUrl) && (
         <section className={styles.sources}>
-          <Title order={2}>Sources</Title>
+          <Title order={2}>{t('detail.sources')}</Title>
           <Group gap='xs'>
             {app.appstreamUrl && (
               <Button
@@ -174,7 +174,7 @@ export default function AppDetailPage() {
                 rightSection={<ArrowSquareOutIcon size={18} />}
                 variant='default'
               >
-                AppStream metadata
+                {t('detail.appstreamMetadata')}
               </Button>
             )}
             {app.desktopUrl && (
@@ -186,7 +186,7 @@ export default function AppDetailPage() {
                 rightSection={<ArrowSquareOutIcon size={18} />}
                 variant='default'
               >
-                Desktop entry
+                {t('detail.desktopEntry')}
               </Button>
             )}
           </Group>
@@ -194,14 +194,14 @@ export default function AppDetailPage() {
       )}
 
       <section className={styles.packages}>
-        <Title order={2}>Packages</Title>
+        <Title order={2}>{t('detail.packages')}</Title>
         {packagesError && <Alert color='red'>{packagesError}</Alert>}
         {packagesLoading ? (
           <div className={styles.packagesLoading}>
             <Loader color='orange' size='sm' />
           </div>
         ) : packages?.data.length === 0 ? (
-          <Text c='dimmed'>No packages available.</Text>
+          <Text c='dimmed'>{t('detail.noPackages')}</Text>
         ) : (
           <>
             <div className={styles.packageList}>
@@ -239,7 +239,7 @@ export default function AppDetailPage() {
                       rightSection={<ArrowSquareOutIcon size={18} />}
                       variant='default'
                     >
-                      Download
+                      {t('detail.download')}
                     </Button>
                   )}
                 </article>

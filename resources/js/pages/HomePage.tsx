@@ -2,6 +2,7 @@ import type { Data } from '@generated/data'
 import { Alert, Anchor, Loader, Text, Title } from '@mantine/core'
 import { ArrowRightIcon } from '@phosphor-icons/react/ArrowRight'
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Link } from 'wouter'
 
 import HomeAppCard from '../components/home/HomeAppCard'
@@ -11,6 +12,7 @@ import { getApps, getDistros, type Distro } from '../services/apps'
 import styles from './HomePage.module.css'
 
 export default function HomePage() {
+  const { t } = useTranslation()
   const [apps, setApps] = useState<Data.App[]>([])
   const [distros, setDistros] = useState<Distro[]>([])
   const [loading, setLoading] = useState(true)
@@ -22,9 +24,7 @@ export default function HomePage() {
         setApps(appPage.data.slice(0, 6))
         setDistros(distroList)
       })
-      .catch((reason) =>
-        setError(reason instanceof Error ? reason.message : 'Unable to load catalog'),
-      )
+      .catch((reason) => setError(reason instanceof Error ? reason.message : t('home.loadError')))
       .finally(() => setLoading(false))
   }, [])
 
@@ -44,11 +44,11 @@ export default function HomePage() {
           <section className={styles.section}>
             <div className={styles.sectionHeader}>
               <div>
-                <Text className={styles.eyebrow}>Linux catalog</Text>
-                <Title order={1}>Applications</Title>
+                <Text className={styles.eyebrow}>{t('home.eyebrow')}</Text>
+                <Title order={1}>{t('home.applications')}</Title>
               </div>
               <Anchor component={Link} href='/apps'>
-                View all <ArrowRightIcon size={16} />
+                {t('home.viewAll')} <ArrowRightIcon size={16} />
               </Anchor>
             </div>
             <div className={styles.appGrid}>
@@ -61,8 +61,8 @@ export default function HomePage() {
           <section className={styles.section}>
             <div className={styles.sectionHeader}>
               <div>
-                <Text className={styles.eyebrow}>Operating systems</Text>
-                <Title order={2}>Distributions</Title>
+                <Text className={styles.eyebrow}>{t('home.operatingSystems')}</Text>
+                <Title order={2}>{t('home.distributions')}</Title>
               </div>
             </div>
             <div className={styles.distroGrid}>
