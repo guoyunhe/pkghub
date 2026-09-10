@@ -1,6 +1,6 @@
 import { BaseTransformer } from '@adonisjs/core/transformers'
 
-import Image from '#models/image'
+import type Image from '#models/image'
 
 export default class ImageTransformer extends BaseTransformer<Image> {
   toObject() {

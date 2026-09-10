@@ -1,6 +1,6 @@
 import { BaseTransformer } from '@adonisjs/core/transformers'
 
-import Repo from '#models/repo'
+import type Repo from '#models/repo'
 
 export default class RepoTransformer extends BaseTransformer<Repo> {
   toObject() {
