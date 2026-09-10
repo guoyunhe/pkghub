@@ -55,27 +55,47 @@ const repos = [
     repositoryFile:
       'deb https://security.debian.org/debian-security trixie-security main contrib non-free non-free-firmware',
   },
+  {
+    name: 'Flathub',
+    baseUrl: 'https://dl.flathub.org/repo/',
+    distroName: null,
+    distroVersion: null,
+    type: 'flatpak' as const,
+    repositoryFile: null,
+  },
+  {
+    name: 'Snapcraft',
+    baseUrl: 'https://api.snapcraft.io/',
+    distroName: null,
+    distroVersion: null,
+    type: 'snap' as const,
+    repositoryFile: null,
+  },
 ]
 
 export default class RepoSeeder extends BaseSeeder {
   async run() {
     for (const repo of repos) {
       const { distroName, distroVersion, ...attributes } = repo
-      const distroQuery = Distro.query().where('name', distroName)
+      let distroId = null
 
-      if (distroVersion === null) {
-        distroQuery.whereNull('version')
-      } else {
-        distroQuery.where('version', distroVersion)
+      if (distroName) {
+        const distroQuery = Distro.query().where('name', distroName)
+
+        if (distroVersion === null) {
+          distroQuery.whereNull('version')
+        } else {
+          distroQuery.where('version', distroVersion)
+        }
+
+        distroId = (await distroQuery.firstOrFail()).id
       }
-
-      const distro = await distroQuery.firstOrFail()
 
       await Repo.updateOrCreate(
         { name: repo.name },
         {
           ...attributes,
-          distroId: distro.id,
+          distroId,
           keyUrl: null,
           keyFingerprint: null,
           enabled: true,

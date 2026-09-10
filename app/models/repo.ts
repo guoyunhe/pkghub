@@ -6,8 +6,6 @@ import Distro from '#models/distro'
 import Pkg from '#models/pkg'
 
 export default class Repo extends RepoSchema {
-  declare type: 'rpm' | 'deb'
-
   @belongsTo(() => Distro)
   declare distro: BelongsTo<typeof Distro>
 
