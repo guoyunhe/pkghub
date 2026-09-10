@@ -8,3 +8,34 @@ body {
   margin: 0;
   min-width: 320px;
 }
+
+.app-header {
+  background: rgba(246, 244, 239, 0.94);
+  border-bottom: 1px solid #d9d4ca;
+  backdrop-filter: blur(12px);
+}
+
+.app-header__inner {
+  align-items: center;
+  display: flex;
+  height: 100%;
+  justify-content: space-between;
+  margin: 0 auto;
+  max-width: 1120px;
+  padding: 0 24px;
+}
+
+.app-header__brand {
+  color: #d05a19;
+  text-decoration: none;
+}
+
+@media (max-width: 600px) {
+  .app-header__inner {
+    padding: 0 18px;
+  }
+
+  .app-header .mantine-Button-label {
+    display: none;
+  }
+}

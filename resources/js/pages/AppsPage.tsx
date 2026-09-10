@@ -1,17 +1,10 @@
 import type { Data } from '@generated/data'
-import { Alert, Button, Group, Loader, Text, Title } from '@mantine/core'
-import {
-  ArrowRightIcon,
-  PlusIcon,
-  SignInIcon,
-  SignOutIcon,
-  UserPlusIcon,
-} from '@phosphor-icons/react'
+import { Alert, Loader, Text, Title } from '@mantine/core'
+import { ArrowRightIcon } from '@phosphor-icons/react/ArrowRight'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link, useLocation } from 'wouter'
+import { Link } from 'wouter'
 
-import { useAuth } from '../auth'
 import { getApps } from '../services/apps'
 
 import styles from './AppsPage.module.css'
@@ -27,12 +20,9 @@ function localized(translations: Record<string, string>, language: string) {
 
 export default function AppsPage() {
   const { i18n } = useTranslation()
-  const { ready, user, logout } = useAuth()
-  const [, navigate] = useLocation()
   const [apps, setApps] = useState<Data.App[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const isAdmin = user?.role === 'admin'
 
   async function loadApps() {
     try {
@@ -49,11 +39,6 @@ export default function AppsPage() {
     void loadApps()
   }, [])
 
-  async function handleLogout() {
-    await logout()
-    navigate('/')
-  }
-
   return (
     <main className={styles.page}>
       <header className={styles.header}>
@@ -62,42 +47,6 @@ export default function AppsPage() {
           <Title order={1}>Applications</Title>
           <Text c='dimmed'>Discover software metadata, launchers and upstream sources.</Text>
         </div>
-        <Group gap='xs'>
-          {ready && user ? (
-            <>
-              {isAdmin && (
-                <Button
-                  component={Link}
-                  href='/apps/new'
-                  leftSection={<PlusIcon size={18} weight='bold' />}
-                >
-                  Add application
-                </Button>
-              )}
-              <Button
-                leftSection={<SignOutIcon size={18} />}
-                variant='default'
-                onClick={() => void handleLogout()}
-              >
-                Sign out
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button
-                component={Link}
-                href='/login'
-                leftSection={<SignInIcon size={18} />}
-                variant='default'
-              >
-                Sign in
-              </Button>
-              <Button component={Link} href='/register' leftSection={<UserPlusIcon size={18} />}>
-                Create account
-              </Button>
-            </>
-          )}
-        </Group>
       </header>
 
       {error && (

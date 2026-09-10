@@ -1,6 +1,7 @@
 import type { Data } from '@generated/data'
 import { Alert, Button, Group, Loader, Stack, Text, TextInput, Title } from '@mantine/core'
-import { FloppyDiskIcon, XIcon } from '@phosphor-icons/react'
+import { FloppyDiskIcon } from '@phosphor-icons/react/FloppyDisk'
+import { XIcon } from '@phosphor-icons/react/X'
 import { useEffect, useState } from 'react'
 import { Redirect, useLocation, useRoute } from 'wouter'
 

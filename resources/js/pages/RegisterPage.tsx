@@ -10,7 +10,7 @@ import {
   Title,
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { UserPlusIcon } from '@phosphor-icons/react'
+import { UserPlusIcon } from '@phosphor-icons/react/UserPlus'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation } from 'wouter'

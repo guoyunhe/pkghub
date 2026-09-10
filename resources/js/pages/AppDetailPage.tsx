@@ -1,11 +1,9 @@
 import type { Data } from '@generated/data'
 import { Alert, Button, Group, Loader, Text, Title } from '@mantine/core'
-import {
-  ArrowLeftIcon,
-  ArrowSquareOutIcon,
-  PencilSimpleIcon,
-  TrashIcon,
-} from '@phosphor-icons/react'
+import { ArrowLeftIcon } from '@phosphor-icons/react/ArrowLeft'
+import { ArrowSquareOutIcon } from '@phosphor-icons/react/ArrowSquareOut'
+import { PencilSimpleIcon } from '@phosphor-icons/react/PencilSimple'
+import { TrashIcon } from '@phosphor-icons/react/Trash'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useLocation, useRoute } from 'wouter'
