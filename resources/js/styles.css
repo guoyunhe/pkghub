@@ -18,18 +18,27 @@ body {
 .app-header__inner {
   align-items: center;
   display: flex;
+  gap: 16px;
   height: 100%;
-  justify-content: space-between;
   margin: 0 auto;
   max-width: 1120px;
   padding: 0 24px;
+}
+
+.app-header__nav {
+  align-items: center;
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .app-header__brand {
   align-items: center;
   color: #d05a19;
   display: inline-flex;
+  flex: 0 0 auto;
   gap: 8px;
+  margin-right: 8px;
   text-decoration: none;
 }
 
@@ -38,9 +47,13 @@ body {
   width: 28px;
 }
 
+.app-header__nav-button {
+  flex: 0 0 auto;
+}
+
 .app-header__search-form {
-  flex: 0 1 360px;
-  margin: 0 24px;
+  flex: 1 1 320px;
+  margin-left: 12px;
 }
 
 .app-header__search {
@@ -53,12 +66,21 @@ body {
 
 @media (max-width: 600px) {
   .app-header__inner {
+    gap: 8px;
     padding: 0 18px;
+  }
+
+  .app-header__nav {
+    gap: 0;
+  }
+
+  .app-header__brand {
+    margin-right: 2px;
   }
 
   .app-header__search-form {
     flex: 1 1 auto;
-    margin: 0 12px;
+    margin-left: 8px;
     min-width: 0;
   }
 
