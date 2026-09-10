@@ -16,6 +16,7 @@ export type ScannedRoutes = {
     'images.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'apps.index': { paramsTuple?: []; params?: {} }
     'apps.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'pkgs.search': { paramsTuple?: []; params?: {} }
     'apps.packages.index': { paramsTuple: [ParamValue]; params: {'app_id': ParamValue} }
     'distros.index': { paramsTuple?: []; params?: {} }
     'apps.store': { paramsTuple?: []; params?: {} }
@@ -29,6 +30,7 @@ export type ScannedRoutes = {
     'images.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'apps.index': { paramsTuple?: []; params?: {} }
     'apps.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'pkgs.search': { paramsTuple?: []; params?: {} }
     'apps.packages.index': { paramsTuple: [ParamValue]; params: {'app_id': ParamValue} }
     'distros.index': { paramsTuple?: []; params?: {} }
   }
@@ -39,6 +41,7 @@ export type ScannedRoutes = {
     'images.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'apps.index': { paramsTuple?: []; params?: {} }
     'apps.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'pkgs.search': { paramsTuple?: []; params?: {} }
     'apps.packages.index': { paramsTuple: [ParamValue]; params: {'app_id': ParamValue} }
     'distros.index': { paramsTuple?: []; params?: {} }
   }

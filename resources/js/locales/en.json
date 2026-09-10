@@ -27,6 +27,7 @@
   },
   "common": {
     "cancel": "Cancel",
+    "download": "Download",
     "notSpecified": "Not specified"
   },
   "home": {
@@ -49,7 +50,13 @@
     "title": "Search results",
     "resultsFor": "Results for “{{query}}”.",
     "notFound": "No applications found.",
-    "loadError": "Unable to search applications"
+    "packagesNotFound": "No packages found.",
+    "loadError": "Unable to search applications",
+    "loadPackagesError": "Unable to search packages",
+    "tabs": {
+      "apps": "Applications",
+      "packages": "Packages"
+    }
   },
   "detail": {
     "invalidId": "Invalid application ID",

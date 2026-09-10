@@ -151,6 +151,18 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/apps_controller').default['show']>>>
     }
   }
+  'pkgs.search': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/packages'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/pkgs_controller').default['search']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/pkgs_controller').default['search']>>>
+    }
+  }
   'apps.packages.index': {
     methods: ["GET","HEAD"]
     pattern: '/api/apps/:app_id/packages'

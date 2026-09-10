@@ -1,6 +1,7 @@
 import { args, BaseCommand, flags } from '@adonisjs/core/ace'
 import type { CommandOptions } from '@adonisjs/core/types/ace'
 import chalk from 'chalk'
+import { DateTime } from 'luxon'
 
 import Repo from '#models/repo'
 import RepoPackageExtractor from '#services/repo_package_extractor'
@@ -41,6 +42,8 @@ export default class RepoSync extends BaseCommand {
       this.logger.info(`Extracting packages from ${chalk.cyan(repo.name)} (${repo.type})`)
       try {
         const packages = await extractor.extract(repo, { arch: this.arch || undefined })
+        repo.lastSyncedAt = DateTime.now()
+        await repo.save()
         this.logger.info(`${repo.name}: extracted ${chalk.green(String(packages.length))} packages`)
         for (const pkg of packages.slice(0, this.limit)) {
           const details = [pkg.version, pkg.release, pkg.arch].filter(Boolean).join(' ')

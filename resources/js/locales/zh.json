@@ -27,6 +27,7 @@
   },
   "common": {
     "cancel": "取消",
+    "download": "下载",
     "notSpecified": "未指定"
   },
   "home": {
@@ -49,7 +50,13 @@
     "title": "搜索结果",
     "resultsFor": "“{{query}}”的搜索结果。",
     "notFound": "未找到应用。",
-    "loadError": "无法搜索应用"
+    "packagesNotFound": "未找到软件包。",
+    "loadError": "无法搜索应用",
+    "loadPackagesError": "无法搜索软件包",
+    "tabs": {
+      "apps": "应用程序",
+      "packages": "软件包"
+    }
   },
   "detail": {
     "invalidId": "无效的应用 ID",

@@ -78,6 +78,12 @@ const routes = {
     tokens: [{"old":"/api/apps/:id","type":0,"val":"api","end":""},{"old":"/api/apps/:id","type":0,"val":"apps","end":""},{"old":"/api/apps/:id","type":1,"val":"id","end":""}],
     types: placeholder as Registry['apps.show']['types'],
   },
+  'pkgs.search': {
+    methods: ["GET","HEAD"],
+    pattern: '/api/packages',
+    tokens: [{"old":"/api/packages","type":0,"val":"api","end":""},{"old":"/api/packages","type":0,"val":"packages","end":""}],
+    types: placeholder as Registry['pkgs.search']['types'],
+  },
   'apps.packages.index': {
     methods: ["GET","HEAD"],
     pattern: '/api/apps/:app_id/packages',

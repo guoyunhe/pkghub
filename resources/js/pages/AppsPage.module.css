@@ -25,6 +25,12 @@
   border-top: 1px solid #d9d4ca;
 }
 
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: 72px 0;
+}
+
 .pagination {
   margin-top: 28px;
 }
@@ -46,6 +52,22 @@
 
 .emptyIcon {
   background: #e4dfd4;
+}
+
+.pkgItem {
+  align-items: center;
+  border-bottom: 1px solid #d9d4ca;
+  display: grid;
+  gap: 14px;
+  grid-template-columns: 32px minmax(0, 1fr) auto;
+  padding: 16px 0;
+}
+
+.pkgTypeIcon {
+  border-radius: 4px;
+  height: 32px;
+  object-fit: contain;
+  width: 32px;
 }
 
 .copy h3 {

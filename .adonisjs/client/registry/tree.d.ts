@@ -30,6 +30,9 @@ export interface ApiDefinition {
     update: typeof routes['apps.update']
     destroy: typeof routes['apps.destroy']
   }
+  pkgs: {
+    search: typeof routes['pkgs.search']
+  }
   distros: {
     index: typeof routes['distros.index']
   }

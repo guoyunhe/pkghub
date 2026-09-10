@@ -1,14 +1,20 @@
 import type { Data } from '@generated/data'
-import { Alert, Loader, Pagination, Text, Title } from '@mantine/core'
+import { Alert, Badge, Button, Group, Loader, Pagination, Tabs, Text, Title } from '@mantine/core'
 import { ArrowRightIcon } from '@phosphor-icons/react/ArrowRight'
+import { DownloadSimpleIcon } from '@phosphor-icons/react/DownloadSimple'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link, useLocation, useSearchParams } from 'wouter'
+import { useSearchParams } from 'wouter'
+import { Link } from 'wouter'
 
-import { getApps } from '../services/apps'
+import { getApps, searchPackages } from '../services/apps'
 import type { Paginated } from '../types/pagination'
 
 import styles from './AppsPage.module.css'
+
+const packageTypesWithIcons = new Set(['rpm', 'deb', 'appimage'])
+
+type SearchTab = 'apps' | 'packages'
 
 function localized(translations: Record<string, string>, language: string) {
   return (
@@ -19,39 +25,80 @@ function localized(translations: Record<string, string>, language: string) {
   )
 }
 
+function CountBadge({ count, loading }: { count?: number; loading: boolean }) {
+  if (loading) {
+    return <Loader color='orange' size={10} />
+  }
+  return (
+    <Badge radius='sm' size='xs' variant='light'>
+      {count ?? 0}
+    </Badge>
+  )
+}
+
 export default function SearchResultsPage() {
   const { t, i18n } = useTranslation()
-  const [, navigate] = useLocation()
   const [searchParams] = useSearchParams()
-  const [result, setResult] = useState<Paginated<Data.App> | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
   const query = searchParams.get('q')?.trim() ?? ''
-  const page = Number(searchParams.get('page') ?? 1) || 1
+
+  const [activeTab, setActiveTab] = useState<SearchTab>('apps')
+  const [appsPage, setAppsPage] = useState(1)
+  const [pkgsPage, setPkgsPage] = useState(1)
+
+  const [appsResult, setAppsResult] = useState<Paginated<Data.App> | null>(null)
+  const [appsLoading, setAppsLoading] = useState(true)
+  const [appsError, setAppsError] = useState<string | null>(null)
+
+  const [pkgsResult, setPkgsResult] = useState<Paginated<Data.Pkg> | null>(null)
+  const [pkgsLoading, setPkgsLoading] = useState(true)
+  const [pkgsError, setPkgsError] = useState<string | null>(null)
+
+  useEffect(() => {
+    setAppsPage(1)
+    setPkgsPage(1)
+  }, [query])
 
   useEffect(() => {
     let active = true
-
-    async function loadResults() {
-      try {
-        setLoading(true)
-        setError(null)
-        const results = await getApps(query, page)
-        if (active) setResult(results)
-      } catch (reason) {
+    setAppsLoading(true)
+    setAppsError(null)
+    getApps(query, appsPage)
+      .then((result) => {
+        if (active) setAppsResult(result)
+      })
+      .catch((reason) => {
         if (active) {
-          setError(reason instanceof Error ? reason.message : t('search.loadError'))
+          setAppsError(reason instanceof Error ? reason.message : t('search.loadError'))
         }
-      } finally {
-        if (active) setLoading(false)
-      }
-    }
-
-    void loadResults()
+      })
+      .finally(() => {
+        if (active) setAppsLoading(false)
+      })
     return () => {
       active = false
     }
-  }, [page, query])
+  }, [appsPage, query, t])
+
+  useEffect(() => {
+    let active = true
+    setPkgsLoading(true)
+    setPkgsError(null)
+    searchPackages(query, pkgsPage)
+      .then((result) => {
+        if (active) setPkgsResult(result)
+      })
+      .catch((reason) => {
+        if (active) {
+          setPkgsError(reason instanceof Error ? reason.message : t('search.loadPackagesError'))
+        }
+      })
+      .finally(() => {
+        if (active) setPkgsLoading(false)
+      })
+    return () => {
+      active = false
+    }
+  }, [pkgsPage, query, t])
 
   return (
     <main className={styles.page}>
@@ -63,57 +110,131 @@ export default function SearchResultsPage() {
         </div>
       </header>
 
-      {error && (
-        <Alert color='red' mb='lg'>
-          {error}
-        </Alert>
-      )}
-      {loading ? (
-        <div className={styles.loading}>
-          <Loader color='orange' />
-        </div>
-      ) : result?.data.length === 0 ? (
-        <Text c='dimmed'>{t('search.notFound')}</Text>
-      ) : (
-        <>
-          <section className={styles.grid}>
-            {result?.data.map((app: Data.App) => (
-              <article className={styles.item} key={app.id}>
-                {app.icon ? (
-                  <img alt='' className={styles.icon} src={app.icon.url} />
-                ) : (
-                  <div className={`${styles.icon} ${styles.emptyIcon}`} />
-                )}
-                <div className={styles.copy}>
-                  <Title order={3}>
-                    <Link className={styles.link} href={`/apps/${app.id}`}>
-                      {localized(app.name, i18n.language)}{' '}
-                      <ArrowRightIcon size={18} weight='bold' />
-                    </Link>
-                  </Title>
-                  <Text c='dimmed'>{localized(app.summary, i18n.language)}</Text>
-                  <div className={styles.metadata}>
-                    {app.version && <span>{app.version}</span>}
-                    {app.license && <span>{app.license}</span>}
+      <Tabs mb='lg' value={activeTab} onChange={(value) => setActiveTab(value as SearchTab)}>
+        <Tabs.List>
+          <Tabs.Tab
+            value='apps'
+            rightSection={<CountBadge count={appsResult?.meta.total} loading={appsLoading} />}
+          >
+            {t('search.tabs.apps')}
+          </Tabs.Tab>
+          <Tabs.Tab
+            value='packages'
+            rightSection={<CountBadge count={pkgsResult?.meta.total} loading={pkgsLoading} />}
+          >
+            {t('search.tabs.packages')}
+          </Tabs.Tab>
+        </Tabs.List>
+      </Tabs>
+
+      {activeTab === 'apps' &&
+        (appsError ? (
+          <Alert color='red'>{appsError}</Alert>
+        ) : appsLoading ? (
+          <div className={styles.loading}>
+            <Loader color='orange' />
+          </div>
+        ) : appsResult && appsResult.data.length > 0 ? (
+          <>
+            <section className={styles.grid}>
+              {appsResult.data.map((app) => (
+                <article className={styles.item} key={app.id}>
+                  {app.icon ? (
+                    <img alt='' className={styles.icon} src={app.icon.url} />
+                  ) : (
+                    <div className={`${styles.icon} ${styles.emptyIcon}`} />
+                  )}
+                  <div className={styles.copy}>
+                    <Title order={3}>
+                      <Link className={styles.link} href={`/apps/${app.id}`}>
+                        {localized(app.name, i18n.language)}{' '}
+                        <ArrowRightIcon size={18} weight='bold' />
+                      </Link>
+                    </Title>
+                    <Text c='dimmed'>{localized(app.summary, i18n.language)}</Text>
+                    <div className={styles.meta}>
+                      {app.version && <span>{app.version}</span>}
+                      {app.license && <span>{app.license}</span>}
+                    </div>
                   </div>
-                </div>
-              </article>
-            ))}
-          </section>
-          {result && result.meta.lastPage > 1 && (
-            <Pagination
-              className={styles.pagination}
-              total={result.meta.lastPage}
-              value={result.meta.currentPage}
-              onChange={(nextPage) => {
-                const params = new URLSearchParams({ q: query })
-                if (nextPage > 1) params.set('page', String(nextPage))
-                navigate(`/search?${params}`)
-              }}
-            />
-          )}
-        </>
-      )}
+                </article>
+              ))}
+            </section>
+            {appsResult.meta.lastPage > 1 && (
+              <Pagination
+                className={styles.pagination}
+                total={appsResult.meta.lastPage}
+                value={appsResult.meta.currentPage}
+                onChange={setAppsPage}
+              />
+            )}
+          </>
+        ) : (
+          <Text c='dimmed'>{t('search.notFound')}</Text>
+        ))}
+
+      {activeTab === 'packages' &&
+        (pkgsError ? (
+          <Alert color='red'>{pkgsError}</Alert>
+        ) : pkgsLoading ? (
+          <div className={styles.loading}>
+            <Loader color='orange' />
+          </div>
+        ) : pkgsResult && pkgsResult.data.length > 0 ? (
+          <>
+            <section className={styles.grid}>
+              {pkgsResult.data.map((pkg) => (
+                <article className={styles.pkgItem} key={pkg.id}>
+                  {packageTypesWithIcons.has(pkg.type) ? (
+                    <img alt='' className={styles.pkgTypeIcon} src={`/packages/${pkg.type}.svg`} />
+                  ) : (
+                    <div className={styles.pkgTypeIcon} />
+                  )}
+                  <div className={styles.copy}>
+                    <Title order={3}>
+                      {pkg.app ? (
+                        <Link className={styles.link} href={`/apps/${pkg.app.id}`}>
+                          {pkg.name}
+                        </Link>
+                      ) : (
+                        pkg.name
+                      )}
+                    </Title>
+                    <div className={styles.meta}>
+                      <span>{pkg.type}</span>
+                      {pkg.version && <span>{pkg.version}</span>}
+                      {pkg.release && <span>{pkg.release}</span>}
+                      {pkg.arch && <span>{pkg.arch}</span>}
+                    </div>
+                  </div>
+                  <Group>
+                    {pkg.downloadUrl && (
+                      <Button
+                        component='a'
+                        href={pkg.downloadUrl}
+                        leftSection={<DownloadSimpleIcon size={16} />}
+                        size='xs'
+                        variant='default'
+                      >
+                        {t('common.download')}
+                      </Button>
+                    )}
+                  </Group>
+                </article>
+              ))}
+            </section>
+            {pkgsResult.meta.lastPage > 1 && (
+              <Pagination
+                className={styles.pagination}
+                total={pkgsResult.meta.lastPage}
+                value={pkgsResult.meta.currentPage}
+                onChange={setPkgsPage}
+              />
+            )}
+          </>
+        ) : (
+          <Text c='dimmed'>{t('search.packagesNotFound')}</Text>
+        ))}
     </main>
   )
 }

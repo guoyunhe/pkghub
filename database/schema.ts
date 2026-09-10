@@ -162,7 +162,7 @@ export class PkgSchema extends BaseModel {
 }
 
 export class RepoSchema extends BaseModel {
-  static $columns = ['baseUrl', 'createdAt', 'distroId', 'enabled', 'id', 'keyFingerprint', 'keyUrl', 'name', 'priority', 'repositoryFile', 'type', 'updatedAt'] as const
+  static $columns = ['baseUrl', 'createdAt', 'distroId', 'enabled', 'id', 'keyFingerprint', 'keyUrl', 'lastSyncedAt', 'name', 'priority', 'repositoryFile', 'syncInterval', 'type', 'updatedAt'] as const
   $columns = RepoSchema.$columns
   @column()
   declare baseUrl: string
@@ -178,12 +178,16 @@ export class RepoSchema extends BaseModel {
   declare keyFingerprint: string | null
   @column()
   declare keyUrl: string | null
+  @column.dateTime()
+  declare lastSyncedAt: DateTime | null
   @column()
   declare name: string
   @column()
   declare priority: number | null
   @column()
   declare repositoryFile: string | null
+  @column()
+  declare syncInterval: number | null
   @column()
   declare type: string
   @column.dateTime({ autoCreate: true, autoUpdate: true })
