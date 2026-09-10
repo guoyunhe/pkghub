@@ -25,8 +25,8 @@ export default class extends BaseSchema {
       table.boolean('enabled').notNullable().defaultTo(true)
       table.integer('priority').unsigned().nullable()
 
-      // Synchronization interval in minutes; null means the repo is only synced manually.
-      table.integer('sync_interval').unsigned().nullable()
+      // Synchronization interval in days; null means the repo is only synced manually.
+      table.integer('sync_interval_days').unsigned().nullable()
       table.timestamp('last_synced_at').nullable()
 
       table.timestamp('created_at').notNullable().defaultTo(this.now())
