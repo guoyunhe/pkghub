@@ -26,8 +26,16 @@ body {
 }
 
 .app-header__brand {
+  align-items: center;
   color: #d05a19;
+  display: inline-flex;
+  gap: 8px;
   text-decoration: none;
+}
+
+.app-header__icon {
+  height: 28px;
+  width: 28px;
 }
 
 @media (max-width: 600px) {

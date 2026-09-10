@@ -42,6 +42,7 @@ function AppHeader() {
     <AppShell.Header className='app-header'>
       <div className='app-header__inner'>
         <Text component={Link} href='/' className='app-header__brand' fw={700}>
+          <img src='/favicon.svg' alt='' className='app-header__icon' />
           PkgHub
         </Text>
         <Group gap='xs'>
