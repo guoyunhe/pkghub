@@ -1,10 +1,12 @@
 import '@mantine/core/styles.css'
 import './styles.css'
 import './i18n'
-import { MantineProvider } from '@mantine/core'
+import { MantineProvider, localStorageColorSchemeManager } from '@mantine/core'
 import { createRoot } from 'react-dom/client'
 
 import App from './App'
+
+const colorSchemeManager = localStorageColorSchemeManager({ key: 'pkghub-color-scheme' })
 
 const root = document.getElementById('root')
 
@@ -13,7 +15,7 @@ if (!root) {
 }
 
 createRoot(root).render(
-  <MantineProvider defaultColorScheme='light'>
+  <MantineProvider defaultColorScheme='auto' colorSchemeManager={colorSchemeManager}>
     <App />
   </MantineProvider>,
 )

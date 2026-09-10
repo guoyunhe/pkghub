@@ -1,17 +1,40 @@
 :root {
-  color: #1f2933;
-  background: #f6f4ef;
+  --ph-bg: #f6f4ef;
+  --ph-text: #1f2933;
+  --ph-border: #d9d4ca;
+  --ph-primary: #d05a19;
+  --ph-muted: #6f685f;
+  --ph-icon-bg: #e4dfd4;
+  --ph-header-bg: rgba(246, 244, 239, 0.94);
+
+  color: var(--ph-text);
+  background: var(--ph-bg);
+  color-scheme: light;
   font-family: 'Noto Sans', 'Source Han Sans SC', sans-serif;
+}
+
+:root[data-mantine-color-scheme='dark'] {
+  --ph-bg: #1a1b1e;
+  --ph-text: #c9c9c9;
+  --ph-border: #33333a;
+  --ph-primary: #ff7a33;
+  --ph-muted: #909296;
+  --ph-icon-bg: #2a2b2f;
+  --ph-header-bg: rgba(26, 27, 30, 0.94);
+
+  color-scheme: dark;
 }
 
 body {
   margin: 0;
   min-width: 320px;
+  background: var(--ph-bg);
+  color: var(--ph-text);
 }
 
 .app-header {
-  background: rgba(246, 244, 239, 0.94);
-  border-bottom: 1px solid #d9d4ca;
+  background: var(--ph-header-bg);
+  border-bottom: 1px solid var(--ph-border);
   backdrop-filter: blur(12px);
 }
 
@@ -34,7 +57,7 @@ body {
 
 .app-header__brand {
   align-items: center;
-  color: #d05a19;
+  color: var(--ph-primary);
   display: inline-flex;
   flex: 0 0 auto;
   gap: 8px;

@@ -24,11 +24,11 @@
 }
 
 .emptyIcon {
-  background: #e4dfd4;
+  background: var(--ph-icon-bg);
 }
 
 .eyebrow {
-  color: #d05a19;
+  color: var(--ph-primary);
   font-weight: 700;
   letter-spacing: 0;
 }
@@ -38,8 +38,8 @@
 }
 
 .metadata {
-  border-bottom: 1px solid #d9d4ca;
-  border-top: 1px solid #d9d4ca;
+  border-bottom: 1px solid var(--ph-border);
+  border-top: 1px solid var(--ph-border);
   display: grid;
   gap: 24px;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -66,12 +66,12 @@
 }
 
 .packageList {
-  border-top: 1px solid #d9d4ca;
+  border-top: 1px solid var(--ph-border);
 }
 
 .package {
   align-items: center;
-  border-bottom: 1px solid #d9d4ca;
+  border-bottom: 1px solid var(--ph-border);
   display: flex;
   gap: 24px;
   justify-content: space-between;
@@ -90,7 +90,7 @@
 }
 
 .packageMeta span {
-  border: 1px solid #d9d4ca;
+  border: 1px solid var(--ph-border);
   font-size: 12px;
   padding: 2px 6px;
 }

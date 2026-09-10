@@ -5,6 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PkgHub</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script>
+      ;(function () {
+        try {
+          var saved = localStorage.getItem('pkghub-color-scheme')
+          var scheme =
+            saved === 'light' || saved === 'dark'
+              ? saved
+              : window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light'
+          document.documentElement.dataset.mantineColorScheme = scheme
+        } catch (error) {
+          document.documentElement.dataset.mantineColorScheme = 'light'
+        }
+      })()
+    </script>
     @viteReactRefresh()
     @vite(['resources/js/index.tsx'])
   </head>

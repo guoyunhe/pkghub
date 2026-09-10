@@ -26,7 +26,11 @@
     "addApplication": "添加应用",
     "applications": "应用",
     "repositories": "软件源",
-    "packages": "软件包"
+    "packages": "软件包",
+    "theme": "主题",
+    "themeAuto": "跟随系统",
+    "themeLight": "浅色模式",
+    "themeDark": "深色模式"
   },
   "common": {
     "cancel": "取消",

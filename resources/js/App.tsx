@@ -1,11 +1,26 @@
-import { AppShell, Button, Group, Select, Text, TextInput } from '@mantine/core'
+import {
+  ActionIcon,
+  AppShell,
+  Button,
+  Group,
+  Menu,
+  Select,
+  Text,
+  TextInput,
+  useComputedColorScheme,
+  useMantineColorScheme,
+} from '@mantine/core'
+import { CheckIcon } from '@phosphor-icons/react/Check'
+import { DesktopIcon } from '@phosphor-icons/react/Desktop'
 import { GlobeIcon } from '@phosphor-icons/react/Globe'
 import { HardDrivesIcon } from '@phosphor-icons/react/HardDrives'
 import { MagnifyingGlassIcon } from '@phosphor-icons/react/MagnifyingGlass'
+import { MoonIcon } from '@phosphor-icons/react/Moon'
 import { PackageIcon } from '@phosphor-icons/react/Package'
 import { SignInIcon } from '@phosphor-icons/react/SignIn'
 import { SignOutIcon } from '@phosphor-icons/react/SignOut'
 import { SquaresFourIcon } from '@phosphor-icons/react/SquaresFour'
+import { SunIcon } from '@phosphor-icons/react/Sun'
 import { UserPlusIcon } from '@phosphor-icons/react/UserPlus'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -48,6 +63,8 @@ function AppRoutes() {
 function AppHeader() {
   const { t, i18n } = useTranslation()
   const { ready, user, logout } = useAuth()
+  const { colorScheme, setColorScheme } = useMantineColorScheme()
+  const computedColorScheme = useComputedColorScheme()
   const [, navigate] = useLocation()
   const [searchParams] = useSearchParams()
   const query = searchParams.get('q') ?? ''
@@ -120,6 +137,41 @@ function AppHeader() {
           </form>
         </nav>
         <Group gap='xs'>
+          <Menu shadow='md' width={170} position='bottom-end'>
+            <Menu.Target>
+              <ActionIcon
+                aria-label={t('header.theme')}
+                title={t('header.theme')}
+                variant='default'
+                size='lg'
+              >
+                {computedColorScheme === 'dark' ? <MoonIcon size={18} /> : <SunIcon size={18} />}
+              </ActionIcon>
+            </Menu.Target>
+            <Menu.Dropdown>
+              <Menu.Item
+                leftSection={<DesktopIcon size={16} />}
+                rightSection={colorScheme === 'auto' ? <CheckIcon size={14} /> : null}
+                onClick={() => setColorScheme('auto')}
+              >
+                {t('header.themeAuto')}
+              </Menu.Item>
+              <Menu.Item
+                leftSection={<SunIcon size={16} />}
+                rightSection={colorScheme === 'light' ? <CheckIcon size={14} /> : null}
+                onClick={() => setColorScheme('light')}
+              >
+                {t('header.themeLight')}
+              </Menu.Item>
+              <Menu.Item
+                leftSection={<MoonIcon size={16} />}
+                rightSection={colorScheme === 'dark' ? <CheckIcon size={14} /> : null}
+                onClick={() => setColorScheme('dark')}
+              >
+                {t('header.themeDark')}
+              </Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
           <Select
             aria-label={t('language')}
             className='app-header__lang'

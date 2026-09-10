@@ -16,13 +16,13 @@
 }
 
 .eyebrow {
-  color: #d05a19;
+  color: var(--ph-primary);
   font-weight: 700;
   letter-spacing: 0;
 }
 
 .form {
-  border-top: 1px solid #d9d4ca;
+  border-top: 1px solid var(--ph-border);
   padding-top: 24px;
 }
 

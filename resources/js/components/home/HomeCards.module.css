@@ -12,7 +12,7 @@
 }
 
 .appItem:hover {
-  border-color: #d05a19;
+  border-color: var(--ph-primary);
 }
 
 .icon {
@@ -23,7 +23,7 @@
 }
 
 .emptyIcon {
-  background: #e4dfd4;
+  background: var(--ph-icon-bg);
 }
 
 .distroHeading {
@@ -48,7 +48,7 @@
 }
 
 .distroVersion {
-  color: #6b7280;
+  color: var(--ph-muted);
   flex: 0 0 auto;
   font-size: 1.125rem;
   text-align: right;

@@ -26,7 +26,11 @@
     "addApplication": "Add application",
     "applications": "Applications",
     "repositories": "Repositories",
-    "packages": "Packages"
+    "packages": "Packages",
+    "theme": "Theme",
+    "themeAuto": "System",
+    "themeLight": "Light",
+    "themeDark": "Dark"
   },
   "common": {
     "cancel": "Cancel",

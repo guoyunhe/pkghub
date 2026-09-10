@@ -16,7 +16,7 @@
 }
 
 .eyebrow {
-  color: #d05a19;
+  color: var(--ph-primary);
   font-weight: 700;
   letter-spacing: 0;
 }
@@ -28,7 +28,7 @@
 }
 
 .table {
-  border-top: 1px solid #d9d4ca;
+  border-top: 1px solid var(--ph-border);
 }
 
 .typeCell {
@@ -58,7 +58,7 @@
 }
 
 .distroVersion {
-  color: #6f685f;
+  color: var(--ph-muted);
 }
 
 .name {
@@ -66,7 +66,7 @@
 }
 
 .baseUrl {
-  color: #6f685f;
+  color: var(--ph-muted);
   font-size: 12px;
   word-break: break-all;
 }
