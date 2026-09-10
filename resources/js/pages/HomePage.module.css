@@ -46,9 +46,7 @@
 
 .appItem,
 .distroItem {
-  border: 1px solid #d9d4ca;
   color: inherit;
-  padding: 18px;
   text-decoration: none;
 }
 

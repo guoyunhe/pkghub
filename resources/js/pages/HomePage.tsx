@@ -1,5 +1,5 @@
 import type { Data } from '@generated/data'
-import { Alert, Anchor, Loader, Text, Title } from '@mantine/core'
+import { Alert, Anchor, Card, Loader, Text, Title } from '@mantine/core'
 import { ArrowRightIcon } from '@phosphor-icons/react/ArrowRight'
 import { useEffect, useState } from 'react'
 import { Link } from 'wouter'
@@ -15,12 +15,6 @@ function localized(translations: Record<string, string>, language: string) {
     translations.en ??
     Object.values(translations)[0]
   )
-}
-
-function formatDate(value: string | null) {
-  return value
-    ? new Intl.DateTimeFormat(undefined, { dateStyle: 'medium' }).format(new Date(value))
-    : 'Not specified'
 }
 
 export default function HomePage() {
@@ -66,7 +60,15 @@ export default function HomePage() {
             </div>
             <div className={styles.appGrid}>
               {apps.map((app) => (
-                <Link className={styles.appItem} href={`/apps/${app.id}`} key={app.id}>
+                <Card
+                  className={styles.appItem}
+                  component={Link}
+                  href={`/apps/${app.id}`}
+                  key={app.id}
+                  padding='md'
+                  radius='sm'
+                  withBorder
+                >
                   {app.icon ? (
                     <img alt='' className={styles.icon} src={app.icon.url} />
                   ) : (
@@ -78,7 +80,7 @@ export default function HomePage() {
                       {localized(app.summary, 'en')}
                     </Text>
                   </span>
-                </Link>
+                </Card>
               ))}
             </div>
           </section>
@@ -92,7 +94,13 @@ export default function HomePage() {
             </div>
             <div className={styles.distroGrid}>
               {distros.map((distro) => (
-                <article className={styles.distroItem} key={distro.id}>
+                <Card
+                  className={styles.distroItem}
+                  key={distro.id}
+                  padding='md'
+                  radius='sm'
+                  withBorder
+                >
                   <div className={styles.distroHeading}>
                     <img
                       alt=''
@@ -106,9 +114,7 @@ export default function HomePage() {
                       {distro.version ?? '∞'}
                     </Text>
                   </div>
-                  <Text size='sm'>Released: {formatDate(distro.releaseDate)}</Text>
-                  <Text size='sm'>EOL: {formatDate(distro.eolDate)}</Text>
-                </article>
+                </Card>
               ))}
             </div>
           </section>
