@@ -23,7 +23,9 @@ export interface ApiDefinition {
   apps: {
     index: typeof routes['apps.index']
     show: typeof routes['apps.show']
-    packages: typeof routes['apps.packages']
+    packages: {
+      index: typeof routes['apps.packages.index']
+    }
     store: typeof routes['apps.store']
     update: typeof routes['apps.update']
     destroy: typeof routes['apps.destroy']

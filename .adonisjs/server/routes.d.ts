@@ -16,7 +16,7 @@ export type ScannedRoutes = {
     'images.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'apps.index': { paramsTuple?: []; params?: {} }
     'apps.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
-    'apps.packages': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'apps.packages.index': { paramsTuple: [ParamValue]; params: {'app_id': ParamValue} }
     'distros.index': { paramsTuple?: []; params?: {} }
     'apps.store': { paramsTuple?: []; params?: {} }
     'apps.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
@@ -29,7 +29,7 @@ export type ScannedRoutes = {
     'images.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'apps.index': { paramsTuple?: []; params?: {} }
     'apps.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
-    'apps.packages': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'apps.packages.index': { paramsTuple: [ParamValue]; params: {'app_id': ParamValue} }
     'distros.index': { paramsTuple?: []; params?: {} }
   }
   HEAD: {
@@ -39,7 +39,7 @@ export type ScannedRoutes = {
     'images.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'apps.index': { paramsTuple?: []; params?: {} }
     'apps.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
-    'apps.packages': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'apps.packages.index': { paramsTuple: [ParamValue]; params: {'app_id': ParamValue} }
     'distros.index': { paramsTuple?: []; params?: {} }
   }
   POST: {

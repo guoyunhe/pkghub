@@ -78,11 +78,11 @@ const routes = {
     tokens: [{"old":"/api/apps/:id","type":0,"val":"api","end":""},{"old":"/api/apps/:id","type":0,"val":"apps","end":""},{"old":"/api/apps/:id","type":1,"val":"id","end":""}],
     types: placeholder as Registry['apps.show']['types'],
   },
-  'apps.packages': {
+  'apps.packages.index': {
     methods: ["GET","HEAD"],
-    pattern: '/api/apps/:id/packages',
-    tokens: [{"old":"/api/apps/:id/packages","type":0,"val":"api","end":""},{"old":"/api/apps/:id/packages","type":0,"val":"apps","end":""},{"old":"/api/apps/:id/packages","type":1,"val":"id","end":""},{"old":"/api/apps/:id/packages","type":0,"val":"packages","end":""}],
-    types: placeholder as Registry['apps.packages']['types'],
+    pattern: '/api/apps/:app_id/packages',
+    tokens: [{"old":"/api/apps/:app_id/packages","type":0,"val":"api","end":""},{"old":"/api/apps/:app_id/packages","type":0,"val":"apps","end":""},{"old":"/api/apps/:app_id/packages","type":1,"val":"app_id","end":""},{"old":"/api/apps/:app_id/packages","type":0,"val":"packages","end":""}],
+    types: placeholder as Registry['apps.packages.index']['types'],
   },
   'distros.index': {
     methods: ["GET","HEAD"],

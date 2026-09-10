@@ -9,4 +9,5 @@ export const controllers = {
   Auth: () => import('#controllers/auth_controller'),
   Distros: () => import('#controllers/distros_controller'),
   Images: () => import('#controllers/images_controller'),
+  Pkgs: () => import('#controllers/pkgs_controller'),
 }

@@ -151,16 +151,16 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/apps_controller').default['show']>>>
     }
   }
-  'apps.packages': {
+  'apps.packages.index': {
     methods: ["GET","HEAD"]
-    pattern: '/api/apps/:id/packages'
+    pattern: '/api/apps/:app_id/packages'
     types: {
       body: {}
       paramsTuple: [ParamValue]
-      params: { id: ParamValue }
+      params: { app_id: ParamValue }
       query: {}
-      response: ExtractResponse<Awaited<ReturnType<import('#controllers/apps_controller').default['packages']>>>
-      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/apps_controller').default['packages']>>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/pkgs_controller').default['index']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/pkgs_controller').default['index']>>>
     }
   }
   'distros.index': {
