@@ -27,6 +27,13 @@ export default class extends BaseSchema {
         .references('id')
         .inTable('repos')
         .onDelete('SET NULL')
+      table
+        .integer('file_id')
+        .unsigned()
+        .nullable()
+        .references('id')
+        .inTable('files')
+        .onDelete('SET NULL')
       table.string('download_url').nullable()
       table.string('checksum').nullable()
       table.string('checksum_type').nullable()

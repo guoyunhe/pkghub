@@ -44,7 +44,7 @@ export class AuthAccessTokenSchema extends BaseModel {
   @column()
   declare abilities: string
   @column.dateTime({ autoCreate: true })
-  declare createdAt: DateTime
+  declare createdAt: DateTime | null
   @column.dateTime()
   declare expiresAt: DateTime | null
   @column()
@@ -82,6 +82,25 @@ export class DistroSchema extends BaseModel {
   declare version: string | null
 }
 
+export class FileSchema extends BaseModel {
+  static $columns = ['createdAt', 'id', 'mimeType', 'path', 'size', 'updatedAt', 'userId'] as const
+  $columns = FileSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare mimeType: string
+  @column()
+  declare path: string
+  @column()
+  declare size: number
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare userId: number | null
+}
+
 export class ImageSchema extends BaseModel {
   static $columns = ['createdAt', 'height', 'id', 'mimeType', 'path', 'size', 'updatedAt', 'userId', 'width'] as const
   $columns = ImageSchema.$columns
@@ -106,7 +125,7 @@ export class ImageSchema extends BaseModel {
 }
 
 export class PkgSchema extends BaseModel {
-  static $columns = ['appId', 'arch', 'checksum', 'checksumType', 'createdAt', 'downloadUrl', 'id', 'installCommand', 'name', 'release', 'repoId', 'size', 'type', 'updatedAt', 'version'] as const
+  static $columns = ['appId', 'arch', 'checksum', 'checksumType', 'createdAt', 'downloadUrl', 'fileId', 'id', 'installCommand', 'name', 'release', 'repoId', 'size', 'type', 'updatedAt', 'version'] as const
   $columns = PkgSchema.$columns
   @column()
   declare appId: number
@@ -120,6 +139,8 @@ export class PkgSchema extends BaseModel {
   declare createdAt: DateTime | null
   @column()
   declare downloadUrl: string | null
+  @column()
+  declare fileId: number | null
   @column({ isPrimary: true })
   declare id: number
   @column()
@@ -170,7 +191,7 @@ export class RepoSchema extends BaseModel {
 }
 
 export class UserSchema extends BaseModel {
-  static $columns = ['createdAt', 'email', 'id', 'name', 'password', 'role', 'updatedAt'] as const
+  static $columns = ['createdAt', 'email', 'id', 'name', 'password', 'updatedAt'] as const
   $columns = UserSchema.$columns
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
@@ -179,11 +200,9 @@ export class UserSchema extends BaseModel {
   @column({ isPrimary: true })
   declare id: number
   @column()
-  declare name: string
+  declare name: string | null
   @column({ serializeAs: null })
   declare password: string
-  @column()
-  declare role: string
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null
 }
