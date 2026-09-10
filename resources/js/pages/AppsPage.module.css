@@ -25,6 +25,10 @@
   border-top: 1px solid #d9d4ca;
 }
 
+.pagination {
+  margin-top: 28px;
+}
+
 .item {
   align-items: center;
   border-bottom: 1px solid #d9d4ca;

@@ -1,10 +1,12 @@
-import { AppShell, Button, Group, Text } from '@mantine/core'
+import { AppShell, Button, Group, Text, TextInput } from '@mantine/core'
+import { MagnifyingGlassIcon } from '@phosphor-icons/react/MagnifyingGlass'
 import { PlusIcon } from '@phosphor-icons/react/Plus'
 import { SignInIcon } from '@phosphor-icons/react/SignIn'
 import { SignOutIcon } from '@phosphor-icons/react/SignOut'
 import { UserPlusIcon } from '@phosphor-icons/react/UserPlus'
+import { useEffect, useState } from 'react'
 import { Route, Switch } from 'wouter'
-import { Link, useLocation } from 'wouter'
+import { Link, useLocation, useSearchParams } from 'wouter'
 
 import { AuthProvider, useAuth } from './auth'
 import AppDetailPage from './pages/AppDetailPage'
@@ -12,12 +14,14 @@ import AppFormPage from './pages/AppFormPage'
 import AppsPage from './pages/AppsPage'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
+import SearchResultsPage from './pages/SearchResultsPage'
 
 function AppRoutes() {
   return (
     <Switch>
       <Route path='/login' component={LoginPage} />
       <Route path='/register' component={RegisterPage} />
+      <Route path='/search' component={SearchResultsPage} />
       <Route path='/apps/new' component={AppFormPage} />
       <Route path='/apps/:id/edit' component={AppFormPage} />
       <Route path='/apps/:id' component={AppDetailPage} />
@@ -32,6 +36,13 @@ function AppRoutes() {
 function AppHeader() {
   const { ready, user, logout } = useAuth()
   const [, navigate] = useLocation()
+  const [searchParams] = useSearchParams()
+  const query = searchParams.get('q') ?? ''
+  const [searchQuery, setSearchQuery] = useState(query)
+
+  useEffect(() => {
+    setSearchQuery(query)
+  }, [query])
 
   async function handleLogout() {
     await logout()
@@ -45,6 +56,23 @@ function AppHeader() {
           <img src='/favicon.svg' alt='' className='app-header__icon' />
           PkgHub
         </Text>
+        <form
+          className='app-header__search-form'
+          onSubmit={(event) => {
+            event.preventDefault()
+            const value = searchQuery.trim()
+            navigate(value ? `/search?q=${encodeURIComponent(value)}` : '/apps')
+          }}
+        >
+          <TextInput
+            aria-label='Search applications'
+            className='app-header__search'
+            leftSection={<MagnifyingGlassIcon size={18} />}
+            placeholder='Search applications'
+            value={searchQuery}
+            onChange={(event) => setSearchQuery(event.currentTarget.value)}
+          />
+        </form>
         <Group gap='xs'>
           {ready && user ? (
             <>

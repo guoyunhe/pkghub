@@ -38,9 +38,24 @@ body {
   width: 28px;
 }
 
+.app-header__search-form {
+  flex: 0 1 360px;
+  margin: 0 24px;
+}
+
+.app-header__search {
+  width: 100%;
+}
+
 @media (max-width: 600px) {
   .app-header__inner {
     padding: 0 18px;
+  }
+
+  .app-header__search-form {
+    flex: 1 1 auto;
+    margin: 0 12px;
+    min-width: 0;
   }
 
   .app-header .mantine-Button-label {

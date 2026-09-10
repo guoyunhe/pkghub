@@ -7,9 +7,27 @@ import AppTransformer from '#transformers/app_transformer'
 type LocalizedText = Record<string, string>
 
 export default class AppsController {
-  async index({ serialize }: HttpContext) {
-    const apps = await App.query().preload('icon').orderBy('id', 'desc')
-    return serialize(AppTransformer.transform(apps))
+  async index({ request, serialize }: HttpContext) {
+    const page = this.positiveInteger(request.input('page'), 1)
+    const perPage = Math.min(this.positiveInteger(request.input('perPage'), 12), 50)
+    const rawQuery = request.input('q')
+    const query = typeof rawQuery === 'string' ? rawQuery.trim().toLocaleLowerCase() : ''
+    const appsQuery = App.query().preload('icon').orderBy('id', 'desc')
+
+    if (query) {
+      const pattern = `%${query.replace(/[\\%_]/g, '\\$&')}%`
+      appsQuery.where((searchQuery) => {
+        searchQuery
+          .whereILike('name', pattern)
+          .orWhereILike('summary', pattern)
+          .orWhereILike('version', pattern)
+          .orWhereILike('license', pattern)
+          .orWhereILike('appstreamId', pattern)
+      })
+    }
+
+    const paginator = await appsQuery.paginate(page, perPage)
+    return serialize(AppTransformer.paginate(paginator.all(), paginator.getMeta()))
   }
 
   async show({ params, serialize }: HttpContext) {
@@ -67,5 +85,10 @@ export default class AppsController {
     if (value === undefined || value === null || value === '') return null
     if (typeof value !== 'string') throw new Exception('Value must be a string', { status: 422 })
     return value.trim() || null
+  }
+
+  private positiveInteger(value: unknown, fallback: number) {
+    const parsed = Number(value)
+    return Number.isInteger(parsed) && parsed > 0 ? parsed : fallback
   }
 }

@@ -1,6 +1,7 @@
 import type { Data } from '@generated/data'
 import xior from 'xior'
 
+import type { Paginated, SerializedPaginated } from '../types/pagination'
 import { getAuthToken } from './auth'
 
 export type AppPayload = {
@@ -20,9 +21,11 @@ function authHeaders() {
   return token ? { Authorization: `Bearer ${token}` } : {}
 }
 
-export async function getApps() {
-  const { data } = await api.get<{ data: Data.App[] }>('/apps')
-  return data.data
+export async function getApps(query = '', page = 1) {
+  const { data } = await api.get<SerializedPaginated<Data.App>>('/apps', {
+    params: { page, q: query || undefined },
+  })
+  return { data: data.data, meta: data.metadata } satisfies Paginated<Data.App>
 }
 
 export async function getApp(id: number) {
