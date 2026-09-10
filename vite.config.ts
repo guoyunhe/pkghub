@@ -23,6 +23,7 @@ export default defineConfig({
     },
   },
   server: {
+    open: true,
     watch: {
       ignored: ['**/storage/**', '**/tmp/**'],
     },
