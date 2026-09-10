@@ -27,4 +27,7 @@ export interface ApiDefinition {
     update: typeof routes['apps.update']
     destroy: typeof routes['apps.destroy']
   }
+  distros: {
+    index: typeof routes['distros.index']
+  }
 }

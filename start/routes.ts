@@ -29,6 +29,7 @@ router
     router.resource('images', controllers.Images).apiOnly().use('*', middleware.auth())
     router.get('apps', [controllers.Apps, 'index'])
     router.get('apps/:id', [controllers.Apps, 'show'])
+    router.get('distros', [controllers.Distros, 'index'])
     router
       .resource('apps', controllers.Apps)
       .only(['store', 'update', 'destroy'])

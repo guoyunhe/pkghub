@@ -78,6 +78,12 @@ const routes = {
     tokens: [{"old":"/api/apps/:id","type":0,"val":"api","end":""},{"old":"/api/apps/:id","type":0,"val":"apps","end":""},{"old":"/api/apps/:id","type":1,"val":"id","end":""}],
     types: placeholder as Registry['apps.show']['types'],
   },
+  'distros.index': {
+    methods: ["GET","HEAD"],
+    pattern: '/api/distros',
+    tokens: [{"old":"/api/distros","type":0,"val":"api","end":""},{"old":"/api/distros","type":0,"val":"distros","end":""}],
+    types: placeholder as Registry['distros.index']['types'],
+  },
   'apps.store': {
     methods: ["POST"],
     pattern: '/api/apps',

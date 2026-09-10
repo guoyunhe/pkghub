@@ -14,6 +14,14 @@ export type AppPayload = {
   desktopUrl?: string
 }
 
+export type Distro = {
+  id: number
+  name: string
+  version: string | null
+  releaseDate: string | null
+  eolDate: string | null
+}
+
 const api = xior.create({ baseURL: import.meta.env.VITE_API_URL ?? '/api' })
 
 function authHeaders() {
@@ -26,6 +34,11 @@ export async function getApps(query = '', page = 1) {
     params: { page, q: query || undefined },
   })
   return { data: data.data, meta: data.metadata } satisfies Paginated<Data.App>
+}
+
+export async function getDistros() {
+  const { data } = await api.get<{ data: Distro[] }>('/distros')
+  return data.data
 }
 
 export async function getApp(id: number) {

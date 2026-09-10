@@ -151,6 +151,18 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/apps_controller').default['show']>>>
     }
   }
+  'distros.index': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/distros'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/distros_controller').default['index']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/distros_controller').default['index']>>>
+    }
+  }
   'apps.store': {
     methods: ["POST"]
     pattern: '/api/apps'

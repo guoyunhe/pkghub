@@ -12,6 +12,7 @@ import { AuthProvider, useAuth } from './auth'
 import AppDetailPage from './pages/AppDetailPage'
 import AppFormPage from './pages/AppFormPage'
 import AppsPage from './pages/AppsPage'
+import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import SearchResultsPage from './pages/SearchResultsPage'
@@ -27,7 +28,7 @@ function AppRoutes() {
       <Route path='/apps/:id' component={AppDetailPage} />
       <Route path='/apps' component={AppsPage} />
       <Route path='/'>
-        <AppsPage />
+        <HomePage />
       </Route>
     </Switch>
   )
