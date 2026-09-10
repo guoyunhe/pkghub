@@ -121,7 +121,23 @@ export default function ReposPage() {
                   <div className={styles.name}>{repo.name}</div>
                   <div className={styles.baseUrl}>{repo.baseUrl}</div>
                 </Table.Td>
-                <Table.Td>{repo.distro?.name ?? '—'}</Table.Td>
+                <Table.Td>
+                  {repo.distro ? (
+                    <span className={styles.distroCell}>
+                      <img
+                        alt=''
+                        className={styles.distroIcon}
+                        src={`/distros/${encodeURIComponent(repo.distro.name)}.svg`}
+                      />
+                      <span>{repo.distro.name}</span>
+                      {repo.distro.version && (
+                        <span className={styles.distroVersion}>{repo.distro.version}</span>
+                      )}
+                    </span>
+                  ) : (
+                    '—'
+                  )}
+                </Table.Td>
                 <Table.Td>
                   <span className={styles.status}>
                     <span

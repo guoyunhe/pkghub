@@ -44,6 +44,23 @@
   width: 22px;
 }
 
+.distroCell {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.distroIcon {
+  height: 20px;
+  object-fit: contain;
+  width: 20px;
+}
+
+.distroVersion {
+  color: #6f685f;
+}
+
 .name {
   font-weight: 700;
 }

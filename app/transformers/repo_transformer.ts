@@ -1,6 +1,7 @@
 import { BaseTransformer } from '@adonisjs/core/transformers'
 
 import type Repo from '#models/repo'
+import DistroTransformer from '#transformers/distro_transformer'
 
 export default class RepoTransformer extends BaseTransformer<Repo> {
   toObject() {
@@ -21,9 +22,7 @@ export default class RepoTransformer extends BaseTransformer<Repo> {
         'createdAt',
         'updatedAt',
       ]),
-      distro: this.resource.distro
-        ? { id: this.resource.distro.id, name: this.resource.distro.name }
-        : null,
+      distro: this.resource.distro ? DistroTransformer.transform(this.resource.distro) : null,
     }
   }
 }
