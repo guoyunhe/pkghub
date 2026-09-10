@@ -1,5 +1,6 @@
 import { AppShell, Button, Group, Select, Text, TextInput } from '@mantine/core'
 import { GlobeIcon } from '@phosphor-icons/react/Globe'
+import { HardDrivesIcon } from '@phosphor-icons/react/HardDrives'
 import { MagnifyingGlassIcon } from '@phosphor-icons/react/MagnifyingGlass'
 import { PlusIcon } from '@phosphor-icons/react/Plus'
 import { SignInIcon } from '@phosphor-icons/react/SignIn'
@@ -17,6 +18,8 @@ import AppsPage from './pages/AppsPage'
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
+import RepoFormPage from './pages/RepoFormPage'
+import ReposPage from './pages/ReposPage'
 import SearchResultsPage from './pages/SearchResultsPage'
 
 function AppRoutes() {
@@ -25,6 +28,9 @@ function AppRoutes() {
       <Route path='/login' component={LoginPage} />
       <Route path='/register' component={RegisterPage} />
       <Route path='/search' component={SearchResultsPage} />
+      <Route path='/repos/new' component={RepoFormPage} />
+      <Route path='/repos/:id/edit' component={RepoFormPage} />
+      <Route path='/repos' component={ReposPage} />
       <Route path='/apps/new' component={AppFormPage} />
       <Route path='/apps/:id/edit' component={AppFormPage} />
       <Route path='/apps/:id' component={AppDetailPage} />
@@ -99,14 +105,24 @@ function AppHeader() {
           {ready && user ? (
             <>
               {user.role === 'admin' && (
-                <Button
-                  component={Link}
-                  href='/apps/new'
-                  leftSection={<PlusIcon size={18} weight='bold' />}
-                  variant='light'
-                >
-                  {t('header.addApplication')}
-                </Button>
+                <>
+                  <Button
+                    component={Link}
+                    href='/repos'
+                    leftSection={<HardDrivesIcon size={18} />}
+                    variant='default'
+                  >
+                    {t('header.repositories')}
+                  </Button>
+                  <Button
+                    component={Link}
+                    href='/apps/new'
+                    leftSection={<PlusIcon size={18} weight='bold' />}
+                    variant='light'
+                  >
+                    {t('header.addApplication')}
+                  </Button>
+                </>
               )}
               <Button
                 leftSection={<SignOutIcon size={18} />}

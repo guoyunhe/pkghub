@@ -23,7 +23,8 @@
   "registerFailed": "Unable to create the account.",
   "header": {
     "searchApplications": "Search applications",
-    "addApplication": "Add application"
+    "addApplication": "Add application",
+    "repositories": "Repositories"
   },
   "common": {
     "cancel": "Cancel",
@@ -95,5 +96,49 @@
     "appstreamUrl": "AppStream URL",
     "desktopUrl": "Desktop URL",
     "save": "Save application"
+  },
+  "repos": {
+    "eyebrow": "Administration",
+    "title": "Repositories",
+    "subtitle": "Debian, RPM and other package repositories used to extract packages.",
+    "addRepo": "Add repository",
+    "editRepo": "Edit repository",
+    "newEntry": "New repository",
+    "editEntry": "Repository",
+    "save": "Save repository",
+    "edit": "Edit",
+    "delete": "Delete",
+    "confirmDelete": "Delete repository “{{name}}”?",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "manual": "Manual only",
+    "neverSynced": "Never",
+    "everyDays_one": "Every {{count}} day",
+    "everyDays_other": "Every {{count}} days",
+    "syncIntervalHint": "Leave empty to sync this repository only manually.",
+    "notFound": "No repositories configured yet.",
+    "loadError": "Unable to load repositories",
+    "saveError": "Unable to save repository",
+    "deleteError": "Unable to delete repository",
+    "columns": {
+      "type": "Type",
+      "name": "Repository",
+      "distro": "Distribution",
+      "status": "Status",
+      "syncInterval": "Sync interval",
+      "lastSynced": "Last synced"
+    },
+    "fields": {
+      "type": "Type",
+      "name": "Name",
+      "baseUrl": "Base URL",
+      "distro": "Distribution",
+      "keyUrl": "Signing key URL",
+      "keyFingerprint": "Key fingerprint",
+      "repositoryFile": "Sources list content",
+      "priority": "Priority",
+      "syncIntervalDays": "Sync interval (days)",
+      "enabled": "Enabled"
+    }
   }
 }

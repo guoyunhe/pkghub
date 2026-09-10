@@ -18,6 +18,11 @@ export type ScannedRoutes = {
     'apps.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'pkgs.search': { paramsTuple?: []; params?: {} }
     'apps.packages.index': { paramsTuple: [ParamValue]; params: {'app_id': ParamValue} }
+    'repos.index': { paramsTuple?: []; params?: {} }
+    'repos.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'repos.store': { paramsTuple?: []; params?: {} }
+    'repos.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'repos.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'distros.index': { paramsTuple?: []; params?: {} }
     'apps.store': { paramsTuple?: []; params?: {} }
     'apps.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
@@ -32,6 +37,8 @@ export type ScannedRoutes = {
     'apps.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'pkgs.search': { paramsTuple?: []; params?: {} }
     'apps.packages.index': { paramsTuple: [ParamValue]; params: {'app_id': ParamValue} }
+    'repos.index': { paramsTuple?: []; params?: {} }
+    'repos.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'distros.index': { paramsTuple?: []; params?: {} }
   }
   HEAD: {
@@ -43,6 +50,8 @@ export type ScannedRoutes = {
     'apps.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'pkgs.search': { paramsTuple?: []; params?: {} }
     'apps.packages.index': { paramsTuple: [ParamValue]; params: {'app_id': ParamValue} }
+    'repos.index': { paramsTuple?: []; params?: {} }
+    'repos.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'distros.index': { paramsTuple?: []; params?: {} }
   }
   POST: {
@@ -50,18 +59,22 @@ export type ScannedRoutes = {
     'auth.login': { paramsTuple?: []; params?: {} }
     'auth.logout': { paramsTuple?: []; params?: {} }
     'images.store': { paramsTuple?: []; params?: {} }
+    'repos.store': { paramsTuple?: []; params?: {} }
     'apps.store': { paramsTuple?: []; params?: {} }
   }
   PUT: {
     'images.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'repos.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'apps.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
   }
   PATCH: {
     'images.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'repos.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'apps.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
   }
   DELETE: {
     'images.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'repos.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'apps.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
   }
 }

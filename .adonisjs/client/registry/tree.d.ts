@@ -33,6 +33,13 @@ export interface ApiDefinition {
   pkgs: {
     search: typeof routes['pkgs.search']
   }
+  repos: {
+    index: typeof routes['repos.index']
+    show: typeof routes['repos.show']
+    store: typeof routes['repos.store']
+    update: typeof routes['repos.update']
+    destroy: typeof routes['repos.destroy']
+  }
   distros: {
     index: typeof routes['distros.index']
   }

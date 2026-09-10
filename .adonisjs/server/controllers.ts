@@ -10,4 +10,5 @@ export const controllers = {
   Distros: () => import('#controllers/distros_controller'),
   Images: () => import('#controllers/images_controller'),
   Pkgs: () => import('#controllers/pkgs_controller'),
+  Repos: () => import('#controllers/repos_controller'),
 }

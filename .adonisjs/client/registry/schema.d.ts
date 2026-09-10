@@ -175,6 +175,66 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/pkgs_controller').default['index']>>>
     }
   }
+  'repos.index': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/repos'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/repos_controller').default['index']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/repos_controller').default['index']>>>
+    }
+  }
+  'repos.show': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/repos/:id'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { id: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/repos_controller').default['show']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/repos_controller').default['show']>>>
+    }
+  }
+  'repos.store': {
+    methods: ["POST"]
+    pattern: '/api/repos'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/repos_controller').default['store']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/repos_controller').default['store']>>>
+    }
+  }
+  'repos.update': {
+    methods: ["PUT","PATCH"]
+    pattern: '/api/repos/:id'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { id: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/repos_controller').default['update']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/repos_controller').default['update']>>>
+    }
+  }
+  'repos.destroy': {
+    methods: ["DELETE"]
+    pattern: '/api/repos/:id'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { id: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/repos_controller').default['destroy']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/repos_controller').default['destroy']>>>
+    }
+  }
   'distros.index': {
     methods: ["GET","HEAD"]
     pattern: '/api/distros'

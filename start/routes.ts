@@ -31,6 +31,12 @@ router
     router.get('apps/:id', [controllers.Apps, 'show'])
     router.get('packages', [controllers.Pkgs, 'search'])
     router.resource('apps.packages', controllers.Pkgs).only(['index'])
+    router.get('repos', [controllers.Repos, 'index'])
+    router.get('repos/:id', [controllers.Repos, 'show'])
+    router
+      .resource('repos', controllers.Repos)
+      .only(['store', 'update', 'destroy'])
+      .use('*', [middleware.auth(), middleware.admin()])
     router.get('distros', [controllers.Distros, 'index'])
     router
       .resource('apps', controllers.Apps)

@@ -26,6 +26,12 @@
   padding-top: 24px;
 }
 
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: 72px 0;
+}
+
 @media (max-width: 600px) {
   .page {
     padding: 44px 18px;
