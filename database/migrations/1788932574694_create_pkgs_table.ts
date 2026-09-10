@@ -36,26 +36,9 @@ export default class extends BaseSchema {
       table.timestamp('created_at')
       table.timestamp('updated_at')
     })
-
-    this.schema.createTable('pkg_targets', (table) => {
-      table.increments('id')
-      table
-        .integer('pkg_id')
-        .unsigned()
-        .notNullable()
-        .references('id')
-        .inTable('pkgs')
-        .onDelete('CASCADE')
-      table.string('distribution').notNullable().defaultTo('*')
-      table.string('release').notNullable().defaultTo('*')
-      table.string('architecture').notNullable().defaultTo('*')
-      table.unique(['pkg_id', 'distribution', 'release', 'architecture'])
-      table.index(['distribution', 'release', 'architecture'])
-    })
   }
 
   async down() {
-    this.schema.dropTable('pkg_targets')
     this.schema.dropTable(this.tableName)
   }
 }

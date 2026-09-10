@@ -63,6 +63,25 @@ export class AuthAccessTokenSchema extends BaseModel {
   declare updatedAt: DateTime | null
 }
 
+export class DistroSchema extends BaseModel {
+  static $columns = ['createdAt', 'eolDate', 'id', 'name', 'releaseDate', 'updatedAt', 'version'] as const
+  $columns = DistroSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column.date()
+  declare eolDate: DateTime | null
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare name: string
+  @column.date()
+  declare releaseDate: DateTime | null
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare version: string | null
+}
+
 export class ImageSchema extends BaseModel {
   static $columns = ['createdAt', 'height', 'id', 'mimeType', 'path', 'size', 'updatedAt', 'userId', 'width'] as const
   $columns = ImageSchema.$columns
@@ -121,28 +140,15 @@ export class PkgSchema extends BaseModel {
   declare version: string | null
 }
 
-export class PkgTargetSchema extends BaseModel {
-  static $columns = ['architecture', 'distribution', 'id', 'pkgId', 'release'] as const
-  $columns = PkgTargetSchema.$columns
-  @column()
-  declare architecture: string
-  @column()
-  declare distribution: string
-  @column({ isPrimary: true })
-  declare id: number
-  @column()
-  declare pkgId: number
-  @column()
-  declare release: string
-}
-
 export class RepoSchema extends BaseModel {
-  static $columns = ['baseUrl', 'createdAt', 'enabled', 'id', 'keyFingerprint', 'keyUrl', 'name', 'priority', 'repositoryFile', 'type', 'updatedAt'] as const
+  static $columns = ['baseUrl', 'createdAt', 'distroId', 'enabled', 'id', 'keyFingerprint', 'keyUrl', 'name', 'priority', 'repositoryFile', 'type', 'updatedAt'] as const
   $columns = RepoSchema.$columns
   @column()
-  declare baseUrl: string | null
+  declare baseUrl: string
   @column.dateTime({ autoCreate: true })
-  declare createdAt: DateTime | null
+  declare createdAt: DateTime
+  @column()
+  declare distroId: number | null
   @column()
   declare enabled: boolean
   @column({ isPrimary: true })
@@ -152,7 +158,7 @@ export class RepoSchema extends BaseModel {
   @column()
   declare keyUrl: string | null
   @column()
-  declare name: string | null
+  declare name: string
   @column()
   declare priority: number | null
   @column()
@@ -161,21 +167,6 @@ export class RepoSchema extends BaseModel {
   declare type: string
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null
-}
-
-export class RepoTargetSchema extends BaseModel {
-  static $columns = ['architecture', 'distribution', 'id', 'release', 'repoId'] as const
-  $columns = RepoTargetSchema.$columns
-  @column()
-  declare architecture: string
-  @column()
-  declare distribution: string
-  @column({ isPrimary: true })
-  declare id: number
-  @column()
-  declare release: string
-  @column()
-  declare repoId: number
 }
 
 export class UserSchema extends BaseModel {
