@@ -1,0 +1,55 @@
+.appItem,
+.distroItem {
+  color: inherit;
+  text-decoration: none;
+}
+
+.appItem {
+  align-items: center;
+  display: flex;
+  gap: 14px;
+  justify-content: flex-start;
+}
+
+.appItem:hover {
+  border-color: #d05a19;
+}
+
+.icon {
+  flex: 0 0 52px;
+  height: 52px;
+  object-fit: contain;
+  width: 52px;
+}
+
+.emptyIcon {
+  background: #e4dfd4;
+}
+
+.distroHeading {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  margin-bottom: 14px;
+  min-width: 0;
+}
+
+.distroIcon {
+  flex: 0 0 auto;
+  height: 32px;
+  width: 32px;
+}
+
+.distroName {
+  flex: 1 1 auto;
+  font-size: 1.125rem;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.distroVersion {
+  color: #6b7280;
+  flex: 0 0 auto;
+  font-size: 1.125rem;
+  text-align: right;
+}

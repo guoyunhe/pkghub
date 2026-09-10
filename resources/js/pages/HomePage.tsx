@@ -1,21 +1,14 @@
 import type { Data } from '@generated/data'
-import { Alert, Anchor, Card, Loader, Text, Title } from '@mantine/core'
+import { Alert, Anchor, Loader, Text, Title } from '@mantine/core'
 import { ArrowRightIcon } from '@phosphor-icons/react/ArrowRight'
 import { useEffect, useState } from 'react'
 import { Link } from 'wouter'
 
+import HomeAppCard from '../components/home/HomeAppCard'
+import HomeDistroCard from '../components/home/HomeDistroCard'
 import { getApps, getDistros, type Distro } from '../services/apps'
 
 import styles from './HomePage.module.css'
-
-function localized(translations: Record<string, string>, language: string) {
-  return (
-    translations[language] ??
-    translations[language.split('-')[0]] ??
-    translations.en ??
-    Object.values(translations)[0]
-  )
-}
 
 export default function HomePage() {
   const [apps, setApps] = useState<Data.App[]>([])
@@ -60,27 +53,7 @@ export default function HomePage() {
             </div>
             <div className={styles.appGrid}>
               {apps.map((app) => (
-                <Card
-                  className={styles.appItem}
-                  component={Link}
-                  href={`/apps/${app.id}`}
-                  key={app.id}
-                  padding='md'
-                  radius='sm'
-                  withBorder
-                >
-                  {app.icon ? (
-                    <img alt='' className={styles.icon} src={app.icon.url} />
-                  ) : (
-                    <div className={`${styles.icon} ${styles.emptyIcon}`} />
-                  )}
-                  <span>
-                    <Text fw={700}>{localized(app.name, 'en')}</Text>
-                    <Text c='dimmed' size='sm'>
-                      {localized(app.summary, 'en')}
-                    </Text>
-                  </span>
-                </Card>
+                <HomeAppCard app={app} key={app.id} />
               ))}
             </div>
           </section>
@@ -94,27 +67,7 @@ export default function HomePage() {
             </div>
             <div className={styles.distroGrid}>
               {distros.map((distro) => (
-                <Card
-                  className={styles.distroItem}
-                  key={distro.id}
-                  padding='md'
-                  radius='sm'
-                  withBorder
-                >
-                  <div className={styles.distroHeading}>
-                    <img
-                      alt=''
-                      className={styles.distroIcon}
-                      src={`/distros/${encodeURIComponent(distro.name)}.svg`}
-                    />
-                    <Text className={styles.distroName} fw={700}>
-                      {distro.name}
-                    </Text>
-                    <Text className={styles.distroVersion} fw={700}>
-                      {distro.version ?? '∞'}
-                    </Text>
-                  </div>
-                </Card>
+                <HomeDistroCard distro={distro} key={distro.id} />
               ))}
             </div>
           </section>

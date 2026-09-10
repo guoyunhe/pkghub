@@ -7,6 +7,6 @@ export const controllers = {
   AccessTokens: () => import('#controllers/access_tokens_controller'),
   Apps: () => import('#controllers/apps_controller'),
   Auth: () => import('#controllers/auth_controller'),
-  Images: () => import('#controllers/images_controller'),
   Distros: () => import('#controllers/distros_controller'),
+  Images: () => import('#controllers/images_controller'),
 }
