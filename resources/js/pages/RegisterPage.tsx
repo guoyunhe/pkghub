@@ -10,6 +10,7 @@ import {
   Title,
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
+import { UserPlusIcon } from '@phosphor-icons/react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation } from 'wouter'
@@ -89,7 +90,12 @@ export default function RegisterPage() {
                 {form.errors.form}
               </Text>
             )}
-            <Button type='submit' color='orange' loading={loading}>
+            <Button
+              leftSection={<UserPlusIcon size={18} />}
+              type='submit'
+              color='orange'
+              loading={loading}
+            >
               {t('register')}
             </Button>
           </Stack>

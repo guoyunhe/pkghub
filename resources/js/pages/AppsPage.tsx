@@ -1,5 +1,12 @@
 import type { Data } from '@generated/data'
 import { Alert, Button, Group, Loader, Text, Title } from '@mantine/core'
+import {
+  ArrowRightIcon,
+  PlusIcon,
+  SignInIcon,
+  SignOutIcon,
+  UserPlusIcon,
+} from '@phosphor-icons/react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useLocation } from 'wouter'
@@ -59,20 +66,33 @@ export default function AppsPage() {
           {ready && user ? (
             <>
               {isAdmin && (
-                <Button component={Link} href='/apps/new'>
+                <Button
+                  component={Link}
+                  href='/apps/new'
+                  leftSection={<PlusIcon size={18} weight='bold' />}
+                >
                   Add application
                 </Button>
               )}
-              <Button variant='default' onClick={() => void handleLogout()}>
+              <Button
+                leftSection={<SignOutIcon size={18} />}
+                variant='default'
+                onClick={() => void handleLogout()}
+              >
                 Sign out
               </Button>
             </>
           ) : (
             <>
-              <Button component={Link} href='/login' variant='default'>
+              <Button
+                component={Link}
+                href='/login'
+                leftSection={<SignInIcon size={18} />}
+                variant='default'
+              >
                 Sign in
               </Button>
-              <Button component={Link} href='/register'>
+              <Button component={Link} href='/register' leftSection={<UserPlusIcon size={18} />}>
                 Create account
               </Button>
             </>
@@ -101,7 +121,7 @@ export default function AppsPage() {
               <div className={styles.copy}>
                 <Title order={3}>
                   <Link className={styles.link} href={`/apps/${app.id}`}>
-                    {localized(app.name, i18n.language)}
+                    {localized(app.name, i18n.language)} <ArrowRightIcon size={18} weight='bold' />
                   </Link>
                 </Title>
                 <Text c='dimmed'>{localized(app.summary, i18n.language)}</Text>

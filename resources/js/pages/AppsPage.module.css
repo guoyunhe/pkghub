@@ -49,7 +49,10 @@
 }
 
 .link {
+  align-items: center;
   color: inherit;
+  display: inline-flex;
+  gap: 6px;
   text-decoration: none;
 }
 

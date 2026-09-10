@@ -1,5 +1,6 @@
 import type { Data } from '@generated/data'
 import { Alert, Button, Group, Loader, Stack, Text, TextInput, Title } from '@mantine/core'
+import { FloppyDiskIcon, XIcon } from '@phosphor-icons/react'
 import { useEffect, useState } from 'react'
 import { Redirect, useLocation, useRoute } from 'wouter'
 
@@ -77,7 +78,11 @@ export default function AppFormPage() {
           <Text className={styles.eyebrow}>{appId ? 'Catalog entry' : 'New catalog entry'}</Text>
           <Title order={1}>{appId ? 'Edit application' : 'Add application'}</Title>
         </div>
-        <Button variant='default' onClick={() => navigate('/apps')}>
+        <Button
+          leftSection={<XIcon size={18} />}
+          variant='default'
+          onClick={() => navigate('/apps')}
+        >
           Cancel
         </Button>
       </header>
@@ -143,7 +148,11 @@ export default function AppFormPage() {
           onChange={(event) => setForm({ ...form, desktopUrl: event.currentTarget.value })}
         />
         <Group justify='flex-end'>
-          <Button loading={saving} onClick={() => void save()}>
+          <Button
+            leftSection={<FloppyDiskIcon size={18} />}
+            loading={saving}
+            onClick={() => void save()}
+          >
             Save application
           </Button>
         </Group>

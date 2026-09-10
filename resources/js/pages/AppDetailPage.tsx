@@ -1,5 +1,11 @@
 import type { Data } from '@generated/data'
 import { Alert, Button, Group, Loader, Text, Title } from '@mantine/core'
+import {
+  ArrowLeftIcon,
+  ArrowSquareOutIcon,
+  PencilSimpleIcon,
+  TrashIcon,
+} from '@phosphor-icons/react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useLocation, useRoute } from 'wouter'
@@ -70,15 +76,30 @@ export default function AppDetailPage() {
   return (
     <main className={styles.page}>
       <header className={styles.header}>
-        <Button component={Link} href='/apps' variant='subtle'>
+        <Button
+          component={Link}
+          href='/apps'
+          leftSection={<ArrowLeftIcon size={18} />}
+          variant='subtle'
+        >
           Back to applications
         </Button>
         {isAdmin && (
           <Group gap='xs'>
-            <Button component={Link} href={`/apps/${app.id}/edit`} variant='default'>
+            <Button
+              component={Link}
+              href={`/apps/${app.id}/edit`}
+              leftSection={<PencilSimpleIcon size={18} />}
+              variant='default'
+            >
               Edit application
             </Button>
-            <Button color='red' variant='subtle' onClick={() => void remove()}>
+            <Button
+              color='red'
+              leftSection={<TrashIcon size={18} />}
+              variant='subtle'
+              onClick={() => void remove()}
+            >
               Delete
             </Button>
           </Group>
@@ -131,6 +152,7 @@ export default function AppDetailPage() {
                 href={app.appstreamUrl}
                 rel='noreferrer'
                 target='_blank'
+                rightSection={<ArrowSquareOutIcon size={18} />}
                 variant='default'
               >
                 AppStream metadata
@@ -142,6 +164,7 @@ export default function AppDetailPage() {
                 href={app.desktopUrl}
                 rel='noreferrer'
                 target='_blank'
+                rightSection={<ArrowSquareOutIcon size={18} />}
                 variant='default'
               >
                 Desktop entry

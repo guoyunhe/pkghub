@@ -10,6 +10,7 @@ import {
   Title,
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
+import { SignInIcon } from '@phosphor-icons/react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation } from 'wouter'
@@ -72,7 +73,12 @@ export default function LoginPage() {
                 {form.errors.form}
               </Text>
             )}
-            <Button type='submit' color='orange' loading={loading}>
+            <Button
+              leftSection={<SignInIcon size={18} />}
+              type='submit'
+              color='orange'
+              loading={loading}
+            >
               {t('login')}
             </Button>
           </Stack>

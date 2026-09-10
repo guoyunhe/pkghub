@@ -55,6 +55,7 @@
     "@mantine/core": "^9.6.0",
     "@mantine/form": "^9.6.0",
     "@mantine/hooks": "^9.6.0",
+    "@phosphor-icons/react": "^2.1.10",
     "@tuyau/core": "^1.2.2",
     "@vinejs/vine": "^4.4.0",
     "better-sqlite3": "^13.0.3",
