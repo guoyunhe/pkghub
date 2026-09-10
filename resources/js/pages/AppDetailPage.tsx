@@ -14,6 +14,8 @@ import type { Paginated } from '../types/pagination'
 
 import styles from './AppDetailPage.module.css'
 
+const packageTypesWithIcons = new Set(['rpm', 'deb', 'appimage'])
+
 function localized(translations: Record<string, string>, language: string) {
   return (
     translations[language] ??
@@ -208,7 +210,16 @@ export default function AppDetailPage() {
                   <div>
                     <Title order={3}>{pkg.name}</Title>
                     <div className={styles.packageMeta}>
-                      <span>{pkg.type}</span>
+                      <span className={styles.packageType}>
+                        {packageTypesWithIcons.has(pkg.type) && (
+                          <img
+                            alt=''
+                            className={styles.packageTypeIcon}
+                            src={`/packages/${pkg.type}.svg`}
+                          />
+                        )}
+                        {pkg.type}
+                      </span>
                       {pkg.version && <span>{pkg.version}</span>}
                       {pkg.release && <span>{pkg.release}</span>}
                       {pkg.arch && <span>{pkg.arch}</span>}
