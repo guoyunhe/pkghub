@@ -24,7 +24,8 @@
   "header": {
     "searchApplications": "搜索应用",
     "addApplication": "添加应用",
-    "repositories": "软件仓库"
+    "repositories": "软件仓库",
+    "packages": "软件包"
   },
   "common": {
     "cancel": "取消",
@@ -45,6 +46,13 @@
     "subtitle": "发现软件元数据、启动器和上游来源。",
     "notFound": "未找到应用。",
     "loadError": "无法加载应用"
+  },
+  "packages": {
+    "eyebrow": "Linux 软件目录",
+    "title": "软件包",
+    "subtitle": "目录中收录的全部软件包，涵盖各个仓库与格式。",
+    "notFound": "未找到软件包。",
+    "loadError": "无法加载软件包"
   },
   "search": {
     "eyebrow": "应用搜索",

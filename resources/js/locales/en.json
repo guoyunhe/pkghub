@@ -24,7 +24,8 @@
   "header": {
     "searchApplications": "Search applications",
     "addApplication": "Add application",
-    "repositories": "Repositories"
+    "repositories": "Repositories",
+    "packages": "Packages"
   },
   "common": {
     "cancel": "Cancel",
@@ -45,6 +46,13 @@
     "subtitle": "Discover software metadata, launchers and upstream sources.",
     "notFound": "No applications found.",
     "loadError": "Unable to load applications"
+  },
+  "packages": {
+    "eyebrow": "Linux catalog",
+    "title": "Packages",
+    "subtitle": "All packages known to the catalog, across every repository and format.",
+    "notFound": "No packages found.",
+    "loadError": "Unable to load packages"
   },
   "search": {
     "eyebrow": "Application search",
