@@ -1,5 +1,5 @@
 import type { Data } from '@generated/data'
-import { Alert, Button, Group, Loader, Text, Title } from '@mantine/core'
+import { Alert, Button, Group, Loader, Pagination, Text, Title } from '@mantine/core'
 import { ArrowLeftIcon } from '@phosphor-icons/react/ArrowLeft'
 import { ArrowSquareOutIcon } from '@phosphor-icons/react/ArrowSquareOut'
 import { PencilSimpleIcon } from '@phosphor-icons/react/PencilSimple'
@@ -9,7 +9,8 @@ import { useTranslation } from 'react-i18next'
 import { Link, useLocation, useRoute } from 'wouter'
 
 import { useAuth } from '../auth'
-import { deleteApp, getApp } from '../services/apps'
+import { deleteApp, getApp, getAppPackages } from '../services/apps'
+import type { Paginated } from '../types/pagination'
 
 import styles from './AppDetailPage.module.css'
 
@@ -29,7 +30,11 @@ export default function AppDetailPage() {
   const [, params] = useRoute('/apps/:id')
   const appId = params?.id ? Number(params.id) : undefined
   const [app, setApp] = useState<Data.App | null>(null)
+  const [packages, setPackages] = useState<Paginated<Data.Pkg> | null>(null)
+  const [packagesPage, setPackagesPage] = useState(1)
+  const [packagesLoading, setPackagesLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [packagesError, setPackagesError] = useState<string | null>(null)
 
   useEffect(() => {
     if (!appId) {
@@ -42,6 +47,19 @@ export default function AppDetailPage() {
         setError(reason instanceof Error ? reason.message : 'Unable to load application'),
       )
   }, [appId])
+
+  useEffect(() => {
+    if (!appId) return
+
+    setPackagesLoading(true)
+    setPackagesError(null)
+    getAppPackages(appId, packagesPage)
+      .then(setPackages)
+      .catch((reason) =>
+        setPackagesError(reason instanceof Error ? reason.message : 'Unable to load packages'),
+      )
+      .finally(() => setPackagesLoading(false))
+  }, [appId, packagesPage])
 
   if (error) {
     return (
@@ -62,6 +80,7 @@ export default function AppDetailPage() {
   const isAdmin = user?.role === 'admin'
 
   async function remove() {
+    if (!app) return
     if (!window.confirm(`Delete ${name}?`)) return
     try {
       await deleteApp(app.id)
@@ -171,6 +190,61 @@ export default function AppDetailPage() {
           </Group>
         </section>
       )}
+
+      <section className={styles.packages}>
+        <Title order={2}>Packages</Title>
+        {packagesError && <Alert color='red'>{packagesError}</Alert>}
+        {packagesLoading ? (
+          <div className={styles.packagesLoading}>
+            <Loader color='orange' size='sm' />
+          </div>
+        ) : packages?.data.length === 0 ? (
+          <Text c='dimmed'>No packages available.</Text>
+        ) : (
+          <>
+            <div className={styles.packageList}>
+              {packages?.data.map((pkg) => (
+                <article className={styles.package} key={pkg.id}>
+                  <div>
+                    <Title order={3}>{pkg.name}</Title>
+                    <div className={styles.packageMeta}>
+                      <span>{pkg.type}</span>
+                      {pkg.version && <span>{pkg.version}</span>}
+                      {pkg.release && <span>{pkg.release}</span>}
+                      {pkg.arch && <span>{pkg.arch}</span>}
+                    </div>
+                    {pkg.installCommand && (
+                      <Text className={styles.installCommand} component='code' size='sm'>
+                        {pkg.installCommand}
+                      </Text>
+                    )}
+                  </div>
+                  {pkg.downloadUrl && (
+                    <Button
+                      component='a'
+                      href={pkg.downloadUrl}
+                      rel='noreferrer'
+                      target='_blank'
+                      rightSection={<ArrowSquareOutIcon size={18} />}
+                      variant='default'
+                    >
+                      Download
+                    </Button>
+                  )}
+                </article>
+              ))}
+            </div>
+            {packages && packages.meta.lastPage > 1 && (
+              <Pagination
+                className={styles.pagination}
+                total={packages.meta.lastPage}
+                value={packages.meta.currentPage}
+                onChange={setPackagesPage}
+              />
+            )}
+          </>
+        )}
+      </section>
     </main>
   )
 }

@@ -2,7 +2,9 @@ import { Exception } from '@adonisjs/core/exceptions'
 import type { HttpContext } from '@adonisjs/core/http'
 
 import App from '#models/app'
+import Pkg from '#models/pkg'
 import AppTransformer from '#transformers/app_transformer'
+import PkgTransformer from '#transformers/pkg_transformer'
 
 type LocalizedText = Record<string, string>
 
@@ -35,6 +37,18 @@ export default class AppsController {
     return serialize(AppTransformer.transform(app))
   }
 
+  async packages({ params, request, serialize }: HttpContext) {
+    await App.findOrFail(params.id)
+    const page = this.positiveInteger(request.input('page'), 1)
+    const perPage = Math.min(this.positiveInteger(request.input('perPage'), 12), 50)
+    const paginator = await Pkg.query()
+      .where('appId', params.id)
+      .orderBy('id', 'desc')
+      .paginate(page, perPage)
+
+    return serialize(PkgTransformer.paginate(paginator.all(), paginator.getMeta()))
+  }
+
   async store({ request, response, serialize }: HttpContext) {
     const app = await App.create(this.attributes(request))
     await app.load('icon')
@@ -50,7 +64,8 @@ export default class AppsController {
   }
 
   async destroy({ params, response }: HttpContext) {
-    await (await App.findOrFail(params.id)).delete()
+    const app = await App.findOrFail(params.id)
+    await app.delete()
     return response.noContent()
   }
 

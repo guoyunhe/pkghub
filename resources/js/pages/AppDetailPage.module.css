@@ -51,6 +51,60 @@
   margin-bottom: 16px;
 }
 
+.packages {
+  margin-top: 44px;
+}
+
+.packages h2 {
+  margin-bottom: 16px;
+}
+
+.packagesLoading {
+  display: flex;
+  justify-content: center;
+  padding: 24px 0;
+}
+
+.packageList {
+  border-top: 1px solid #d9d4ca;
+}
+
+.package {
+  align-items: center;
+  border-bottom: 1px solid #d9d4ca;
+  display: flex;
+  gap: 24px;
+  justify-content: space-between;
+  padding: 18px 0;
+}
+
+.package h3 {
+  margin: 0;
+}
+
+.packageMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.packageMeta span {
+  border: 1px solid #d9d4ca;
+  font-size: 12px;
+  padding: 2px 6px;
+}
+
+.installCommand {
+  display: block;
+  margin-top: 10px;
+  overflow-wrap: anywhere;
+}
+
+.pagination {
+  margin-top: 28px;
+}
+
 @media (max-width: 600px) {
   .page {
     padding: 32px 18px 48px;
@@ -68,5 +122,11 @@
 
   .metadata {
     grid-template-columns: 1fr;
+  }
+
+  .package {
+    align-items: start;
+    flex-direction: column;
+    gap: 14px;
   }
 }

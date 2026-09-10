@@ -44,7 +44,7 @@ export class AuthAccessTokenSchema extends BaseModel {
   @column()
   declare abilities: string
   @column.dateTime({ autoCreate: true })
-  declare createdAt: DateTime | null
+  declare createdAt: DateTime
   @column.dateTime()
   declare expiresAt: DateTime | null
   @column()
@@ -191,7 +191,7 @@ export class RepoSchema extends BaseModel {
 }
 
 export class UserSchema extends BaseModel {
-  static $columns = ['createdAt', 'email', 'id', 'name', 'password', 'updatedAt'] as const
+  static $columns = ['createdAt', 'email', 'id', 'name', 'password', 'role', 'updatedAt'] as const
   $columns = UserSchema.$columns
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
@@ -200,9 +200,11 @@ export class UserSchema extends BaseModel {
   @column({ isPrimary: true })
   declare id: number
   @column()
-  declare name: string | null
+  declare name: string
   @column({ serializeAs: null })
   declare password: string
+  @column()
+  declare role: string
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null
 }

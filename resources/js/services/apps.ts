@@ -46,6 +46,13 @@ export async function getApp(id: number) {
   return data.data
 }
 
+export async function getAppPackages(id: number, page = 1) {
+  const { data } = await api.get<SerializedPaginated<Data.Pkg>>(`/apps/${id}/packages`, {
+    params: { page },
+  })
+  return { data: data.data, meta: data.metadata } satisfies Paginated<Data.Pkg>
+}
+
 export async function createApp(payload: AppPayload) {
   const { data } = await api.post<{ data: Data.App }>('/apps', payload, { headers: authHeaders() })
   return data.data

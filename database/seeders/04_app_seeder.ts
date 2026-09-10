@@ -4,6 +4,7 @@ import xior, { isXiorError } from 'xior'
 
 import App from '#models/app'
 import Image from '#models/image'
+import Pkg from '#models/pkg'
 
 const applications = [
   {
@@ -13,6 +14,18 @@ const applications = [
       'https://raw.githubusercontent.com/libretro/RetroArch/refs/heads/master/com.libretro.RetroArch.desktop',
     iconUrl:
       'https://raw.githubusercontent.com/libretro/RetroArch/refs/heads/master/media/com.libretro.RetroArch.svg',
+    packages: [
+      {
+        arch: 'x86_64',
+        downloadUrl: 'https://buildbot.libretro.com/stable/1.22.2/linux/x86_64/RetroArch.7z',
+        version: '1.22.2',
+      },
+      {
+        arch: 'x86_64',
+        downloadUrl: 'https://buildbot.libretro.com/nightly/linux/x86_64/RetroArch.7z',
+        version: 'nightly',
+      },
+    ],
   },
   {
     appstreamUrl:
@@ -83,7 +96,7 @@ function parseAppStream(xml: string) {
 
 export default class AppSeeder extends BaseSeeder {
   async run() {
-    for (const { appstreamUrl, desktopUrl, iconUrl } of applications) {
+    for (const { appstreamUrl, desktopUrl, iconUrl, packages = [] } of applications) {
       const appstreamData = await this.download(appstreamUrl, 'AppStream XML')
       const appstreamXml = appstreamData.toString('utf8')
       const application = parseAppStream(appstreamXml)
@@ -94,6 +107,30 @@ export default class AppSeeder extends BaseSeeder {
         { ...application, appstreamUrl, appstreamXml, desktopUrl: desktopUrl ?? null, desktop },
       )
       await this.updateIcon(app, iconUrl)
+      await this.updatePackages(app, packages)
+    }
+  }
+
+  private async updatePackages(
+    app: App,
+    packages: Array<{ arch: string; downloadUrl: string; version: string }>,
+  ) {
+    for (const pkg of packages) {
+      await Pkg.updateOrCreate(
+        { appId: app.id, type: 'appimage', version: pkg.version, arch: pkg.arch },
+        {
+          ...pkg,
+          appId: app.id,
+          type: 'appimage',
+          name: 'RetroArch',
+          release: null,
+          repoId: null,
+          checksum: null,
+          checksumType: null,
+          size: null,
+          installCommand: '7z x RetroArch.7z && chmod +x RetroArch*.AppImage',
+        },
+      )
     }
   }
 
