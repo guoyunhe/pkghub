@@ -4,6 +4,6 @@ import type User from '#models/user'
 
 export default class UserTransformer extends BaseTransformer<User> {
   toObject() {
-    return this.pick(this.resource, ['id', 'name', 'email', 'role', 'createdAt', 'updatedAt'])
+    return this.pick(this.resource, ['id', 'name', 'role', 'createdAt', 'updatedAt'])
   }
 }

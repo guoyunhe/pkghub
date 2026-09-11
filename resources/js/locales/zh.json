@@ -30,12 +30,28 @@
     "theme": "主题",
     "themeAuto": "跟随系统",
     "themeLight": "浅色模式",
-    "themeDark": "深色模式"
+    "themeDark": "深色模式",
+    "profile": "个人资料"
   },
   "common": {
     "cancel": "取消",
     "download": "下载",
     "notSpecified": "未指定"
+  },
+  "favorites": {
+    "add": "收藏应用",
+    "remove": "取消收藏",
+    "loadError": "无法加载收藏列表"
+  },
+  "profile": {
+    "eyebrow": "用户主页",
+    "eyebrowOwn": "你的账户",
+    "favoritesTitle": "收藏的应用",
+    "noFavorites": "你还没有收藏任何应用。",
+    "noFavoritesOther": "该用户还没有收藏任何应用。",
+    "browseApps": "浏览应用",
+    "loadError": "无法加载用户信息",
+    "notFound": "用户不存在。"
   },
   "home": {
     "eyebrow": "Linux 软件目录",

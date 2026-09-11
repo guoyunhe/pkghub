@@ -17,6 +17,7 @@ export default class AppTransformer extends BaseTransformer<App> {
         'desktopUrl',
       ]),
       icon: this.resource.icon ? ImageTransformer.transform(this.resource.icon) : null,
+      isFavorite: this.resource.favoritedBy ? this.resource.favoritedBy.length > 0 : false,
     }
   }
 }

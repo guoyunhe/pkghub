@@ -26,6 +26,11 @@ router
       })
       .prefix('auth')
 
+    router.get('users/:id', [controllers.Users, 'show'])
+    router.get('users/:id/favorites', [controllers.Users, 'favorites'])
+    router.post('apps/:id/favorite', [controllers.Favorites, 'store']).use(middleware.auth())
+    router.delete('apps/:id/favorite', [controllers.Favorites, 'destroy']).use(middleware.auth())
+
     router.resource('images', controllers.Images).apiOnly().use('*', middleware.auth())
     router.get('apps', [controllers.Apps, 'index'])
     router.get('apps/:id', [controllers.Apps, 'show'])

@@ -7,12 +7,16 @@ import AppTransformer from '#transformers/app_transformer'
 type LocalizedText = Record<string, string>
 
 export default class AppsController {
-  async index({ request, serialize }: HttpContext) {
+  async index({ auth, request, serialize }: HttpContext) {
     const page = this.positiveInteger(request.input('page'), 1)
     const perPage = Math.min(this.positiveInteger(request.input('perPage'), 12), 50)
     const rawQuery = request.input('q')
     const query = typeof rawQuery === 'string' ? rawQuery.trim().toLocaleLowerCase() : ''
     const appsQuery = App.query().preload('icon').orderBy('id', 'desc')
+
+    if (auth.isAuthenticated) {
+      appsQuery.preload('favoritedBy', (builder) => builder.where('users.id', auth.user!.id))
+    }
 
     if (query) {
       const pattern = `%${query.replace(/[\\%_]/g, '\\$&')}%`
@@ -30,8 +34,12 @@ export default class AppsController {
     return serialize(AppTransformer.paginate(paginator.all(), paginator.getMeta()))
   }
 
-  async show({ params, serialize }: HttpContext) {
-    const app = await App.query().where('id', params.id).preload('icon').firstOrFail()
+  async show({ auth, params, serialize }: HttpContext) {
+    const appQuery = App.query().where('id', params.id).preload('icon')
+    if (auth.isAuthenticated) {
+      appQuery.preload('favoritedBy', (builder) => builder.where('users.id', auth.user!.id))
+    }
+    const app = await appQuery.firstOrFail()
     return serialize(AppTransformer.transform(app))
   }
 

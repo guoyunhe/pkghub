@@ -36,6 +36,30 @@ const routes = {
     tokens: [{"old":"/api/auth/user","type":0,"val":"api","end":""},{"old":"/api/auth/user","type":0,"val":"auth","end":""},{"old":"/api/auth/user","type":0,"val":"user","end":""}],
     types: placeholder as Registry['auth.user']['types'],
   },
+  'users.show': {
+    methods: ["GET","HEAD"],
+    pattern: '/api/users/:id',
+    tokens: [{"old":"/api/users/:id","type":0,"val":"api","end":""},{"old":"/api/users/:id","type":0,"val":"users","end":""},{"old":"/api/users/:id","type":1,"val":"id","end":""}],
+    types: placeholder as Registry['users.show']['types'],
+  },
+  'users.favorites': {
+    methods: ["GET","HEAD"],
+    pattern: '/api/users/:id/favorites',
+    tokens: [{"old":"/api/users/:id/favorites","type":0,"val":"api","end":""},{"old":"/api/users/:id/favorites","type":0,"val":"users","end":""},{"old":"/api/users/:id/favorites","type":1,"val":"id","end":""},{"old":"/api/users/:id/favorites","type":0,"val":"favorites","end":""}],
+    types: placeholder as Registry['users.favorites']['types'],
+  },
+  'favorites.store': {
+    methods: ["POST"],
+    pattern: '/api/apps/:id/favorite',
+    tokens: [{"old":"/api/apps/:id/favorite","type":0,"val":"api","end":""},{"old":"/api/apps/:id/favorite","type":0,"val":"apps","end":""},{"old":"/api/apps/:id/favorite","type":1,"val":"id","end":""},{"old":"/api/apps/:id/favorite","type":0,"val":"favorite","end":""}],
+    types: placeholder as Registry['favorites.store']['types'],
+  },
+  'favorites.destroy': {
+    methods: ["DELETE"],
+    pattern: '/api/apps/:id/favorite',
+    tokens: [{"old":"/api/apps/:id/favorite","type":0,"val":"api","end":""},{"old":"/api/apps/:id/favorite","type":0,"val":"apps","end":""},{"old":"/api/apps/:id/favorite","type":1,"val":"id","end":""},{"old":"/api/apps/:id/favorite","type":0,"val":"favorite","end":""}],
+    types: placeholder as Registry['favorites.destroy']['types'],
+  },
   'images.index': {
     methods: ["GET","HEAD"],
     pattern: '/api/images',

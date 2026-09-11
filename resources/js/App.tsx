@@ -21,6 +21,7 @@ import { SignInIcon } from '@phosphor-icons/react/SignIn'
 import { SignOutIcon } from '@phosphor-icons/react/SignOut'
 import { SquaresFourIcon } from '@phosphor-icons/react/SquaresFour'
 import { SunIcon } from '@phosphor-icons/react/Sun'
+import { UserCircleIcon } from '@phosphor-icons/react/UserCircle'
 import { UserPlusIcon } from '@phosphor-icons/react/UserPlus'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -38,6 +39,7 @@ import RegisterPage from './pages/RegisterPage'
 import RepoFormPage from './pages/RepoFormPage'
 import ReposPage from './pages/ReposPage'
 import SearchResultsPage from './pages/SearchResultsPage'
+import UserDetailPage from './pages/UserDetailPage'
 
 function AppRoutes() {
   return (
@@ -49,6 +51,7 @@ function AppRoutes() {
       <Route path='/repos/new' component={RepoFormPage} />
       <Route path='/repos/:id/edit' component={RepoFormPage} />
       <Route path='/repos' component={ReposPage} />
+      <Route path='/users/:id' component={UserDetailPage} />
       <Route path='/apps/new' component={AppFormPage} />
       <Route path='/apps/:id/edit' component={AppFormPage} />
       <Route path='/apps/:id' component={AppDetailPage} />
@@ -190,13 +193,25 @@ function AppHeader() {
             }}
           />
           {ready && user ? (
-            <Button
-              leftSection={<SignOutIcon size={18} />}
-              variant='default'
-              onClick={() => void handleLogout()}
-            >
-              {t('logout')}
-            </Button>
+            <>
+              <ActionIcon
+                aria-label={t('header.profile')}
+                component={Link}
+                href={`/users/${user.id}`}
+                size='lg'
+                title={t('header.profile')}
+                variant='default'
+              >
+                <UserCircleIcon size={20} />
+              </ActionIcon>
+              <Button
+                leftSection={<SignOutIcon size={18} />}
+                variant='default'
+                onClick={() => void handleLogout()}
+              >
+                {t('logout')}
+              </Button>
+            </>
           ) : ready ? (
             <>
               <Button

@@ -82,6 +82,21 @@ export class DistroSchema extends BaseModel {
   declare version: string | null
 }
 
+export class FavoriteSchema extends BaseModel {
+  static $columns = ['appId', 'createdAt', 'id', 'updatedAt', 'userId'] as const
+  $columns = FavoriteSchema.$columns
+  @column()
+  declare appId: number
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column({ isPrimary: true })
+  declare id: number
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare userId: number
+}
+
 export class FileSchema extends BaseModel {
   static $columns = ['createdAt', 'id', 'mimeType', 'path', 'size', 'updatedAt', 'userId'] as const
   $columns = FileSchema.$columns

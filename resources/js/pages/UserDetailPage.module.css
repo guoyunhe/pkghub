@@ -1,28 +1,8 @@
 .page {
   margin: 0 auto;
-  padding: 72px 24px;
+  max-width: 900px;
+  padding: 56px 24px 72px;
   width: 100%;
-}
-
-.header {
-  align-items: end;
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 36px;
-}
-
-.header h1 {
-  margin: 6px 0;
-}
-
-.eyebrow {
-  color: var(--ph-primary);
-  font-weight: 700;
-  letter-spacing: 0;
-}
-
-.grid {
-  border-top: 1px solid var(--ph-border);
 }
 
 .loading {
@@ -31,8 +11,49 @@
   padding: 72px 0;
 }
 
-.pagination {
-  margin-top: 28px;
+.profileHeader {
+  align-items: center;
+  border-bottom: 1px solid var(--ph-border);
+  display: flex;
+  gap: 24px;
+  padding-bottom: 32px;
+}
+
+.avatar {
+  align-items: center;
+  background: var(--ph-primary);
+  border-radius: 50%;
+  color: #fff;
+  display: flex;
+  font-size: 36px;
+  font-weight: 700;
+  height: 88px;
+  justify-content: center;
+  text-transform: uppercase;
+  width: 88px;
+}
+
+.eyebrow {
+  color: var(--ph-primary);
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.profileHeader h1 {
+  margin: 6px 0 4px;
+}
+
+.favorites {
+  margin-top: 40px;
+}
+
+.favorites h2 {
+  margin: 0;
+}
+
+.grid {
+  border-top: 1px solid var(--ph-border);
+  margin-top: 20px;
 }
 
 .item {
@@ -58,22 +79,6 @@
   justify-self: end;
 }
 
-.pkgItem {
-  align-items: center;
-  border-bottom: 1px solid var(--ph-border);
-  display: grid;
-  gap: 14px;
-  grid-template-columns: 32px minmax(0, 1fr) auto;
-  padding: 16px 0;
-}
-
-.pkgTypeIcon {
-  border-radius: 4px;
-  height: 32px;
-  object-fit: contain;
-  width: 32px;
-}
-
 .copy h3 {
   margin: 0 0 4px;
 }
@@ -90,16 +95,29 @@
   color: var(--ph-primary);
 }
 
-.meta {
+.metadata {
   display: flex;
   gap: 8px;
   margin-top: 9px;
 }
 
-.meta span {
+.metadata span {
   border: 1px solid var(--ph-border);
   font-size: 12px;
   padding: 2px 6px;
+}
+
+.empty {
+  align-items: center;
+  border-top: 1px solid var(--ph-border);
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+  padding: 64px 0;
+}
+
+.pagination {
+  margin-top: 28px;
 }
 
 @media (max-width: 600px) {
@@ -107,9 +125,15 @@
     padding: 44px 18px;
   }
 
-  .header {
-    align-items: start;
+  .profileHeader {
+    align-items: flex-start;
     gap: 16px;
+  }
+
+  .avatar {
+    font-size: 26px;
+    height: 64px;
+    width: 64px;
   }
 
   .item {

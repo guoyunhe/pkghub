@@ -13,6 +13,14 @@ export interface ApiDefinition {
     logout: typeof routes['auth.logout']
     user: typeof routes['auth.user']
   }
+  users: {
+    show: typeof routes['users.show']
+    favorites: typeof routes['users.favorites']
+  }
+  favorites: {
+    store: typeof routes['favorites.store']
+    destroy: typeof routes['favorites.destroy']
+  }
   images: {
     index: typeof routes['images.index']
     store: typeof routes['images.store']

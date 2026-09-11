@@ -30,12 +30,28 @@
     "theme": "Theme",
     "themeAuto": "System",
     "themeLight": "Light",
-    "themeDark": "Dark"
+    "themeDark": "Dark",
+    "profile": "Profile"
   },
   "common": {
     "cancel": "Cancel",
     "download": "Download",
     "notSpecified": "Not specified"
+  },
+  "favorites": {
+    "add": "Add to favorites",
+    "remove": "Remove from favorites",
+    "loadError": "Unable to load favorites"
+  },
+  "profile": {
+    "eyebrow": "User profile",
+    "eyebrowOwn": "Your account",
+    "favoritesTitle": "Favorite applications",
+    "noFavorites": "You haven't favorited any applications yet.",
+    "noFavoritesOther": "This user hasn't favorited any applications yet.",
+    "browseApps": "Browse applications",
+    "loadError": "Unable to load user",
+    "notFound": "User not found."
   },
   "home": {
     "eyebrow": "Linux catalog",

@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next'
 import { Link, useLocation, useSearchParams } from 'wouter'
 
 import { useAuth } from '../auth'
+import FavoriteButton from '../components/FavoriteButton'
 import { getApps } from '../services/apps'
 import type { Paginated } from '../types/pagination'
 
@@ -102,6 +103,9 @@ export default function AppsPage() {
                         {app.version && <span>{app.version}</span>}
                         {app.license && <span>{app.license}</span>}
                       </div>
+                    </div>
+                    <div className={styles.favorite}>
+                      <FavoriteButton appId={app.id} favorite={app.isFavorite} />
                     </div>
                   </article>
                 ))}

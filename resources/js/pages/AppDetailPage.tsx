@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next'
 import { Link, useLocation, useRoute } from 'wouter'
 
 import { useAuth } from '../auth'
+import FavoriteButton from '../components/FavoriteButton'
 import { deleteApp, getApp, getAppPackages } from '../services/apps'
 import type { Paginated } from '../types/pagination'
 
@@ -133,7 +134,10 @@ export default function AppDetailPage() {
         )}
         <div>
           <Text className={styles.eyebrow}>{t('detail.eyebrow')}</Text>
-          <Title order={1}>{name}</Title>
+          <Group align='center' gap='sm' wrap='nowrap'>
+            <Title order={1}>{name}</Title>
+            <FavoriteButton appId={app.id} favorite={app.isFavorite} size='xl' />
+          </Group>
           <Text c='dimmed' size='lg'>
             {localized(app.summary, i18n.language)}
           </Text>

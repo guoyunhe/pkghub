@@ -8,7 +8,9 @@ export const controllers = {
   Apps: () => import('#controllers/apps_controller'),
   Auth: () => import('#controllers/auth_controller'),
   Distros: () => import('#controllers/distros_controller'),
+  Favorites: () => import('#controllers/favorites_controller'),
   Images: () => import('#controllers/images_controller'),
   Pkgs: () => import('#controllers/pkgs_controller'),
   Repos: () => import('#controllers/repos_controller'),
+  Users: () => import('#controllers/users_controller'),
 }

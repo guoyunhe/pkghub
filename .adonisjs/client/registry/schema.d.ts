@@ -67,6 +67,54 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/auth_controller').default['user']>>>
     }
   }
+  'users.show': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/users/:id'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { id: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/users_controller').default['show']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/users_controller').default['show']>>>
+    }
+  }
+  'users.favorites': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/users/:id/favorites'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { id: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/users_controller').default['favorites']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/users_controller').default['favorites']>>>
+    }
+  }
+  'favorites.store': {
+    methods: ["POST"]
+    pattern: '/api/apps/:id/favorite'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { id: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/favorites_controller').default['store']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/favorites_controller').default['store']>>>
+    }
+  }
+  'favorites.destroy': {
+    methods: ["DELETE"]
+    pattern: '/api/apps/:id/favorite'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { id: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/favorites_controller').default['destroy']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/favorites_controller').default['destroy']>>>
+    }
+  }
   'images.index': {
     methods: ["GET","HEAD"]
     pattern: '/api/images'
