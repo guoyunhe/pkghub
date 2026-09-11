@@ -34,6 +34,7 @@ import AppFormPage from './pages/AppFormPage'
 import AppsPage from './pages/AppsPage'
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
+import PkgFormPage from './pages/PkgFormPage'
 import PkgsPage from './pages/PkgsPage'
 import RegisterPage from './pages/RegisterPage'
 import RepoFormPage from './pages/RepoFormPage'
@@ -47,6 +48,8 @@ function AppRoutes() {
       <Route path='/login' component={LoginPage} />
       <Route path='/register' component={RegisterPage} />
       <Route path='/search' component={SearchResultsPage} />
+      <Route path='/packages/new' component={PkgFormPage} />
+      <Route path='/packages/:id/edit' component={PkgFormPage} />
       <Route path='/packages' component={PkgsPage} />
       <Route path='/repos/new' component={RepoFormPage} />
       <Route path='/repos/:id/edit' component={RepoFormPage} />

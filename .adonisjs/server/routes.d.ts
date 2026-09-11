@@ -25,6 +25,10 @@ export type ScannedRoutes = {
     'apps.index': { paramsTuple?: []; params?: {} }
     'apps.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'pkgs.search': { paramsTuple?: []; params?: {} }
+    'packages.store': { paramsTuple?: []; params?: {} }
+    'packages.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'packages.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'packages.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'apps.packages.index': { paramsTuple: [ParamValue]; params: {'app_id': ParamValue} }
     'repos.index': { paramsTuple?: []; params?: {} }
     'repos.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
@@ -48,6 +52,7 @@ export type ScannedRoutes = {
     'apps.index': { paramsTuple?: []; params?: {} }
     'apps.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'pkgs.search': { paramsTuple?: []; params?: {} }
+    'packages.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'apps.packages.index': { paramsTuple: [ParamValue]; params: {'app_id': ParamValue} }
     'repos.index': { paramsTuple?: []; params?: {} }
     'repos.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
@@ -65,6 +70,7 @@ export type ScannedRoutes = {
     'apps.index': { paramsTuple?: []; params?: {} }
     'apps.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'pkgs.search': { paramsTuple?: []; params?: {} }
+    'packages.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'apps.packages.index': { paramsTuple: [ParamValue]; params: {'app_id': ParamValue} }
     'repos.index': { paramsTuple?: []; params?: {} }
     'repos.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
@@ -77,6 +83,7 @@ export type ScannedRoutes = {
     'favorites.store': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'reviews.store': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'images.store': { paramsTuple?: []; params?: {} }
+    'packages.store': { paramsTuple?: []; params?: {} }
     'repos.store': { paramsTuple?: []; params?: {} }
     'apps.store': { paramsTuple?: []; params?: {} }
   }
@@ -84,16 +91,19 @@ export type ScannedRoutes = {
     'favorites.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'reviews.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'images.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'packages.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'repos.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'apps.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
   }
   PUT: {
     'images.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'packages.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'repos.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'apps.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
   }
   PATCH: {
     'images.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'packages.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'repos.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'apps.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
   }

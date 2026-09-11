@@ -3,6 +3,7 @@ import { Alert, Button, Group, Loader, Pagination, Text, Title } from '@mantine/
 import { ArrowLeftIcon } from '@phosphor-icons/react/ArrowLeft'
 import { ArrowSquareOutIcon } from '@phosphor-icons/react/ArrowSquareOut'
 import { PencilSimpleIcon } from '@phosphor-icons/react/PencilSimple'
+import { PlusIcon } from '@phosphor-icons/react/Plus'
 import { TrashIcon } from '@phosphor-icons/react/Trash'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -14,6 +15,7 @@ import FavoriteButton from '../components/FavoriteButton'
 import ReviewForm from '../components/ReviewForm'
 import ReviewList from '../components/ReviewList'
 import { deleteApp, getApp, getAppPackages } from '../services/apps'
+import { deletePkg } from '../services/pkgs'
 import { deleteReview, getAppReviews } from '../services/reviews'
 import type { Paginated } from '../types/pagination'
 
@@ -39,6 +41,7 @@ export default function AppDetailPage() {
   const [app, setApp] = useState<Data.App | null>(null)
   const [packages, setPackages] = useState<Paginated<Data.Pkg> | null>(null)
   const [packagesPage, setPackagesPage] = useState(1)
+  const [packagesRefresh, setPackagesRefresh] = useState(0)
   const [packagesLoading, setPackagesLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [packagesError, setPackagesError] = useState<string | null>(null)
@@ -72,7 +75,7 @@ export default function AppDetailPage() {
         setPackagesError(reason instanceof Error ? reason.message : t('detail.loadPackagesError')),
       )
       .finally(() => setPackagesLoading(false))
-  }, [appId, packagesPage])
+  }, [appId, packagesPage, packagesRefresh])
 
   useEffect(() => {
     if (!appId) return
@@ -131,6 +134,16 @@ export default function AppDetailPage() {
       setReviewsError(reason instanceof Error ? reason.message : t('reviews.deleteError'))
     } finally {
       setDeletingReviewId(null)
+    }
+  }
+
+  async function handleDeletePkg(pkg: Data.Pkg) {
+    if (!window.confirm(t('packages.deleteConfirm', { name: pkg.name }))) return
+    try {
+      await deletePkg(pkg.id)
+      setPackagesRefresh((value) => value + 1)
+    } catch (reason) {
+      setPackagesError(reason instanceof Error ? reason.message : t('packages.deleteError'))
     }
   }
 
@@ -240,7 +253,19 @@ export default function AppDetailPage() {
       )}
 
       <section className={styles.packages}>
-        <Title order={2}>{t('detail.packages')}</Title>
+        <Group align='center' justify='space-between'>
+          <Title order={2}>{t('detail.packages')}</Title>
+          {isAdmin && (
+            <Button
+              component={Link}
+              href={`/packages/new?appId=${app.id}`}
+              leftSection={<PlusIcon size={16} weight='bold' />}
+              size='xs'
+            >
+              {t('detail.addPackage')}
+            </Button>
+          )}
+        </Group>
         {packagesError && <Alert color='red'>{packagesError}</Alert>}
         {packagesLoading ? (
           <div className={styles.packagesLoading}>
@@ -276,18 +301,42 @@ export default function AppDetailPage() {
                       </Text>
                     )}
                   </div>
-                  {pkg.downloadUrl && (
-                    <Button
-                      component='a'
-                      href={pkg.downloadUrl}
-                      rel='noreferrer'
-                      target='_blank'
-                      rightSection={<ArrowSquareOutIcon size={18} />}
-                      variant='default'
-                    >
-                      {t('detail.download')}
-                    </Button>
-                  )}
+                  <Group gap='xs'>
+                    {pkg.downloadUrl && (
+                      <Button
+                        component='a'
+                        href={pkg.downloadUrl}
+                        rel='noreferrer'
+                        target='_blank'
+                        rightSection={<ArrowSquareOutIcon size={18} />}
+                        variant='default'
+                      >
+                        {t('detail.download')}
+                      </Button>
+                    )}
+                    {isAdmin && (
+                      <>
+                        <Button
+                          aria-label={t('detail.editPackage')}
+                          component={Link}
+                          href={`/packages/${pkg.id}/edit`}
+                          size='xs'
+                          variant='subtle'
+                        >
+                          <PencilSimpleIcon size={16} />
+                        </Button>
+                        <Button
+                          aria-label={t('detail.deletePackage')}
+                          color='red'
+                          size='xs'
+                          variant='subtle'
+                          onClick={() => void handleDeletePkg(pkg)}
+                        >
+                          <TrashIcon size={16} />
+                        </Button>
+                      </>
+                    )}
+                  </Group>
                 </article>
               ))}
             </div>

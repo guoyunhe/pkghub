@@ -259,6 +259,54 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/pkgs_controller').default['search']>>>
     }
   }
+  'packages.store': {
+    methods: ["POST"]
+    pattern: '/api/packages'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/pkgs_controller').default['store']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/pkgs_controller').default['store']>>>
+    }
+  }
+  'packages.show': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/packages/:id'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { id: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/pkgs_controller').default['show']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/pkgs_controller').default['show']>>>
+    }
+  }
+  'packages.update': {
+    methods: ["PUT","PATCH"]
+    pattern: '/api/packages/:id'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { id: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/pkgs_controller').default['update']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/pkgs_controller').default['update']>>>
+    }
+  }
+  'packages.destroy': {
+    methods: ["DELETE"]
+    pattern: '/api/packages/:id'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { id: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/pkgs_controller').default['destroy']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/pkgs_controller').default['destroy']>>>
+    }
+  }
   'apps.packages.index': {
     methods: ["GET","HEAD"]
     pattern: '/api/apps/:app_id/packages'

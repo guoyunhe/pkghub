@@ -88,7 +88,29 @@
     "title": "Packages",
     "subtitle": "All packages known to the catalog, across every repository and format.",
     "notFound": "No packages found.",
-    "loadError": "Unable to load packages"
+    "loadError": "Unable to load packages",
+    "addPackage": "Add package",
+    "editPackage": "Edit package",
+    "newEntry": "New package",
+    "editEntry": "Package",
+    "save": "Save package",
+    "saveError": "Unable to save package",
+    "delete": "Delete",
+    "deleteConfirm": "Delete package {{name}}?",
+    "deleteError": "Unable to delete package",
+    "fields": {
+      "app": "Application",
+      "type": "Type",
+      "name": "Name",
+      "version": "Version",
+      "release": "Release",
+      "arch": "Architecture",
+      "downloadUrl": "Download URL",
+      "checksum": "Checksum",
+      "checksumType": "Checksum type",
+      "size": "Size (bytes)",
+      "installCommand": "Install command"
+    }
   },
   "search": {
     "eyebrow": "Application search",
@@ -121,6 +143,9 @@
     "desktopEntry": "Desktop entry",
     "packages": "Packages",
     "noPackages": "No packages available.",
+    "addPackage": "Add package",
+    "editPackage": "Edit",
+    "deletePackage": "Delete",
     "download": "Download"
   },
   "form": {

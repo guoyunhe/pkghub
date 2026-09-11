@@ -29,9 +29,9 @@ function authHeaders() {
   return token ? { Authorization: `Bearer ${token}` } : {}
 }
 
-export async function getApps(query = '', page = 1) {
+export async function getApps(query = '', page = 1, perPage = 12) {
   const { data } = await api.get<SerializedPaginated<Data.App>>('/apps', {
-    params: { page, q: query || undefined },
+    params: { page, perPage, q: query || undefined },
   })
   return { data: data.data, meta: data.metadata } satisfies Paginated<Data.App>
 }
