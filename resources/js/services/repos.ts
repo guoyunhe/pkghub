@@ -3,15 +3,6 @@ import xior from 'xior'
 
 import { getAuthToken } from './auth'
 
-export type RepoPayload = {
-  type: string
-  name: string
-  baseUrl: string
-  distroId: number | null
-  configContent: string
-  syncIntervalDays: string
-}
-
 const api = xior.create({ baseURL: import.meta.env.VITE_API_URL ?? '/api' })
 
 function authHeaders() {
@@ -29,14 +20,14 @@ export async function getRepo(id: number) {
   return data.data
 }
 
-export async function createRepo(payload: RepoPayload) {
+export async function createRepo(payload: Partial<Data.Repo>) {
   const { data } = await api.post<{ data: Data.Repo }>('/repos', payload, {
     headers: authHeaders(),
   })
   return data.data
 }
 
-export async function updateRepo(id: number, payload: RepoPayload) {
+export async function updateRepo(id: number, payload: Partial<Data.Repo>) {
   const { data } = await api.patch<{ data: Data.Repo }>(`/repos/${id}`, payload, {
     headers: authHeaders(),
   })

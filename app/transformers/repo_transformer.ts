@@ -13,6 +13,8 @@ export default class RepoTransformer extends BaseTransformer<Repo> {
         'name',
         'baseUrl',
         'configContent',
+        'configUrl',
+        'installScript',
         'syncIntervalDays',
         'lastSyncedAt',
         'createdAt',
