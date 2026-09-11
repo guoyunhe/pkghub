@@ -87,8 +87,8 @@ export default class RepoSeeder extends BaseSeeder {
           distroQuery.where('version', distroVersion)
         }
 
-        console.log(distroName, distroVersion)
-        distroId = (await distroQuery.firstOrFail()).id
+        const distro = await distroQuery.firstOrFail()
+        distroId = distro.id
       }
 
       await Repo.updateOrCreate(
