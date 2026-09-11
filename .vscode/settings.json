@@ -1,0 +1,11 @@
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "oxc.oxc-vscode",
+  "editor.rulers": [100],
+  "chat.tools.terminal.autoApprove": {
+    "/^ls node_modules/\\.bin/ace 2>/dev/null && node ace list 2>&1 \\| head -80$/": {
+      "approve": true,
+      "matchCommandLine": true
+    }
+  }
+}
