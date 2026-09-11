@@ -97,25 +97,6 @@ export class FavoriteSchema extends BaseModel {
   declare userId: number
 }
 
-export class FileSchema extends BaseModel {
-  static $columns = ['createdAt', 'id', 'mimeType', 'path', 'size', 'updatedAt', 'userId'] as const
-  $columns = FileSchema.$columns
-  @column.dateTime({ autoCreate: true })
-  declare createdAt: DateTime
-  @column({ isPrimary: true })
-  declare id: number
-  @column()
-  declare mimeType: string
-  @column()
-  declare path: string
-  @column()
-  declare size: number
-  @column.dateTime({ autoCreate: true, autoUpdate: true })
-  declare updatedAt: DateTime | null
-  @column()
-  declare userId: number | null
-}
-
 export class ImageSchema extends BaseModel {
   static $columns = ['createdAt', 'height', 'id', 'mimeType', 'path', 'size', 'updatedAt', 'userId', 'width'] as const
   $columns = ImageSchema.$columns
@@ -140,7 +121,7 @@ export class ImageSchema extends BaseModel {
 }
 
 export class PkgSchema extends BaseModel {
-  static $columns = ['appId', 'arch', 'checksum', 'checksumType', 'createdAt', 'downloadUrl', 'fileId', 'id', 'installCommand', 'name', 'release', 'repoId', 'size', 'type', 'updatedAt', 'version'] as const
+  static $columns = ['appId', 'arch', 'checksum', 'checksumType', 'createdAt', 'downloadUrl', 'id', 'installCommand', 'name', 'path', 'release', 'repoId', 'size', 'type', 'updatedAt', 'userId', 'version'] as const
   $columns = PkgSchema.$columns
   @column()
   declare appId: number
@@ -154,14 +135,14 @@ export class PkgSchema extends BaseModel {
   declare createdAt: DateTime | null
   @column()
   declare downloadUrl: string | null
-  @column()
-  declare fileId: number | null
   @column({ isPrimary: true })
   declare id: number
   @column()
   declare installCommand: string | null
   @column()
   declare name: string
+  @column()
+  declare path: string | null
   @column()
   declare release: string | null
   @column()
@@ -172,6 +153,8 @@ export class PkgSchema extends BaseModel {
   declare type: string
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null
+  @column()
+  declare userId: number | null
   @column()
   declare version: string | null
 }
