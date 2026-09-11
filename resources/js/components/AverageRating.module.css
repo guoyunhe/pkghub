@@ -1,0 +1,10 @@
+.rating {
+  align-items: center;
+  display: inline-flex;
+  gap: 6px;
+}
+
+.value {
+  font-weight: 600;
+  line-height: 1;
+}

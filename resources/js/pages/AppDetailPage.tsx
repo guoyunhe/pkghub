@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next'
 import { Link, useLocation, useRoute } from 'wouter'
 
 import { useAuth } from '../auth'
+import AverageRating from '../components/AverageRating'
 import FavoriteButton from '../components/FavoriteButton'
 import ReviewForm from '../components/ReviewForm'
 import ReviewList from '../components/ReviewList'
@@ -178,6 +179,7 @@ export default function AppDetailPage() {
             <Title order={1}>{name}</Title>
             <FavoriteButton appId={app.id} favorite={app.isFavorite} size='xl' />
           </Group>
+          <AverageRating size='lg' value={app.avgRating} />
           <Text c='dimmed' size='lg'>
             {localized(app.summary, i18n.language)}
           </Text>

@@ -12,7 +12,10 @@ export default class AppsController {
     const perPage = Math.min(this.positiveInteger(request.input('perPage'), 12), 50)
     const rawQuery = request.input('q')
     const query = typeof rawQuery === 'string' ? rawQuery.trim().toLocaleLowerCase() : ''
-    const appsQuery = App.query().preload('icon').orderBy('id', 'desc')
+    const appsQuery = App.query()
+      .preload('icon')
+      .withAggregate('reviews', (subQuery) => subQuery.avg('rating').as('avgRating'))
+      .orderBy('id', 'desc')
 
     if (auth.isAuthenticated) {
       appsQuery.preload('favoritedBy', (builder) => builder.where('users.id', auth.user!.id))
@@ -35,7 +38,10 @@ export default class AppsController {
   }
 
   async show({ auth, params, serialize }: HttpContext) {
-    const appQuery = App.query().where('id', params.id).preload('icon')
+    const appQuery = App.query()
+      .where('id', params.id)
+      .preload('icon')
+      .withAggregate('reviews', (subQuery) => subQuery.avg('rating').as('avgRating'))
     if (auth.isAuthenticated) {
       appQuery.preload('favoritedBy', (builder) => builder.where('users.id', auth.user!.id))
     }

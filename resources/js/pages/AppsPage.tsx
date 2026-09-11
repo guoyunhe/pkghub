@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next'
 import { Link, useLocation, useSearchParams } from 'wouter'
 
 import { useAuth } from '../auth'
+import AverageRating from '../components/AverageRating'
 import FavoriteButton from '../components/FavoriteButton'
 import { getApps } from '../services/apps'
 import type { Paginated } from '../types/pagination'
@@ -99,6 +100,7 @@ export default function AppsPage() {
                         </Link>
                       </Title>
                       <Text c='dimmed'>{localized(app.summary, i18n.language)}</Text>
+                      <AverageRating value={app.avgRating} />
                       <div className={styles.metadata}>
                         {app.version && <span>{app.version}</span>}
                         {app.license && <span>{app.license}</span>}
