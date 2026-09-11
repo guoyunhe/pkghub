@@ -176,6 +176,21 @@ export class PkgSchema extends BaseModel {
   declare version: string | null
 }
 
+export class PkgFavoriteSchema extends BaseModel {
+  static $columns = ['createdAt', 'id', 'pkgId', 'updatedAt', 'userId'] as const
+  $columns = PkgFavoriteSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare pkgId: number
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare userId: number
+}
+
 export class RepoSchema extends BaseModel {
   static $columns = ['baseUrl', 'createdAt', 'distroId', 'enabled', 'id', 'keyFingerprint', 'keyUrl', 'lastSyncedAt', 'name', 'priority', 'repositoryFile', 'syncIntervalDays', 'type', 'updatedAt'] as const
   $columns = RepoSchema.$columns
@@ -207,6 +222,25 @@ export class RepoSchema extends BaseModel {
   declare type: string
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null
+}
+
+export class ReviewSchema extends BaseModel {
+  static $columns = ['appId', 'comment', 'createdAt', 'id', 'rating', 'updatedAt', 'userId'] as const
+  $columns = ReviewSchema.$columns
+  @column()
+  declare appId: number
+  @column()
+  declare comment: string | null
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare rating: number
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare userId: number
 }
 
 export class UserSchema extends BaseModel {

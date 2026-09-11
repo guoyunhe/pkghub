@@ -91,6 +91,18 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/users_controller').default['favorites']>>>
     }
   }
+  'reviews.user_index': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/users/:id/reviews'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { id: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/reviews_controller').default['userIndex']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/reviews_controller').default['userIndex']>>>
+    }
+  }
   'favorites.store': {
     methods: ["POST"]
     pattern: '/api/apps/:id/favorite'
@@ -113,6 +125,42 @@ export interface Registry {
       query: {}
       response: ExtractResponse<Awaited<ReturnType<import('#controllers/favorites_controller').default['destroy']>>>
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/favorites_controller').default['destroy']>>>
+    }
+  }
+  'reviews.index': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/apps/:id/reviews'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { id: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/reviews_controller').default['index']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/reviews_controller').default['index']>>>
+    }
+  }
+  'reviews.store': {
+    methods: ["POST"]
+    pattern: '/api/apps/:id/reviews'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/review').reviewValidator)>>
+      paramsTuple: [ParamValue]
+      params: { id: ParamValue }
+      query: ExtractQuery<InferInput<(typeof import('#validators/review').reviewValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/reviews_controller').default['store']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/reviews_controller').default['store']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'reviews.destroy': {
+    methods: ["DELETE"]
+    pattern: '/api/apps/:id/reviews'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { id: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/reviews_controller').default['destroy']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/reviews_controller').default['destroy']>>>
     }
   }
   'images.index': {

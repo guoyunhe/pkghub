@@ -8,6 +8,8 @@ import { Link, useLocation, useRoute, useSearchParams } from 'wouter'
 
 import { useAuth } from '../auth'
 import FavoriteButton from '../components/FavoriteButton'
+import ReviewList from '../components/ReviewList'
+import { deleteReview, getUserReviews } from '../services/reviews'
 import { getUser, getUserFavorites } from '../services/users'
 import type { Paginated } from '../types/pagination'
 
@@ -36,6 +38,12 @@ export default function UserDetailPage() {
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [reviews, setReviews] = useState<Paginated<Data.Review> | null>(null)
+  const [reviewsPage, setReviewsPage] = useState(1)
+  const [reviewsLoading, setReviewsLoading] = useState(true)
+  const [reviewsError, setReviewsError] = useState<string | null>(null)
+  const [reviewsRefresh, setReviewsRefresh] = useState(0)
+  const [deletingReviewId, setDeletingReviewId] = useState<number | null>(null)
 
   const isOwn = ready && !!user && user.id === userId
 
@@ -77,6 +85,32 @@ export default function UserDetailPage() {
   useEffect(() => {
     void loadPage()
   }, [userId, page])
+
+  useEffect(() => {
+    if (!Number.isInteger(userId) || userId <= 0) return
+
+    setReviewsLoading(true)
+    setReviewsError(null)
+    getUserReviews(userId, reviewsPage)
+      .then(setReviews)
+      .catch((reason) =>
+        setReviewsError(reason instanceof Error ? reason.message : t('reviews.loadError')),
+      )
+      .finally(() => setReviewsLoading(false))
+  }, [userId, reviewsPage, reviewsRefresh])
+
+  async function handleDeleteReview(review: Data.Review) {
+    if (!review.app || !window.confirm(t('reviews.deleteConfirm'))) return
+    setDeletingReviewId(review.id)
+    try {
+      await deleteReview(review.app.id)
+      setReviewsRefresh((value) => value + 1)
+    } catch (reason) {
+      setReviewsError(reason instanceof Error ? reason.message : t('reviews.deleteError'))
+    } finally {
+      setDeletingReviewId(null)
+    }
+  }
 
   if (loading) {
     return (
@@ -199,6 +233,27 @@ export default function UserDetailPage() {
             )}
           </div>
         )}
+      </section>
+
+      <section className={styles.reviews}>
+        <Title order={2}>{t('reviews.title')}</Title>
+        {reviewsError && <Alert color='red'>{reviewsError}</Alert>}
+        {reviewsLoading ? (
+          <div className={styles.loading}>
+            <Loader color='orange' />
+          </div>
+        ) : reviews ? (
+          <ReviewList
+            currentUserId={user?.id}
+            deletingId={deletingReviewId}
+            language={i18n.language}
+            onDelete={isOwn ? handleDeleteReview : undefined}
+            onPageChange={setReviewsPage}
+            page={reviewsPage}
+            reviews={reviews}
+            variant='user'
+          />
+        ) : null}
       </section>
     </main>
   )

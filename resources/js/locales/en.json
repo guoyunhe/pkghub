@@ -43,6 +43,21 @@
     "remove": "Remove from favorites",
     "loadError": "Unable to load favorites"
   },
+  "reviews": {
+    "title": "Reviews",
+    "signInToReview": "Sign in to write a review",
+    "yourRating": "Your rating",
+    "comment": "Comment",
+    "commentPlaceholder": "Share your experience with this application (optional)",
+    "submit": "Submit review",
+    "submitError": "Unable to submit review",
+    "delete": "Delete review",
+    "deleteConfirm": "Delete your review?",
+    "deleteError": "Unable to delete review",
+    "loadError": "Unable to load reviews",
+    "empty": "No reviews yet.",
+    "deletedUser": "Deleted user"
+  },
   "profile": {
     "eyebrow": "User profile",
     "eyebrowOwn": "Your account",

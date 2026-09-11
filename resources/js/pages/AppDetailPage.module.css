@@ -59,6 +59,14 @@
   margin-bottom: 16px;
 }
 
+.reviews {
+  margin-top: 44px;
+}
+
+.reviews h2 {
+  margin-bottom: 16px;
+}
+
 .packagesLoading {
   display: flex;
   justify-content: center;

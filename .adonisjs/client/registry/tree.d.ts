@@ -17,6 +17,12 @@ export interface ApiDefinition {
     show: typeof routes['users.show']
     favorites: typeof routes['users.favorites']
   }
+  reviews: {
+    userIndex: typeof routes['reviews.user_index']
+    index: typeof routes['reviews.index']
+    store: typeof routes['reviews.store']
+    destroy: typeof routes['reviews.destroy']
+  }
   favorites: {
     store: typeof routes['favorites.store']
     destroy: typeof routes['favorites.destroy']

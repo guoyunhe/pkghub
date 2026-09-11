@@ -2,11 +2,12 @@ import { type AccessToken, DbAccessTokensProvider } from '@adonisjs/auth/access_
 import { withAuthFinder } from '@adonisjs/auth/mixins/lucid'
 import { compose } from '@adonisjs/core/helpers'
 import hash from '@adonisjs/core/services/hash'
-import { manyToMany } from '@adonisjs/lucid/orm'
-import type { ManyToMany } from '@adonisjs/lucid/types/relations'
+import { hasMany, manyToMany } from '@adonisjs/lucid/orm'
+import type { HasMany, ManyToMany } from '@adonisjs/lucid/types/relations'
 
 import { UserSchema } from '#database/schema'
 import App from '#models/app'
+import Review from '#models/review'
 
 export default class User extends compose(UserSchema, withAuthFinder(hash)) {
   static accessTokens = DbAccessTokensProvider.forModel(User)
@@ -14,4 +15,7 @@ export default class User extends compose(UserSchema, withAuthFinder(hash)) {
 
   @manyToMany(() => App, { pivotTable: 'favorites' })
   declare favoriteApps: ManyToMany<typeof App>
+
+  @hasMany(() => Review)
+  declare reviews: HasMany<typeof Review>
 }

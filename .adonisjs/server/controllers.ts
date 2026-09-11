@@ -12,5 +12,6 @@ export const controllers = {
   Images: () => import('#controllers/images_controller'),
   Pkgs: () => import('#controllers/pkgs_controller'),
   Repos: () => import('#controllers/repos_controller'),
+  Reviews: () => import('#controllers/reviews_controller'),
   Users: () => import('#controllers/users_controller'),
 }

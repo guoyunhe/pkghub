@@ -10,7 +10,10 @@ import { Link, useLocation, useRoute } from 'wouter'
 
 import { useAuth } from '../auth'
 import FavoriteButton from '../components/FavoriteButton'
+import ReviewForm from '../components/ReviewForm'
+import ReviewList from '../components/ReviewList'
 import { deleteApp, getApp, getAppPackages } from '../services/apps'
+import { deleteReview, getAppReviews } from '../services/reviews'
 import type { Paginated } from '../types/pagination'
 
 import styles from './AppDetailPage.module.css'
@@ -38,6 +41,12 @@ export default function AppDetailPage() {
   const [packagesLoading, setPackagesLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [packagesError, setPackagesError] = useState<string | null>(null)
+  const [reviews, setReviews] = useState<Paginated<Data.Review> | null>(null)
+  const [reviewsPage, setReviewsPage] = useState(1)
+  const [reviewsLoading, setReviewsLoading] = useState(true)
+  const [reviewsError, setReviewsError] = useState<string | null>(null)
+  const [reviewsRefresh, setReviewsRefresh] = useState(0)
+  const [deletingReviewId, setDeletingReviewId] = useState<number | null>(null)
 
   useEffect(() => {
     if (!appId) {
@@ -63,6 +72,19 @@ export default function AppDetailPage() {
       )
       .finally(() => setPackagesLoading(false))
   }, [appId, packagesPage])
+
+  useEffect(() => {
+    if (!appId) return
+
+    setReviewsLoading(true)
+    setReviewsError(null)
+    getAppReviews(appId, reviewsPage)
+      .then(setReviews)
+      .catch((reason) =>
+        setReviewsError(reason instanceof Error ? reason.message : t('reviews.loadError')),
+      )
+      .finally(() => setReviewsLoading(false))
+  }, [appId, reviewsPage, reviewsRefresh])
 
   if (error) {
     return (
@@ -90,6 +112,24 @@ export default function AppDetailPage() {
       navigate('/apps')
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : t('detail.deleteError'))
+    }
+  }
+
+  function handleReviewSubmitted() {
+    setReviewsPage(1)
+    setReviewsRefresh((value) => value + 1)
+  }
+
+  async function handleDeleteReview(review: Data.Review) {
+    if (!window.confirm(t('reviews.deleteConfirm'))) return
+    setDeletingReviewId(review.id)
+    try {
+      await deleteReview(app!.id)
+      setReviewsRefresh((value) => value + 1)
+    } catch (reason) {
+      setReviewsError(reason instanceof Error ? reason.message : t('reviews.deleteError'))
+    } finally {
+      setDeletingReviewId(null)
     }
   }
 
@@ -259,6 +299,28 @@ export default function AppDetailPage() {
             )}
           </>
         )}
+      </section>
+
+      <section className={styles.reviews}>
+        <Title order={2}>{t('reviews.title')}</Title>
+        <ReviewForm appId={app.id} onSubmitted={handleReviewSubmitted} />
+        {reviewsError && <Alert color='red'>{reviewsError}</Alert>}
+        {reviewsLoading ? (
+          <div className={styles.packagesLoading}>
+            <Loader color='orange' size='sm' />
+          </div>
+        ) : reviews ? (
+          <ReviewList
+            currentUserId={user?.id}
+            deletingId={deletingReviewId}
+            language={i18n.language}
+            onDelete={handleDeleteReview}
+            onPageChange={setReviewsPage}
+            page={reviewsPage}
+            reviews={reviews}
+            variant='app'
+          />
+        ) : null}
       </section>
     </main>
   )

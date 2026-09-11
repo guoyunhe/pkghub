@@ -28,8 +28,12 @@ router
 
     router.get('users/:id', [controllers.Users, 'show'])
     router.get('users/:id/favorites', [controllers.Users, 'favorites'])
+    router.get('users/:id/reviews', [controllers.Reviews, 'userIndex'])
     router.post('apps/:id/favorite', [controllers.Favorites, 'store']).use(middleware.auth())
     router.delete('apps/:id/favorite', [controllers.Favorites, 'destroy']).use(middleware.auth())
+    router.get('apps/:id/reviews', [controllers.Reviews, 'index'])
+    router.post('apps/:id/reviews', [controllers.Reviews, 'store']).use(middleware.auth())
+    router.delete('apps/:id/reviews', [controllers.Reviews, 'destroy']).use(middleware.auth())
 
     router.resource('images', controllers.Images).apiOnly().use('*', middleware.auth())
     router.get('apps', [controllers.Apps, 'index'])
