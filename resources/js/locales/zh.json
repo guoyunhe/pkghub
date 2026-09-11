@@ -202,12 +202,8 @@
       "name": "名称",
       "baseUrl": "基础 URL",
       "distro": "发行版",
-      "keyUrl": "签名密钥 URL",
-      "keyFingerprint": "密钥指纹",
-      "repositoryFile": "源列表内容",
-      "priority": "优先级",
-      "syncIntervalDays": "同步周期（天）",
-      "enabled": "启用"
+      "configContent": "源列表内容",
+      "syncIntervalDays": "同步周期（天）"
     }
   }
 }

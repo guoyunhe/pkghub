@@ -11,7 +11,7 @@ const repos = [
     baseUrl: 'https://download.opensuse.org/tumbleweed/repo/oss/',
     distroName: 'openSUSE Tumbleweed',
     distroVersion: null,
-    repositoryFile: null,
+    configContent: null,
   },
   {
     name: 'openSUSE Tumbleweed Non-OSS',
@@ -20,7 +20,7 @@ const repos = [
     distroName: 'openSUSE Tumbleweed',
     distroVersion: null,
     type: 'rpm',
-    repositoryFile: null,
+    configContent: null,
   },
   {
     name: 'openSUSE Tumbleweed Update',
@@ -29,7 +29,7 @@ const repos = [
     distroName: 'openSUSE Tumbleweed',
     distroVersion: null,
     type: 'rpm',
-    repositoryFile: null,
+    configContent: null,
   },
   {
     name: 'Debian 13 Main',
@@ -38,7 +38,7 @@ const repos = [
     distroName: 'Debian',
     distroVersion: '13',
     type: 'deb',
-    repositoryFile:
+    configContent:
       'deb https://deb.debian.org/debian trixie main contrib non-free non-free-firmware',
   },
   {
@@ -48,7 +48,7 @@ const repos = [
     distroName: 'Debian',
     distroVersion: '13',
     type: 'deb',
-    repositoryFile:
+    configContent:
       'deb https://deb.debian.org/debian trixie-updates main contrib non-free non-free-firmware',
   },
   {
@@ -58,7 +58,7 @@ const repos = [
     distroName: 'Debian',
     distroVersion: '13',
     baseUrl: 'https://security.debian.org/debian-security/',
-    repositoryFile:
+    configContent:
       'deb https://security.debian.org/debian-security trixie-security main contrib non-free non-free-firmware',
   },
   ...['42', '43', '44'].map((ver) => ({
@@ -69,6 +69,39 @@ const repos = [
     distroName: 'Fedora Linux',
     distroVersion: ver,
     baseUrl: `http://download1.rpmfusion.org/free/fedora/releases/${ver}/Everything/x86_64/os/`,
+    configContent: `[rpmfusion-free]
+name=RPM Fusion for Fedora $releasever - Free
+#baseurl=http://download1.rpmfusion.org/free/fedora/releases/$releasever/Everything/$basearch/os/
+metalink=https://mirrors.rpmfusion.org/metalink?repo=free-fedora-$releasever&arch=$basearch
+enabled=0
+metadata_expire=14d
+type=rpm-md
+gpgcheck=1
+repo_gpgcheck=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-rpmfusion-free-fedora-$releasever
+
+[rpmfusion-free-debuginfo]
+name=RPM Fusion for Fedora $releasever - Free - Debug
+#baseurl=http://download1.rpmfusion.org/free/fedora/releases/$releasever/Everything/$basearch/debug/
+metalink=https://mirrors.rpmfusion.org/metalink?repo=free-fedora-debug-$releasever&arch=$basearch
+enabled=0
+metadata_expire=7d
+type=rpm-md
+gpgcheck=1
+repo_gpgcheck=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-rpmfusion-free-fedora-$releasever
+
+[rpmfusion-free-source]
+name=RPM Fusion for Fedora $releasever - Free - Source
+#baseurl=http://download1.rpmfusion.org/free/fedora/releases/$releasever/Everything/source/SRPMS/
+metalink=https://mirrors.rpmfusion.org/metalink?repo=free-fedora-source-$releasever&arch=$basearch
+enabled=0
+metadata_expire=7d
+type=rpm-md
+gpgcheck=1
+repo_gpgcheck=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-rpmfusion-free-fedora-$releasever
+`,
   })),
 ]
 
@@ -96,10 +129,6 @@ export default class RepoSeeder extends BaseSeeder {
         {
           ...attributes,
           distroId,
-          keyUrl: null,
-          keyFingerprint: null,
-          enabled: true,
-          priority: null,
         },
       )
     }

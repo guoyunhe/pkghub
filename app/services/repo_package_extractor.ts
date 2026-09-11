@@ -184,7 +184,7 @@ export default class RepoPackageExtractor {
   }
 
   private sourcesFor(repo: Repo, requestedArch: string | null): Required<DebSource>[] {
-    const parsed = this.parseDebSources(repo.repositoryFile)
+    const parsed = this.parseDebSources(repo.configContent)
     const matching = parsed.filter((source) => this.sameBase(source.uri, repo.baseUrl))
     const selected = matching.length > 0 ? matching : parsed
 
@@ -208,11 +208,11 @@ export default class RepoPackageExtractor {
     }))
   }
 
-  private parseDebSources(repositoryFile: string | null): DebSource[] {
-    if (!repositoryFile) return []
+  private parseDebSources(configContent: string | null): DebSource[] {
+    if (!configContent) return []
     const sources: DebSource[] = []
 
-    for (const rawLine of repositoryFile.split('\n')) {
+    for (const rawLine of configContent.split('\n')) {
       const line = rawLine.trim()
       if (!line.startsWith('deb ')) continue
 

@@ -8,11 +8,7 @@ export type RepoPayload = {
   name: string
   baseUrl: string
   distroId: number | null
-  keyUrl: string
-  keyFingerprint: string
-  repositoryFile: string
-  enabled: boolean
-  priority: string
+  configContent: string
   syncIntervalDays: string
 }
 

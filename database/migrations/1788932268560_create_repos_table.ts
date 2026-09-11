@@ -20,13 +20,8 @@ export default class extends BaseSchema {
       table.string('source').notNullable().index()
 
       table.string('base_url').notNullable()
-      table.string('key_url').nullable()
-      table.string('key_fingerprint').nullable()
-      table.text('repository_file').nullable()
-      table.boolean('enabled').notNullable().defaultTo(true)
-      table.integer('priority').unsigned().nullable()
-
-      table.string('install_script').nullable()
+      table.text('config_content').nullable()
+      table.text('install_script').nullable()
 
       // Synchronization interval in days; null means the repo is only synced manually.
       table.integer('sync_interval_days').unsigned().nullable()

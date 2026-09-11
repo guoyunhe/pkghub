@@ -62,11 +62,7 @@ export default class ReposController {
       baseUrl,
       type,
       distroId,
-      keyUrl: this.optionalString(request.input('keyUrl')),
-      keyFingerprint: this.optionalString(request.input('keyFingerprint')),
-      repositoryFile: this.optionalString(request.input('repositoryFile')),
-      enabled: request.input('enabled', true) !== false,
-      priority: this.optionalPositiveInteger(request.input('priority')),
+      configContent: this.optionalString(request.input('configContent')),
       syncIntervalDays: this.optionalPositiveInteger(request.input('syncIntervalDays')),
     }
   }

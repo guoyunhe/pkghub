@@ -30,11 +30,7 @@ const emptyForm: RepoPayload = {
   name: '',
   baseUrl: '',
   distroId: null,
-  keyUrl: '',
-  keyFingerprint: '',
-  repositoryFile: '',
-  enabled: true,
-  priority: '',
+  configContent: '',
   syncIntervalDays: '',
 }
 
@@ -44,11 +40,7 @@ function formFromRepo(repo: Data.Repo): RepoPayload {
     name: repo.name,
     baseUrl: repo.baseUrl,
     distroId: repo.distroId,
-    keyUrl: repo.keyUrl ?? '',
-    keyFingerprint: repo.keyFingerprint ?? '',
-    repositoryFile: repo.repositoryFile ?? '',
-    enabled: repo.enabled,
-    priority: repo.priority === null ? '' : String(repo.priority),
+    configContent: repo.configContent ?? '',
     syncIntervalDays: repo.syncIntervalDays === null ? '' : String(repo.syncIntervalDays),
   }
 }
@@ -172,28 +164,12 @@ export default function RepoFormPage() {
           value={form.distroId === null ? null : String(form.distroId)}
           onChange={(value) => update('distroId', value ? Number(value) : null)}
         />
-        <TextInput
-          label={t('repos.fields.keyUrl')}
-          value={form.keyUrl}
-          onChange={(event) => update('keyUrl', event.currentTarget.value)}
-        />
-        <TextInput
-          label={t('repos.fields.keyFingerprint')}
-          value={form.keyFingerprint}
-          onChange={(event) => update('keyFingerprint', event.currentTarget.value)}
-        />
         <Textarea
           autosize
-          label={t('repos.fields.repositoryFile')}
+          label={t('repos.fields.configContent')}
           minRows={2}
-          value={form.repositoryFile}
-          onChange={(event) => update('repositoryFile', event.currentTarget.value)}
-        />
-        <NumberInput
-          label={t('repos.fields.priority')}
-          min={0}
-          value={form.priority === '' ? '' : Number(form.priority)}
-          onChange={(value) => update('priority', value === '' ? '' : String(value))}
+          value={form.configContent}
+          onChange={(event) => update('configContent', event.currentTarget.value)}
         />
         <NumberInput
           description={t('repos.syncIntervalHint')}
@@ -201,12 +177,6 @@ export default function RepoFormPage() {
           min={0}
           value={form.syncIntervalDays === '' ? '' : Number(form.syncIntervalDays)}
           onChange={(value) => update('syncIntervalDays', value === '' ? '' : String(value))}
-        />
-        <Switch
-          checked={form.enabled}
-          label={t('repos.fields.enabled')}
-          mt='xs'
-          onChange={(event) => update('enabled', event.currentTarget.checked)}
         />
         <Group justify='flex-end'>
           <Button
