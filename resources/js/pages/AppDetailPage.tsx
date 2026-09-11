@@ -128,7 +128,7 @@ export default function AppDetailPage() {
     if (!window.confirm(t('reviews.deleteConfirm'))) return
     setDeletingReviewId(review.id)
     try {
-      await deleteReview(app!.id)
+      await deleteReview(app!.id, review.id)
       setReviewsRefresh((value) => value + 1)
     } catch (reason) {
       setReviewsError(reason instanceof Error ? reason.message : t('reviews.deleteError'))

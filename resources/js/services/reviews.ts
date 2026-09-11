@@ -37,6 +37,6 @@ export async function createReview(appId: number, payload: ReviewPayload) {
   return data.data
 }
 
-export async function deleteReview(appId: number) {
-  await api.delete(`/apps/${appId}/reviews`, { headers: authHeaders() })
+export async function deleteReview(appId: number, reviewId: number) {
+  await api.delete(`/apps/${appId}/reviews/${reviewId}`, { headers: authHeaders() })
 }

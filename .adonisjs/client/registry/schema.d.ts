@@ -187,37 +187,37 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/favorites_controller').default['destroy']>>>
     }
   }
-  'reviews.index': {
+  'apps.reviews.index': {
     methods: ["GET","HEAD"]
-    pattern: '/api/apps/:id/reviews'
+    pattern: '/api/apps/:app_id/reviews'
     types: {
       body: {}
       paramsTuple: [ParamValue]
-      params: { id: ParamValue }
+      params: { app_id: ParamValue }
       query: {}
       response: ExtractResponse<Awaited<ReturnType<import('#controllers/reviews_controller').default['index']>>>
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/reviews_controller').default['index']>>>
     }
   }
-  'reviews.store': {
+  'apps.reviews.store': {
     methods: ["POST"]
-    pattern: '/api/apps/:id/reviews'
+    pattern: '/api/apps/:app_id/reviews'
     types: {
       body: ExtractBody<InferInput<(typeof import('#validators/review').reviewValidator)>>
       paramsTuple: [ParamValue]
-      params: { id: ParamValue }
+      params: { app_id: ParamValue }
       query: ExtractQuery<InferInput<(typeof import('#validators/review').reviewValidator)>>
       response: ExtractResponse<Awaited<ReturnType<import('#controllers/reviews_controller').default['store']>>>
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/reviews_controller').default['store']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
-  'reviews.destroy': {
+  'apps.reviews.destroy': {
     methods: ["DELETE"]
-    pattern: '/api/apps/:id/reviews'
+    pattern: '/api/apps/:app_id/reviews/:id'
     types: {
       body: {}
-      paramsTuple: [ParamValue]
-      params: { id: ParamValue }
+      paramsTuple: [ParamValue, ParamValue]
+      params: { app_id: ParamValue; id: ParamValue }
       query: {}
       response: ExtractResponse<Awaited<ReturnType<import('#controllers/reviews_controller').default['destroy']>>>
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/reviews_controller').default['destroy']>>>

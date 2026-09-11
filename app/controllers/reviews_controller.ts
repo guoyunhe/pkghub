@@ -8,12 +8,12 @@ import { reviewValidator } from '#validators/review'
 
 export default class ReviewsController {
   async index({ params, request, serialize }: HttpContext) {
-    await App.findOrFail(params.id)
+    await App.findOrFail(params.app_id)
     const page = this.positiveInteger(request.input('page'), 1)
     const perPage = Math.min(this.positiveInteger(request.input('perPage'), 12), 50)
 
     const paginator = await Review.query()
-      .where('appId', params.id)
+      .where('appId', params.app_id)
       .preload('user')
       .orderBy('createdAt', 'desc')
       .paginate(page, perPage)
@@ -37,7 +37,7 @@ export default class ReviewsController {
 
   async store({ auth, params, request, response, serialize }: HttpContext) {
     const user = auth.getUserOrFail()
-    const app = await App.findOrFail(params.id)
+    const app = await App.findOrFail(params.app_id)
     const payload = await request.validateUsing(reviewValidator)
 
     const review = await Review.updateOrCreate(
@@ -52,11 +52,14 @@ export default class ReviewsController {
 
   async destroy({ auth, params, response }: HttpContext) {
     const user = auth.getUserOrFail()
-    await App.findOrFail(params.id)
 
-    const review = await Review.query().where('userId', user.id).where('appId', params.id).first()
+    const review = await Review.query().where('id', params.id).where('appId', params.app_id).first()
 
     if (!review) return response.noContent()
+    if (review.userId !== user.id && user.role !== 'admin') {
+      return response.forbidden()
+    }
+
     await review.delete()
     return response.noContent()
   }

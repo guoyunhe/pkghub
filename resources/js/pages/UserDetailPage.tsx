@@ -103,7 +103,7 @@ export default function UserDetailPage() {
     if (!review.app || !window.confirm(t('reviews.deleteConfirm'))) return
     setDeletingReviewId(review.id)
     try {
-      await deleteReview(review.app.id)
+      await deleteReview(review.app.id, review.id)
       setReviewsRefresh((value) => value + 1)
     } catch (reason) {
       setReviewsError(reason instanceof Error ? reason.message : t('reviews.deleteError'))

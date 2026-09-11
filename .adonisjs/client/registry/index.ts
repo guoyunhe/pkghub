@@ -96,23 +96,23 @@ const routes = {
     tokens: [{"old":"/api/apps/:id/favorite","type":0,"val":"api","end":""},{"old":"/api/apps/:id/favorite","type":0,"val":"apps","end":""},{"old":"/api/apps/:id/favorite","type":1,"val":"id","end":""},{"old":"/api/apps/:id/favorite","type":0,"val":"favorite","end":""}],
     types: placeholder as Registry['favorites.destroy']['types'],
   },
-  'reviews.index': {
+  'apps.reviews.index': {
     methods: ["GET","HEAD"],
-    pattern: '/api/apps/:id/reviews',
-    tokens: [{"old":"/api/apps/:id/reviews","type":0,"val":"api","end":""},{"old":"/api/apps/:id/reviews","type":0,"val":"apps","end":""},{"old":"/api/apps/:id/reviews","type":1,"val":"id","end":""},{"old":"/api/apps/:id/reviews","type":0,"val":"reviews","end":""}],
-    types: placeholder as Registry['reviews.index']['types'],
+    pattern: '/api/apps/:app_id/reviews',
+    tokens: [{"old":"/api/apps/:app_id/reviews","type":0,"val":"api","end":""},{"old":"/api/apps/:app_id/reviews","type":0,"val":"apps","end":""},{"old":"/api/apps/:app_id/reviews","type":1,"val":"app_id","end":""},{"old":"/api/apps/:app_id/reviews","type":0,"val":"reviews","end":""}],
+    types: placeholder as Registry['apps.reviews.index']['types'],
   },
-  'reviews.store': {
+  'apps.reviews.store': {
     methods: ["POST"],
-    pattern: '/api/apps/:id/reviews',
-    tokens: [{"old":"/api/apps/:id/reviews","type":0,"val":"api","end":""},{"old":"/api/apps/:id/reviews","type":0,"val":"apps","end":""},{"old":"/api/apps/:id/reviews","type":1,"val":"id","end":""},{"old":"/api/apps/:id/reviews","type":0,"val":"reviews","end":""}],
-    types: placeholder as Registry['reviews.store']['types'],
+    pattern: '/api/apps/:app_id/reviews',
+    tokens: [{"old":"/api/apps/:app_id/reviews","type":0,"val":"api","end":""},{"old":"/api/apps/:app_id/reviews","type":0,"val":"apps","end":""},{"old":"/api/apps/:app_id/reviews","type":1,"val":"app_id","end":""},{"old":"/api/apps/:app_id/reviews","type":0,"val":"reviews","end":""}],
+    types: placeholder as Registry['apps.reviews.store']['types'],
   },
-  'reviews.destroy': {
+  'apps.reviews.destroy': {
     methods: ["DELETE"],
-    pattern: '/api/apps/:id/reviews',
-    tokens: [{"old":"/api/apps/:id/reviews","type":0,"val":"api","end":""},{"old":"/api/apps/:id/reviews","type":0,"val":"apps","end":""},{"old":"/api/apps/:id/reviews","type":1,"val":"id","end":""},{"old":"/api/apps/:id/reviews","type":0,"val":"reviews","end":""}],
-    types: placeholder as Registry['reviews.destroy']['types'],
+    pattern: '/api/apps/:app_id/reviews/:id',
+    tokens: [{"old":"/api/apps/:app_id/reviews/:id","type":0,"val":"api","end":""},{"old":"/api/apps/:app_id/reviews/:id","type":0,"val":"apps","end":""},{"old":"/api/apps/:app_id/reviews/:id","type":1,"val":"app_id","end":""},{"old":"/api/apps/:app_id/reviews/:id","type":0,"val":"reviews","end":""},{"old":"/api/apps/:app_id/reviews/:id","type":1,"val":"id","end":""}],
+    types: placeholder as Registry['apps.reviews.destroy']['types'],
   },
   'apps.pkgs.index': {
     methods: ["GET","HEAD"],

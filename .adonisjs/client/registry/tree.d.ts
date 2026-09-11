@@ -19,9 +19,6 @@ export interface ApiDefinition {
   }
   reviews: {
     userIndex: typeof routes['reviews.user_index']
-    index: typeof routes['reviews.index']
-    store: typeof routes['reviews.store']
-    destroy: typeof routes['reviews.destroy']
   }
   apps: {
     index: typeof routes['apps.index']
@@ -29,6 +26,11 @@ export interface ApiDefinition {
     show: typeof routes['apps.show']
     update: typeof routes['apps.update']
     destroy: typeof routes['apps.destroy']
+    reviews: {
+      index: typeof routes['apps.reviews.index']
+      store: typeof routes['apps.reviews.store']
+      destroy: typeof routes['apps.reviews.destroy']
+    }
     pkgs: {
       index: typeof routes['apps.pkgs.index']
     }

@@ -39,9 +39,10 @@ router
       .use(['store', 'update', 'destroy'], [middleware.auth(), middleware.admin()])
     router.post('apps/:id/favorite', [controllers.Favorites, 'store']).use(middleware.auth())
     router.delete('apps/:id/favorite', [controllers.Favorites, 'destroy']).use(middleware.auth())
-    router.get('apps/:id/reviews', [controllers.Reviews, 'index'])
-    router.post('apps/:id/reviews', [controllers.Reviews, 'store']).use(middleware.auth())
-    router.delete('apps/:id/reviews', [controllers.Reviews, 'destroy']).use(middleware.auth())
+    router
+      .resource('apps.reviews', controllers.Reviews)
+      .only(['index', 'store', 'destroy'])
+      .use(['store', 'destroy'], middleware.auth())
     router.resource('apps.pkgs', controllers.Pkgs).only(['index'])
 
     // Images
