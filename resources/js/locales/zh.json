@@ -178,13 +178,13 @@
     "edit": "编辑",
     "delete": "删除",
     "confirmDelete": "确定删除仓库“{{name}}”吗？",
-    "enabled": "已启用",
     "disabled": "已停用",
     "manual": "仅手动同步",
     "neverSynced": "从未",
     "everyDays_one": "每 {{count}} 天",
     "everyDays_other": "每 {{count}} 天",
     "syncIntervalHint": "留空表示该仓库仅支持手动同步。",
+    "installScriptHint": "用户在自己系统上启用该仓库时执行的命令。",
     "notFound": "尚未配置任何仓库。",
     "loadError": "无法加载仓库",
     "saveError": "无法保存仓库",
@@ -201,9 +201,16 @@
       "type": "类型",
       "name": "名称",
       "baseUrl": "基础 URL",
+      "source": "来源",
       "distro": "发行版",
+      "configUrl": "源列表 URL",
       "configContent": "源列表内容",
+      "installScript": "安装脚本",
       "syncIntervalDays": "同步周期（天）"
+    },
+    "sources": {
+      "distro": "发行版自带",
+      "community": "社区仓库"
     }
   }
 }

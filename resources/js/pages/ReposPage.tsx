@@ -139,16 +139,6 @@ export default function ReposPage() {
                   )}
                 </Table.Td>
                 <Table.Td>
-                  <span className={styles.status}>
-                    <span
-                      className={`${styles.dot} ${
-                        repo.enabled ? styles.dotEnabled : styles.dotDisabled
-                      }`}
-                    />
-                    {repo.enabled ? t('repos.enabled') : t('repos.disabled')}
-                  </span>
-                </Table.Td>
-                <Table.Td>
                   {repo.syncIntervalDays
                     ? t('repos.everyDays', { count: repo.syncIntervalDays })
                     : t('repos.manual')}

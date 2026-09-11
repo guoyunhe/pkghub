@@ -37,7 +37,9 @@ export default function RepoFormPage() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const form = useForm<Partial<Data.Repo>>({})
+  const form = useForm<Partial<Data.Repo>>({
+    initialValues: { source: 'community', distroId: null },
+  })
 
   useEffect(() => {
     getDistros()
@@ -131,6 +133,17 @@ export default function RepoFormPage() {
           />
 
           <Select
+            label={t('repos.fields.source')}
+            required
+            allowDeselect={false}
+            data={[
+              { value: 'distro', label: t('repos.sources.distro') },
+              { value: 'community', label: t('repos.sources.community') },
+            ]}
+            {...form.getInputProps('source')}
+          />
+
+          <Select
             label={t('repos.fields.distro')}
             clearable
             searchable
@@ -145,9 +158,24 @@ export default function RepoFormPage() {
 
           <Textarea
             autosize
+            label={t('repos.fields.configUrl')}
+            minRows={2}
+            {...form.getInputProps('configUrl')}
+          />
+
+          <Textarea
+            autosize
             label={t('repos.fields.configContent')}
             minRows={2}
             {...form.getInputProps('configContent')}
+          />
+
+          <Textarea
+            autosize
+            description={t('repos.installScriptHint')}
+            label={t('repos.fields.installScript')}
+            minRows={2}
+            {...form.getInputProps('installScript')}
           />
 
           <NumberInput

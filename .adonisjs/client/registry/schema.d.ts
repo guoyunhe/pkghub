@@ -371,12 +371,12 @@ export interface Registry {
     methods: ["POST"]
     pattern: '/api/repos'
     types: {
-      body: {}
+      body: ExtractBody<InferInput<(typeof import('#validators/repo').repoValidator)>>
       paramsTuple: []
       params: {}
-      query: {}
+      query: ExtractQuery<InferInput<(typeof import('#validators/repo').repoValidator)>>
       response: ExtractResponse<Awaited<ReturnType<import('#controllers/repos_controller').default['store']>>>
-      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/repos_controller').default['store']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/repos_controller').default['store']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
   'repos.show': {
@@ -395,12 +395,12 @@ export interface Registry {
     methods: ["PUT","PATCH"]
     pattern: '/api/repos/:id'
     types: {
-      body: {}
+      body: ExtractBody<InferInput<(typeof import('#validators/repo').repoValidator)>>
       paramsTuple: [ParamValue]
       params: { id: ParamValue }
-      query: {}
+      query: ExtractQuery<InferInput<(typeof import('#validators/repo').repoValidator)>>
       response: ExtractResponse<Awaited<ReturnType<import('#controllers/repos_controller').default['update']>>>
-      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/repos_controller').default['update']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/repos_controller').default['update']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
   'repos.destroy': {
