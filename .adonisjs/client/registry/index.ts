@@ -186,17 +186,17 @@ const routes = {
     tokens: [{"old":"/api/repos","type":0,"val":"api","end":""},{"old":"/api/repos","type":0,"val":"repos","end":""}],
     types: placeholder as Registry['repos.index']['types'],
   },
-  'repos.show': {
-    methods: ["GET","HEAD"],
-    pattern: '/api/repos/:id',
-    tokens: [{"old":"/api/repos/:id","type":0,"val":"api","end":""},{"old":"/api/repos/:id","type":0,"val":"repos","end":""},{"old":"/api/repos/:id","type":1,"val":"id","end":""}],
-    types: placeholder as Registry['repos.show']['types'],
-  },
   'repos.store': {
     methods: ["POST"],
     pattern: '/api/repos',
     tokens: [{"old":"/api/repos","type":0,"val":"api","end":""},{"old":"/api/repos","type":0,"val":"repos","end":""}],
     types: placeholder as Registry['repos.store']['types'],
+  },
+  'repos.show': {
+    methods: ["GET","HEAD"],
+    pattern: '/api/repos/:id',
+    tokens: [{"old":"/api/repos/:id","type":0,"val":"api","end":""},{"old":"/api/repos/:id","type":0,"val":"repos","end":""},{"old":"/api/repos/:id","type":1,"val":"id","end":""}],
+    types: placeholder as Registry['repos.show']['types'],
   },
   'repos.update': {
     methods: ["PUT","PATCH"],

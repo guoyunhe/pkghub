@@ -53,8 +53,8 @@ export interface ApiDefinition {
   }
   repos: {
     index: typeof routes['repos.index']
-    show: typeof routes['repos.show']
     store: typeof routes['repos.store']
+    show: typeof routes['repos.show']
     update: typeof routes['repos.update']
     destroy: typeof routes['repos.destroy']
   }

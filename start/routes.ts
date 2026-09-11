@@ -54,12 +54,10 @@ router
       .use(['store', 'update', 'destroy'], [middleware.auth(), middleware.admin()])
 
     // Repos
-    router.get('repos', [controllers.Repos, 'index'])
-    router.get('repos/:id', [controllers.Repos, 'show'])
     router
       .resource('repos', controllers.Repos)
-      .only(['store', 'update', 'destroy'])
-      .use('*', [middleware.auth(), middleware.admin()])
+      .apiOnly()
+      .use(['store', 'update', 'destroy'], [middleware.auth(), middleware.admin()])
 
     // Distros
     router.get('distros', [controllers.Distros, 'index'])

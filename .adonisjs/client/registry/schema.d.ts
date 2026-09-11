@@ -367,18 +367,6 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/repos_controller').default['index']>>>
     }
   }
-  'repos.show': {
-    methods: ["GET","HEAD"]
-    pattern: '/api/repos/:id'
-    types: {
-      body: {}
-      paramsTuple: [ParamValue]
-      params: { id: ParamValue }
-      query: {}
-      response: ExtractResponse<Awaited<ReturnType<import('#controllers/repos_controller').default['show']>>>
-      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/repos_controller').default['show']>>>
-    }
-  }
   'repos.store': {
     methods: ["POST"]
     pattern: '/api/repos'
@@ -389,6 +377,18 @@ export interface Registry {
       query: {}
       response: ExtractResponse<Awaited<ReturnType<import('#controllers/repos_controller').default['store']>>>
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/repos_controller').default['store']>>>
+    }
+  }
+  'repos.show': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/repos/:id'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { id: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/repos_controller').default['show']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/repos_controller').default['show']>>>
     }
   }
   'repos.update': {

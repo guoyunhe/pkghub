@@ -34,8 +34,8 @@ export type ScannedRoutes = {
     'pkgs.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'pkgs.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'repos.index': { paramsTuple?: []; params?: {} }
-    'repos.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'repos.store': { paramsTuple?: []; params?: {} }
+    'repos.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'repos.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'repos.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'distros.index': { paramsTuple?: []; params?: {} }
