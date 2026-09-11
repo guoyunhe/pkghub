@@ -5,7 +5,7 @@ import { ArrowSquareOutIcon } from '@phosphor-icons/react/ArrowSquareOut'
 import { PencilSimpleIcon } from '@phosphor-icons/react/PencilSimple'
 import { PlusIcon } from '@phosphor-icons/react/Plus'
 import { TrashIcon } from '@phosphor-icons/react/Trash'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useLocation, useRoute } from 'wouter'
 
@@ -14,23 +14,21 @@ import AverageRating from '../components/AverageRating'
 import FavoriteButton from '../components/FavoriteButton'
 import ReviewForm from '../components/ReviewForm'
 import ReviewList from '../components/ReviewList'
+import ScreenshotCarousel from '../components/ScreenshotCarousel'
 import { deleteApp, getApp, getAppPackages } from '../services/apps'
 import { deletePkg } from '../services/pkgs'
 import { deleteReview, getAppReviews } from '../services/reviews'
 import type { Paginated } from '../types/pagination'
+import {
+  localized,
+  parseAppStreamContent,
+  resolveDescription,
+  selectScreenshots,
+} from '../utils/appstream'
 
 import styles from './AppDetailPage.module.css'
 
 const packageTypesWithIcons = new Set(['rpm', 'deb', 'appimage'])
-
-function localized(translations: Record<string, string>, language: string) {
-  return (
-    translations[language] ??
-    translations[language.split('-')[0]] ??
-    translations.en ??
-    Object.values(translations)[0]
-  )
-}
 
 export default function AppDetailPage() {
   const { t, i18n } = useTranslation()
@@ -51,6 +49,10 @@ export default function AppDetailPage() {
   const [reviewsError, setReviewsError] = useState<string | null>(null)
   const [reviewsRefresh, setReviewsRefresh] = useState(0)
   const [deletingReviewId, setDeletingReviewId] = useState<number | null>(null)
+  const appstream = useMemo(
+    () => parseAppStreamContent(app?.appstreamContent),
+    [app?.appstreamContent],
+  )
 
   useEffect(() => {
     if (!appId) {
@@ -106,6 +108,8 @@ export default function AppDetailPage() {
   }
 
   const name = localized(app.name, i18n.language)
+  const description = resolveDescription(appstream.description, i18n.language)
+  const screenshots = selectScreenshots(appstream.screenshots, i18n.language)
   const isAdmin = user?.role === 'admin'
 
   async function remove() {
@@ -219,6 +223,21 @@ export default function AppDetailPage() {
           <Text>{app.appstreamId ?? t('common.notSpecified')}</Text>
         </div>
       </section>
+
+      {screenshots.length > 0 && (
+        <section className={styles.screenshots}>
+          <ScreenshotCarousel screenshots={screenshots} />
+        </section>
+      )}
+
+      {description && (
+        <section className={styles.description}>
+          <div
+            className={styles.descriptionBody}
+            dangerouslySetInnerHTML={{ __html: description }}
+          />
+        </section>
+      )}
 
       {(app.appstreamUrl || app.desktopUrl) && (
         <section className={styles.sources}>

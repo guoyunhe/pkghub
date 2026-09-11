@@ -47,6 +47,45 @@
   padding: 22px 0;
 }
 
+.screenshots {
+  margin-top: 44px;
+}
+
+.description {
+  margin-top: 44px;
+}
+
+.descriptionBody {
+  line-height: 1.7;
+}
+
+.descriptionBody p {
+  margin: 0 0 14px;
+}
+
+.descriptionBody ul,
+.descriptionBody ol {
+  margin: 0 0 14px;
+  padding-left: 22px;
+}
+
+.descriptionBody img {
+  height: auto;
+  max-width: 100%;
+}
+
+.descriptionBody pre {
+  overflow-x: auto;
+}
+
+.descriptionBody a {
+  color: var(--ph-primary);
+}
+
+.sources {
+  margin-top: 44px;
+}
+
 .sources h2 {
   margin-bottom: 16px;
 }
