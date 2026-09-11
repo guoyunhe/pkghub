@@ -177,12 +177,14 @@ export class PkgSchema extends BaseModel {
 }
 
 export class RepoSchema extends BaseModel {
-  static $columns = ['baseUrl', 'configContent', 'createdAt', 'distroId', 'id', 'installScript', 'lastSyncedAt', 'name', 'source', 'syncIntervalDays', 'type', 'updatedAt'] as const
+  static $columns = ['baseUrl', 'configContent', 'configUrl', 'createdAt', 'distroId', 'id', 'installScript', 'lastSyncedAt', 'name', 'source', 'syncIntervalDays', 'type', 'updatedAt'] as const
   $columns = RepoSchema.$columns
   @column()
   declare baseUrl: string
   @column()
   declare configContent: string | null
+  @column()
+  declare configUrl: string | null
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
   @column()

@@ -32,6 +32,24 @@ const repos = [
     configContent: null,
   },
   {
+    name: 'VLC for openSUSE Tumbleweed',
+    type: 'rpm',
+    source: 'community',
+    baseUrl: 'https://download.videolan.org/SuSE/Tumbleweed/',
+    distroName: 'openSUSE Tumbleweed',
+    distroVersion: null,
+    configContent: `[SuSE]
+name=VideoLAN repo (Tumbleweed)
+type=rpm-md
+baseurl=http://download.videolan.org/SuSE/Tumbleweed/
+gpgcheck=1
+gpgkey=http://download.videolan.org/SuSE/Tumbleweed/repodata/repomd.xml.key
+enabled=1
+`,
+    configUrl: 'https://download.videolan.org/SuSE/Tumbleweed/SuSE.repo',
+    installScript: `pkexec zypper addrepo -y https://download.videolan.org/SuSE/Tumbleweed/SuSE.repo`,
+  },
+  {
     name: 'Debian 13 Main',
     source: 'distro',
     baseUrl: 'https://deb.debian.org/debian/',

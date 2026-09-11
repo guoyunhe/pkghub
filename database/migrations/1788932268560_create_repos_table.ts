@@ -21,6 +21,7 @@ export default class extends BaseSchema {
 
       table.string('base_url').notNullable()
       table.text('config_content').nullable()
+      table.string('config_url').nullable()
       table.text('install_script').nullable()
 
       // Synchronization interval in days; null means the repo is only synced manually.
