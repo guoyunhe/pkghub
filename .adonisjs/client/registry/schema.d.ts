@@ -103,6 +103,66 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/reviews_controller').default['userIndex']>>>
     }
   }
+  'apps.index': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/apps'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/apps_controller').default['index']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/apps_controller').default['index']>>>
+    }
+  }
+  'apps.show': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/apps/:id'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { id: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/apps_controller').default['show']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/apps_controller').default['show']>>>
+    }
+  }
+  'apps.store': {
+    methods: ["POST"]
+    pattern: '/api/apps'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/apps_controller').default['store']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/apps_controller').default['store']>>>
+    }
+  }
+  'apps.update': {
+    methods: ["PUT","PATCH"]
+    pattern: '/api/apps/:id'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { id: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/apps_controller').default['update']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/apps_controller').default['update']>>>
+    }
+  }
+  'apps.destroy': {
+    methods: ["DELETE"]
+    pattern: '/api/apps/:id'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { id: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/apps_controller').default['destroy']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/apps_controller').default['destroy']>>>
+    }
+  }
   'favorites.store': {
     methods: ["POST"]
     pattern: '/api/apps/:id/favorite'
@@ -161,6 +221,18 @@ export interface Registry {
       query: {}
       response: ExtractResponse<Awaited<ReturnType<import('#controllers/reviews_controller').default['destroy']>>>
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/reviews_controller').default['destroy']>>>
+    }
+  }
+  'apps.pkgs.index': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/apps/:app_id/pkgs'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { app_id: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/pkgs_controller').default['index']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/pkgs_controller').default['index']>>>
     }
   }
   'images.index': {
@@ -223,45 +295,21 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/images_controller').default['destroy']>>>
     }
   }
-  'apps.index': {
+  'pkgs.index': {
     methods: ["GET","HEAD"]
-    pattern: '/api/apps'
+    pattern: '/api/pkgs'
     types: {
       body: {}
       paramsTuple: []
       params: {}
       query: {}
-      response: ExtractResponse<Awaited<ReturnType<import('#controllers/apps_controller').default['index']>>>
-      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/apps_controller').default['index']>>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/pkgs_controller').default['index']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/pkgs_controller').default['index']>>>
     }
   }
-  'apps.show': {
-    methods: ["GET","HEAD"]
-    pattern: '/api/apps/:id'
-    types: {
-      body: {}
-      paramsTuple: [ParamValue]
-      params: { id: ParamValue }
-      query: {}
-      response: ExtractResponse<Awaited<ReturnType<import('#controllers/apps_controller').default['show']>>>
-      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/apps_controller').default['show']>>>
-    }
-  }
-  'pkgs.search': {
-    methods: ["GET","HEAD"]
-    pattern: '/api/packages'
-    types: {
-      body: {}
-      paramsTuple: []
-      params: {}
-      query: {}
-      response: ExtractResponse<Awaited<ReturnType<import('#controllers/pkgs_controller').default['search']>>>
-      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/pkgs_controller').default['search']>>>
-    }
-  }
-  'packages.store': {
+  'pkgs.store': {
     methods: ["POST"]
-    pattern: '/api/packages'
+    pattern: '/api/pkgs'
     types: {
       body: {}
       paramsTuple: []
@@ -271,9 +319,9 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/pkgs_controller').default['store']>>>
     }
   }
-  'packages.show': {
+  'pkgs.show': {
     methods: ["GET","HEAD"]
-    pattern: '/api/packages/:id'
+    pattern: '/api/pkgs/:id'
     types: {
       body: {}
       paramsTuple: [ParamValue]
@@ -283,9 +331,9 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/pkgs_controller').default['show']>>>
     }
   }
-  'packages.update': {
+  'pkgs.update': {
     methods: ["PUT","PATCH"]
-    pattern: '/api/packages/:id'
+    pattern: '/api/pkgs/:id'
     types: {
       body: {}
       paramsTuple: [ParamValue]
@@ -295,9 +343,9 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/pkgs_controller').default['update']>>>
     }
   }
-  'packages.destroy': {
+  'pkgs.destroy': {
     methods: ["DELETE"]
-    pattern: '/api/packages/:id'
+    pattern: '/api/pkgs/:id'
     types: {
       body: {}
       paramsTuple: [ParamValue]
@@ -305,18 +353,6 @@ export interface Registry {
       query: {}
       response: ExtractResponse<Awaited<ReturnType<import('#controllers/pkgs_controller').default['destroy']>>>
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/pkgs_controller').default['destroy']>>>
-    }
-  }
-  'apps.packages.index': {
-    methods: ["GET","HEAD"]
-    pattern: '/api/apps/:app_id/packages'
-    types: {
-      body: {}
-      paramsTuple: [ParamValue]
-      params: { app_id: ParamValue }
-      query: {}
-      response: ExtractResponse<Awaited<ReturnType<import('#controllers/pkgs_controller').default['index']>>>
-      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/pkgs_controller').default['index']>>>
     }
   }
   'repos.index': {
@@ -389,42 +425,6 @@ export interface Registry {
       query: {}
       response: ExtractResponse<Awaited<ReturnType<import('#controllers/distros_controller').default['index']>>>
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/distros_controller').default['index']>>>
-    }
-  }
-  'apps.store': {
-    methods: ["POST"]
-    pattern: '/api/apps'
-    types: {
-      body: {}
-      paramsTuple: []
-      params: {}
-      query: {}
-      response: ExtractResponse<Awaited<ReturnType<import('#controllers/apps_controller').default['store']>>>
-      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/apps_controller').default['store']>>>
-    }
-  }
-  'apps.update': {
-    methods: ["PUT","PATCH"]
-    pattern: '/api/apps/:id'
-    types: {
-      body: {}
-      paramsTuple: [ParamValue]
-      params: { id: ParamValue }
-      query: {}
-      response: ExtractResponse<Awaited<ReturnType<import('#controllers/apps_controller').default['update']>>>
-      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/apps_controller').default['update']>>>
-    }
-  }
-  'apps.destroy': {
-    methods: ["DELETE"]
-    pattern: '/api/apps/:id'
-    types: {
-      body: {}
-      paramsTuple: [ParamValue]
-      params: { id: ParamValue }
-      query: {}
-      response: ExtractResponse<Awaited<ReturnType<import('#controllers/apps_controller').default['destroy']>>>
-      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/apps_controller').default['destroy']>>>
     }
   }
 }

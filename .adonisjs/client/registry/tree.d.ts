@@ -23,6 +23,16 @@ export interface ApiDefinition {
     store: typeof routes['reviews.store']
     destroy: typeof routes['reviews.destroy']
   }
+  apps: {
+    index: typeof routes['apps.index']
+    show: typeof routes['apps.show']
+    store: typeof routes['apps.store']
+    update: typeof routes['apps.update']
+    destroy: typeof routes['apps.destroy']
+    pkgs: {
+      index: typeof routes['apps.pkgs.index']
+    }
+  }
   favorites: {
     store: typeof routes['favorites.store']
     destroy: typeof routes['favorites.destroy']
@@ -34,24 +44,12 @@ export interface ApiDefinition {
     update: typeof routes['images.update']
     destroy: typeof routes['images.destroy']
   }
-  apps: {
-    index: typeof routes['apps.index']
-    show: typeof routes['apps.show']
-    packages: {
-      index: typeof routes['apps.packages.index']
-    }
-    store: typeof routes['apps.store']
-    update: typeof routes['apps.update']
-    destroy: typeof routes['apps.destroy']
-  }
   pkgs: {
-    search: typeof routes['pkgs.search']
-  }
-  packages: {
-    store: typeof routes['packages.store']
-    show: typeof routes['packages.show']
-    update: typeof routes['packages.update']
-    destroy: typeof routes['packages.destroy']
+    index: typeof routes['pkgs.index']
+    store: typeof routes['pkgs.store']
+    show: typeof routes['pkgs.show']
+    update: typeof routes['pkgs.update']
+    destroy: typeof routes['pkgs.destroy']
   }
   repos: {
     index: typeof routes['repos.index']

@@ -54,6 +54,36 @@ const routes = {
     tokens: [{"old":"/api/users/:id/reviews","type":0,"val":"api","end":""},{"old":"/api/users/:id/reviews","type":0,"val":"users","end":""},{"old":"/api/users/:id/reviews","type":1,"val":"id","end":""},{"old":"/api/users/:id/reviews","type":0,"val":"reviews","end":""}],
     types: placeholder as Registry['reviews.user_index']['types'],
   },
+  'apps.index': {
+    methods: ["GET","HEAD"],
+    pattern: '/api/apps',
+    tokens: [{"old":"/api/apps","type":0,"val":"api","end":""},{"old":"/api/apps","type":0,"val":"apps","end":""}],
+    types: placeholder as Registry['apps.index']['types'],
+  },
+  'apps.show': {
+    methods: ["GET","HEAD"],
+    pattern: '/api/apps/:id',
+    tokens: [{"old":"/api/apps/:id","type":0,"val":"api","end":""},{"old":"/api/apps/:id","type":0,"val":"apps","end":""},{"old":"/api/apps/:id","type":1,"val":"id","end":""}],
+    types: placeholder as Registry['apps.show']['types'],
+  },
+  'apps.store': {
+    methods: ["POST"],
+    pattern: '/api/apps',
+    tokens: [{"old":"/api/apps","type":0,"val":"api","end":""},{"old":"/api/apps","type":0,"val":"apps","end":""}],
+    types: placeholder as Registry['apps.store']['types'],
+  },
+  'apps.update': {
+    methods: ["PUT","PATCH"],
+    pattern: '/api/apps/:id',
+    tokens: [{"old":"/api/apps/:id","type":0,"val":"api","end":""},{"old":"/api/apps/:id","type":0,"val":"apps","end":""},{"old":"/api/apps/:id","type":1,"val":"id","end":""}],
+    types: placeholder as Registry['apps.update']['types'],
+  },
+  'apps.destroy': {
+    methods: ["DELETE"],
+    pattern: '/api/apps/:id',
+    tokens: [{"old":"/api/apps/:id","type":0,"val":"api","end":""},{"old":"/api/apps/:id","type":0,"val":"apps","end":""},{"old":"/api/apps/:id","type":1,"val":"id","end":""}],
+    types: placeholder as Registry['apps.destroy']['types'],
+  },
   'favorites.store': {
     methods: ["POST"],
     pattern: '/api/apps/:id/favorite',
@@ -83,6 +113,12 @@ const routes = {
     pattern: '/api/apps/:id/reviews',
     tokens: [{"old":"/api/apps/:id/reviews","type":0,"val":"api","end":""},{"old":"/api/apps/:id/reviews","type":0,"val":"apps","end":""},{"old":"/api/apps/:id/reviews","type":1,"val":"id","end":""},{"old":"/api/apps/:id/reviews","type":0,"val":"reviews","end":""}],
     types: placeholder as Registry['reviews.destroy']['types'],
+  },
+  'apps.pkgs.index': {
+    methods: ["GET","HEAD"],
+    pattern: '/api/apps/:app_id/pkgs',
+    tokens: [{"old":"/api/apps/:app_id/pkgs","type":0,"val":"api","end":""},{"old":"/api/apps/:app_id/pkgs","type":0,"val":"apps","end":""},{"old":"/api/apps/:app_id/pkgs","type":1,"val":"app_id","end":""},{"old":"/api/apps/:app_id/pkgs","type":0,"val":"pkgs","end":""}],
+    types: placeholder as Registry['apps.pkgs.index']['types'],
   },
   'images.index': {
     methods: ["GET","HEAD"],
@@ -114,53 +150,35 @@ const routes = {
     tokens: [{"old":"/api/images/:id","type":0,"val":"api","end":""},{"old":"/api/images/:id","type":0,"val":"images","end":""},{"old":"/api/images/:id","type":1,"val":"id","end":""}],
     types: placeholder as Registry['images.destroy']['types'],
   },
-  'apps.index': {
+  'pkgs.index': {
     methods: ["GET","HEAD"],
-    pattern: '/api/apps',
-    tokens: [{"old":"/api/apps","type":0,"val":"api","end":""},{"old":"/api/apps","type":0,"val":"apps","end":""}],
-    types: placeholder as Registry['apps.index']['types'],
+    pattern: '/api/pkgs',
+    tokens: [{"old":"/api/pkgs","type":0,"val":"api","end":""},{"old":"/api/pkgs","type":0,"val":"pkgs","end":""}],
+    types: placeholder as Registry['pkgs.index']['types'],
   },
-  'apps.show': {
-    methods: ["GET","HEAD"],
-    pattern: '/api/apps/:id',
-    tokens: [{"old":"/api/apps/:id","type":0,"val":"api","end":""},{"old":"/api/apps/:id","type":0,"val":"apps","end":""},{"old":"/api/apps/:id","type":1,"val":"id","end":""}],
-    types: placeholder as Registry['apps.show']['types'],
-  },
-  'pkgs.search': {
-    methods: ["GET","HEAD"],
-    pattern: '/api/packages',
-    tokens: [{"old":"/api/packages","type":0,"val":"api","end":""},{"old":"/api/packages","type":0,"val":"packages","end":""}],
-    types: placeholder as Registry['pkgs.search']['types'],
-  },
-  'packages.store': {
+  'pkgs.store': {
     methods: ["POST"],
-    pattern: '/api/packages',
-    tokens: [{"old":"/api/packages","type":0,"val":"api","end":""},{"old":"/api/packages","type":0,"val":"packages","end":""}],
-    types: placeholder as Registry['packages.store']['types'],
+    pattern: '/api/pkgs',
+    tokens: [{"old":"/api/pkgs","type":0,"val":"api","end":""},{"old":"/api/pkgs","type":0,"val":"pkgs","end":""}],
+    types: placeholder as Registry['pkgs.store']['types'],
   },
-  'packages.show': {
+  'pkgs.show': {
     methods: ["GET","HEAD"],
-    pattern: '/api/packages/:id',
-    tokens: [{"old":"/api/packages/:id","type":0,"val":"api","end":""},{"old":"/api/packages/:id","type":0,"val":"packages","end":""},{"old":"/api/packages/:id","type":1,"val":"id","end":""}],
-    types: placeholder as Registry['packages.show']['types'],
+    pattern: '/api/pkgs/:id',
+    tokens: [{"old":"/api/pkgs/:id","type":0,"val":"api","end":""},{"old":"/api/pkgs/:id","type":0,"val":"pkgs","end":""},{"old":"/api/pkgs/:id","type":1,"val":"id","end":""}],
+    types: placeholder as Registry['pkgs.show']['types'],
   },
-  'packages.update': {
+  'pkgs.update': {
     methods: ["PUT","PATCH"],
-    pattern: '/api/packages/:id',
-    tokens: [{"old":"/api/packages/:id","type":0,"val":"api","end":""},{"old":"/api/packages/:id","type":0,"val":"packages","end":""},{"old":"/api/packages/:id","type":1,"val":"id","end":""}],
-    types: placeholder as Registry['packages.update']['types'],
+    pattern: '/api/pkgs/:id',
+    tokens: [{"old":"/api/pkgs/:id","type":0,"val":"api","end":""},{"old":"/api/pkgs/:id","type":0,"val":"pkgs","end":""},{"old":"/api/pkgs/:id","type":1,"val":"id","end":""}],
+    types: placeholder as Registry['pkgs.update']['types'],
   },
-  'packages.destroy': {
+  'pkgs.destroy': {
     methods: ["DELETE"],
-    pattern: '/api/packages/:id',
-    tokens: [{"old":"/api/packages/:id","type":0,"val":"api","end":""},{"old":"/api/packages/:id","type":0,"val":"packages","end":""},{"old":"/api/packages/:id","type":1,"val":"id","end":""}],
-    types: placeholder as Registry['packages.destroy']['types'],
-  },
-  'apps.packages.index': {
-    methods: ["GET","HEAD"],
-    pattern: '/api/apps/:app_id/packages',
-    tokens: [{"old":"/api/apps/:app_id/packages","type":0,"val":"api","end":""},{"old":"/api/apps/:app_id/packages","type":0,"val":"apps","end":""},{"old":"/api/apps/:app_id/packages","type":1,"val":"app_id","end":""},{"old":"/api/apps/:app_id/packages","type":0,"val":"packages","end":""}],
-    types: placeholder as Registry['apps.packages.index']['types'],
+    pattern: '/api/pkgs/:id',
+    tokens: [{"old":"/api/pkgs/:id","type":0,"val":"api","end":""},{"old":"/api/pkgs/:id","type":0,"val":"pkgs","end":""},{"old":"/api/pkgs/:id","type":1,"val":"id","end":""}],
+    types: placeholder as Registry['pkgs.destroy']['types'],
   },
   'repos.index': {
     methods: ["GET","HEAD"],
@@ -197,24 +215,6 @@ const routes = {
     pattern: '/api/distros',
     tokens: [{"old":"/api/distros","type":0,"val":"api","end":""},{"old":"/api/distros","type":0,"val":"distros","end":""}],
     types: placeholder as Registry['distros.index']['types'],
-  },
-  'apps.store': {
-    methods: ["POST"],
-    pattern: '/api/apps',
-    tokens: [{"old":"/api/apps","type":0,"val":"api","end":""},{"old":"/api/apps","type":0,"val":"apps","end":""}],
-    types: placeholder as Registry['apps.store']['types'],
-  },
-  'apps.update': {
-    methods: ["PUT","PATCH"],
-    pattern: '/api/apps/:id',
-    tokens: [{"old":"/api/apps/:id","type":0,"val":"api","end":""},{"old":"/api/apps/:id","type":0,"val":"apps","end":""},{"old":"/api/apps/:id","type":1,"val":"id","end":""}],
-    types: placeholder as Registry['apps.update']['types'],
-  },
-  'apps.destroy': {
-    methods: ["DELETE"],
-    pattern: '/api/apps/:id',
-    tokens: [{"old":"/api/apps/:id","type":0,"val":"api","end":""},{"old":"/api/apps/:id","type":0,"val":"apps","end":""},{"old":"/api/apps/:id","type":1,"val":"id","end":""}],
-    types: placeholder as Registry['apps.destroy']['types'],
   },
 } as const satisfies Record<string, AdonisEndpoint>
 
