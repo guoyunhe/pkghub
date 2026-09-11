@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto'
 import { readFile } from 'node:fs/promises'
 
 import { Exception } from '@adonisjs/core/exceptions'
@@ -9,6 +10,8 @@ import { ImageSchema } from '#database/schema'
 
 const DEFAULT_MAX_SIZE = 10 * 1024 * 1024
 
+export const imageFormats = ['svg', 'png', 'jpeg', 'webp', 'avif', 'gif'] as const
+
 export type ImageOptions = {
   userId?: number | null
   path?: string
@@ -17,7 +20,7 @@ export type ImageOptions = {
   fit?: keyof FitEnum
   format?: keyof FormatEnum
   maxSize?: number
-  acceptedFormats?: ReadonlyArray<'svg' | 'png' | 'jpeg' | 'webp' | 'avif' | 'gif'>
+  acceptedFormats?: ReadonlyArray<(typeof imageFormats)[number]>
   minimumPngSize?: number
 }
 
@@ -52,13 +55,32 @@ export default class Image extends ImageSchema {
 
   private static async createFromBuffer(data: Buffer, options: ImageOptions) {
     const attributes = await this.process(data, options)
+
+    // Files are content addressed (named after the md5 of their bytes), so the same image
+    // uploaded twice keeps a single file and a single row — "path" is unique in the table.
+    const existing = await this.findBy('path', attributes.path)
+    if (existing) return existing
+
     return this.create(attributes)
   }
 
   private static async replaceFromBuffer(image: Image, data: Buffer, options: ImageOptions) {
     const previousPath = image.path
-    const attributes = await this.process(data, options)
+    let attributes = await this.process(data, options)
+
+    const owner = await this.findBy('path', attributes.path)
+    if (owner && owner.id !== image.id) {
+      // The exact same bytes are already stored for another image. "path" holds a content
+      // hash and is unique, so this row keeps its own copy of the bytes instead of
+      // pointing at the file owned by the other row.
+      attributes = await this.process(data, {
+        ...options,
+        path: this.rowScopedPath(attributes.path, image.id),
+      })
+    }
+
     await image.merge(attributes).save()
+
     if (previousPath !== image.path) await drive.use().delete(previousPath)
     return image
   }
@@ -87,25 +109,29 @@ export default class Image extends ImageSchema {
       ;({ format, width, height } = output.info)
     }
 
-    if (!format || !width || !height) throw new Error('Unable to determine image metadata')
+    if (!format || !width || !height) {
+      throw new Exception('Unable to determine image metadata', { status: 422 })
+    }
     if (outputData.length > maxSize) {
       throw new Exception(`Image exceeds the ${maxSize / 1024 / 1024} MB size limit`, {
         status: 422,
       })
     }
     if (options.acceptedFormats && !options.acceptedFormats.includes(format)) {
-      throw new Error(`Unsupported image format: ${format}`)
+      throw new Exception(`Image must be one of: ${options.acceptedFormats.join(', ')}`, {
+        status: 422,
+      })
     }
     if (
       format === 'png' &&
       options.minimumPngSize &&
       Math.min(width, height) < options.minimumPngSize
     ) {
-      throw new Error(`PNG image must be at least ${options.minimumPngSize}px`)
+      throw new Exception(`PNG image must be at least ${options.minimumPngSize}px`, { status: 422 })
     }
 
     const extension = format === 'jpeg' ? 'jpg' : format
-    const path = options.path ?? `images/${crypto.randomUUID()}.${extension}`
+    const path = options.path ?? `images/${this.contentHash(outputData)}.${extension}`
     await drive.use().put(path, outputData)
 
     return {
@@ -116,6 +142,21 @@ export default class Image extends ImageSchema {
       height,
       mimeType: format === 'svg' ? 'image/svg+xml' : `image/${format}`,
     }
+  }
+
+  /**
+   * Content address for a processed image. Identical bytes always map to the same file name, which
+   * keeps duplicate uploads from wasting disk space.
+   */
+  private static contentHash(data: Buffer) {
+    return createHash('md5').update(data).digest('hex')
+  }
+
+  /**
+   * Adds the image id to a content addressed path, so that a single row owns the file.
+   */
+  private static rowScopedPath(path: string, id: number) {
+    return path.replace(/(\.[^./]+)$/, `-${id}$1`)
   }
 
   private static async download(url: string) {

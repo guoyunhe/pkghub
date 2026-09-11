@@ -1,7 +1,8 @@
 import type { Data } from '@generated/data'
-import xior, { isXiorError } from 'xior'
+import xior from 'xior'
 
 import i18n from '../i18n'
+import { getErrorMessage } from './errors'
 
 export type AuthUser = Data.User
 
@@ -18,11 +19,6 @@ export type RegisterPayload = LoginPayload & {
 type AuthResponse = {
   user: AuthUser
   token: string
-}
-
-type ErrorResponse = {
-  message?: string
-  errors?: Array<{ message?: string }>
 }
 
 const tokenKey = 'pkghub.auth-token'
@@ -51,16 +47,6 @@ export function clearAuthToken() {
 
 function setAuthToken(token: string) {
   localStorage.setItem(tokenKey, token)
-}
-
-function getErrorMessage(error: unknown) {
-  if (isXiorError<ErrorResponse>(error)) {
-    const body = error.response?.data
-    if (body?.message ?? body?.errors?.[0]?.message) {
-      return body.message ?? body.errors?.[0]?.message
-    }
-  }
-  return error instanceof Error ? error.message : 'Request failed'
 }
 
 export async function login(payload: LoginPayload) {

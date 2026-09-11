@@ -1,4 +1,5 @@
 import '@mantine/core/styles.css'
+import '@mantine/dropzone/styles.css'
 import './styles.css'
 import './i18n'
 import { MantineProvider, localStorageColorSchemeManager } from '@mantine/core'

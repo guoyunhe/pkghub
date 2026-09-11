@@ -4,7 +4,6 @@ import {
   Button,
   Group,
   Loader,
-  Select,
   Stack,
   Text,
   Textarea,
@@ -18,8 +17,8 @@ import { useTranslation } from 'react-i18next'
 import { Redirect, useLocation, useRoute } from 'wouter'
 
 import { useAuth } from '../auth'
+import IconUpload from '../components/IconUpload'
 import { createApp, getApp, updateApp, type AppPayload } from '../services/apps'
-import { getImages } from '../services/images'
 
 import styles from './AppFormPage.module.css'
 
@@ -58,21 +57,18 @@ export default function AppFormPage() {
   const [, params] = useRoute('/apps/:id/edit')
   const appId = params?.id ? Number(params.id) : undefined
   const [form, setForm] = useState<AppPayload>(emptyForm)
-  const [images, setImages] = useState<Data.Image[]>([])
+  const [iconUrl, setIconUrl] = useState<string | null>(null)
   const [loading, setLoading] = useState(Boolean(appId))
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    getImages()
-      .then(setImages)
-      .catch(() => undefined)
-  }, [])
-
-  useEffect(() => {
     if (!appId) return
     getApp(appId)
-      .then((app) => setForm(formFromApp(app)))
+      .then((app) => {
+        setForm(formFromApp(app))
+        setIconUrl(app.icon?.url ?? null)
+      })
       .catch((reason) => setError(reason instanceof Error ? reason.message : t('form.loadError')))
       .finally(() => setLoading(false))
   }, [appId])
@@ -126,20 +122,10 @@ export default function AppFormPage() {
         </Alert>
       )}
       <Stack className={styles.form}>
-        <Select
-          clearable
-          searchable
-          label={t('form.icon')}
-          placeholder={t('form.iconPlaceholder')}
-          data={images.map((image) => ({ value: String(image.id), label: image.url }))}
-          value={form.iconId ? String(form.iconId) : null}
-          onChange={(value) => setForm({ ...form, iconId: value ? Number(value) : null })}
-          renderOption={({ option }) => (
-            <Group gap='xs' wrap='nowrap'>
-              <img alt='' height={24} src={option.label} width={24} />
-              <Text size='sm'>{option.label}</Text>
-            </Group>
-          )}
+        <IconUpload
+          previewUrl={iconUrl}
+          value={form.iconId ?? null}
+          onChange={(iconId) => setForm((current) => ({ ...current, iconId }))}
         />
         <TextInput
           label={t('form.nameEn')}

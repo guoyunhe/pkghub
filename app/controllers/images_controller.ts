@@ -2,11 +2,11 @@ import { Exception } from '@adonisjs/core/exceptions'
 import type { HttpContext } from '@adonisjs/core/http'
 import drive from '@adonisjs/drive/services/main'
 
-import Image from '#models/image'
+import Image, { imageFormats, type ImageOptions } from '#models/image'
 import ImageTransformer from '#transformers/image_transformer'
 
 const MAX_IMAGE_SIZE = 10 * 1024 * 1024
-const imageExtensions = ['jpg', 'jpeg', 'png', 'webp', 'avif', 'gif']
+const imageExtensions = ['jpg', 'jpeg', 'png', 'webp', 'avif', 'gif', 'svg']
 const fitModes = ['contain', 'cover', 'fill', 'inside', 'outside'] as const
 const outputFormats = ['jpeg', 'png', 'webp', 'avif'] as const
 
@@ -40,7 +40,7 @@ export default class ImagesController {
       ...this.parseOptions(request),
     })
 
-    response.created()
+    response.status(201)
     return serialize(ImageTransformer.transform(image))
   }
 
@@ -97,11 +97,25 @@ export default class ImagesController {
       throw new Exception(`format must be one of: ${outputFormats.join(', ')}`, { status: 422 })
     }
 
+    const acceptedFormats = request.input('acceptedFormats')
+    if (acceptedFormats !== undefined && !Array.isArray(acceptedFormats)) {
+      throw new Exception(`acceptedFormats must be an array`, { status: 422 })
+    }
+    const invalidFormat = acceptedFormats?.find(
+      (value: unknown) => !imageFormats.includes(value as (typeof imageFormats)[number]),
+    )
+    if (invalidFormat !== undefined) {
+      throw new Exception(`acceptedFormats must be one of: ${imageFormats.join(', ')}`, {
+        status: 422,
+      })
+    }
+
     return {
       width: parseDimension('width'),
       height: parseDimension('height'),
       fit: fit as FitMode | undefined,
       format: format as OutputFormat | undefined,
+      acceptedFormats: acceptedFormats as ImageOptions['acceptedFormats'],
     }
   }
 }

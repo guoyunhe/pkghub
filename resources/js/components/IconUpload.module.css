@@ -1,0 +1,20 @@
+.dropzone {
+  align-items: center;
+  display: flex;
+  height: 128px;
+  justify-content: center;
+  overflow: hidden;
+  width: 128px;
+}
+
+.preview {
+  display: block;
+  height: 128px;
+  object-fit: contain;
+  width: 128px;
+}
+
+.aside {
+  flex: 1;
+  min-width: 0;
+}
