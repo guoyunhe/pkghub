@@ -11,7 +11,10 @@ export type AppPayload = {
   license?: string
   appstreamId?: string
   appstreamUrl?: string
+  appstreamXml?: string
   desktopUrl?: string
+  desktop?: string
+  iconId?: number | null
 }
 
 export type Distro = {

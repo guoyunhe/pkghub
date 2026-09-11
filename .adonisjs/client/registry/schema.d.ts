@@ -119,12 +119,12 @@ export interface Registry {
     methods: ["POST"]
     pattern: '/api/apps'
     types: {
-      body: {}
+      body: ExtractBody<InferInput<(typeof import('#validators/app').appValidator)>>
       paramsTuple: []
       params: {}
-      query: {}
+      query: ExtractQuery<InferInput<(typeof import('#validators/app').appValidator)>>
       response: ExtractResponse<Awaited<ReturnType<import('#controllers/apps_controller').default['store']>>>
-      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/apps_controller').default['store']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/apps_controller').default['store']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
   'apps.show': {
@@ -143,12 +143,12 @@ export interface Registry {
     methods: ["PUT","PATCH"]
     pattern: '/api/apps/:id'
     types: {
-      body: {}
+      body: ExtractBody<InferInput<(typeof import('#validators/app').appValidator)>>
       paramsTuple: [ParamValue]
       params: { id: ParamValue }
-      query: {}
+      query: ExtractQuery<InferInput<(typeof import('#validators/app').appValidator)>>
       response: ExtractResponse<Awaited<ReturnType<import('#controllers/apps_controller').default['update']>>>
-      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/apps_controller').default['update']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/apps_controller').default['update']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
   'apps.destroy': {

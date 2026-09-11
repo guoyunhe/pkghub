@@ -155,6 +155,8 @@
     "editApp": "Edit application",
     "loadError": "Unable to load application",
     "saveError": "Unable to save application",
+    "icon": "Icon",
+    "iconPlaceholder": "Select an uploaded image",
     "nameEn": "Name (English)",
     "nameZh": "Name (Chinese)",
     "summaryEn": "Summary (English)",
@@ -163,7 +165,11 @@
     "license": "License",
     "appstreamId": "AppStream ID",
     "appstreamUrl": "AppStream URL",
+    "appstreamXml": "AppStream XML",
+    "appstreamXmlHint": "Raw AppStream metadata, usually imported from the AppStream URL.",
     "desktopUrl": "Desktop URL",
+    "desktop": "Desktop entry",
+    "desktopHint": "Contents of the .desktop file, usually imported from the desktop URL.",
     "save": "Save application"
   },
   "repos": {

@@ -155,6 +155,8 @@
     "editApp": "编辑应用",
     "loadError": "无法加载应用",
     "saveError": "无法保存应用",
+    "icon": "图标",
+    "iconPlaceholder": "选择已上传的图片",
     "nameEn": "名称（英文）",
     "nameZh": "名称（中文）",
     "summaryEn": "简介（英文）",
@@ -163,7 +165,11 @@
     "license": "许可证",
     "appstreamId": "AppStream ID",
     "appstreamUrl": "AppStream URL",
+    "appstreamXml": "AppStream XML",
+    "appstreamXmlHint": "AppStream 原始元数据，通常从 AppStream URL 导入。",
     "desktopUrl": "Desktop URL",
+    "desktop": "Desktop 文件",
+    "desktopHint": ".desktop 文件内容，通常从 Desktop URL 导入。",
     "save": "保存应用"
   },
   "repos": {

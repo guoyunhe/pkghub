@@ -1,5 +1,16 @@
 import type { Data } from '@generated/data'
-import { Alert, Button, Group, Loader, Stack, Text, TextInput, Title } from '@mantine/core'
+import {
+  Alert,
+  Button,
+  Group,
+  Loader,
+  Select,
+  Stack,
+  Text,
+  Textarea,
+  TextInput,
+  Title,
+} from '@mantine/core'
 import { FloppyDiskIcon } from '@phosphor-icons/react/FloppyDisk'
 import { XIcon } from '@phosphor-icons/react/X'
 import { useEffect, useState } from 'react'
@@ -8,10 +19,22 @@ import { Redirect, useLocation, useRoute } from 'wouter'
 
 import { useAuth } from '../auth'
 import { createApp, getApp, updateApp, type AppPayload } from '../services/apps'
+import { getImages } from '../services/images'
 
 import styles from './AppFormPage.module.css'
 
-const emptyForm: AppPayload = { name: { en: '' }, summary: { en: '' } }
+const emptyForm: AppPayload = {
+  name: { en: '' },
+  summary: { en: '' },
+  version: '',
+  license: '',
+  appstreamId: '',
+  appstreamUrl: '',
+  appstreamXml: '',
+  desktopUrl: '',
+  desktop: '',
+  iconId: null,
+}
 
 function formFromApp(app: Data.App): AppPayload {
   return {
@@ -21,7 +44,10 @@ function formFromApp(app: Data.App): AppPayload {
     license: app.license ?? '',
     appstreamId: app.appstreamId ?? '',
     appstreamUrl: app.appstreamUrl ?? '',
+    appstreamXml: app.appstreamXml ?? '',
     desktopUrl: app.desktopUrl ?? '',
+    desktop: app.desktop ?? '',
+    iconId: app.iconId,
   }
 }
 
@@ -32,9 +58,16 @@ export default function AppFormPage() {
   const [, params] = useRoute('/apps/:id/edit')
   const appId = params?.id ? Number(params.id) : undefined
   const [form, setForm] = useState<AppPayload>(emptyForm)
+  const [images, setImages] = useState<Data.Image[]>([])
   const [loading, setLoading] = useState(Boolean(appId))
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    getImages()
+      .then(setImages)
+      .catch(() => undefined)
+  }, [])
 
   useEffect(() => {
     if (!appId) return
@@ -93,6 +126,21 @@ export default function AppFormPage() {
         </Alert>
       )}
       <Stack className={styles.form}>
+        <Select
+          clearable
+          searchable
+          label={t('form.icon')}
+          placeholder={t('form.iconPlaceholder')}
+          data={images.map((image) => ({ value: String(image.id), label: image.url }))}
+          value={form.iconId ? String(form.iconId) : null}
+          onChange={(value) => setForm({ ...form, iconId: value ? Number(value) : null })}
+          renderOption={({ option }) => (
+            <Group gap='xs' wrap='nowrap'>
+              <img alt='' height={24} src={option.label} width={24} />
+              <Text size='sm'>{option.label}</Text>
+            </Group>
+          )}
+        />
         <TextInput
           label={t('form.nameEn')}
           required
@@ -143,10 +191,26 @@ export default function AppFormPage() {
           value={form.appstreamUrl ?? ''}
           onChange={(event) => setForm({ ...form, appstreamUrl: event.currentTarget.value })}
         />
+        <Textarea
+          autosize
+          description={t('form.appstreamXmlHint')}
+          label={t('form.appstreamXml')}
+          minRows={4}
+          value={form.appstreamXml ?? ''}
+          onChange={(event) => setForm({ ...form, appstreamXml: event.currentTarget.value })}
+        />
         <TextInput
           label={t('form.desktopUrl')}
           value={form.desktopUrl ?? ''}
           onChange={(event) => setForm({ ...form, desktopUrl: event.currentTarget.value })}
+        />
+        <Textarea
+          autosize
+          description={t('form.desktopHint')}
+          label={t('form.desktop')}
+          minRows={4}
+          value={form.desktop ?? ''}
+          onChange={(event) => setForm({ ...form, desktop: event.currentTarget.value })}
         />
         <Group justify='flex-end'>
           <Button

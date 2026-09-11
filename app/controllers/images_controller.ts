@@ -15,9 +15,15 @@ type OutputFormat = (typeof outputFormats)[number]
 
 export default class ImagesController {
   async index({ auth, serialize }: HttpContext) {
-    const images = await Image.query()
-      .where('user_id', auth.getUserOrFail().id)
-      .orderBy('id', 'desc')
+    const user = auth.getUserOrFail()
+    const query = Image.query().orderBy('id', 'desc')
+
+    // Admins pick icons for catalog entries from every uploaded image.
+    if (user.role !== 'admin') {
+      query.where('user_id', user.id)
+    }
+
+    const images = await query
 
     return serialize(ImageTransformer.transform(images))
   }
