@@ -33,6 +33,7 @@ export interface ApiDefinition {
     }
     pkgs: {
       index: typeof routes['apps.pkgs.index']
+      store: typeof routes['apps.pkgs.store']
     }
   }
   favorites: {

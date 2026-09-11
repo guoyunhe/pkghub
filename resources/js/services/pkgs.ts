@@ -2,12 +2,27 @@ import type { Data } from '@generated/data'
 import xior from 'xior'
 
 import { getAuthToken } from './auth'
+import { getErrorMessage } from './errors'
 
 const api = xior.create({ baseURL: import.meta.env.VITE_API_URL ?? '/api' })
 
 function authHeaders() {
   const token = getAuthToken()
   return token ? { Authorization: `Bearer ${token}` } : {}
+}
+
+export async function uploadPkg(appId: number, file: File) {
+  const payload = new FormData()
+  payload.append('file', file)
+
+  try {
+    const { data } = await api.post<{ data: Data.Pkg }>(`/apps/${appId}/pkgs`, payload, {
+      headers: authHeaders(),
+    })
+    return data.data
+  } catch (error) {
+    throw new Error(getErrorMessage(error))
+  }
 }
 
 export async function getPkg(id: number) {

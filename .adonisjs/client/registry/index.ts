@@ -120,6 +120,12 @@ const routes = {
     tokens: [{"old":"/api/apps/:app_id/pkgs","type":0,"val":"api","end":""},{"old":"/api/apps/:app_id/pkgs","type":0,"val":"apps","end":""},{"old":"/api/apps/:app_id/pkgs","type":1,"val":"app_id","end":""},{"old":"/api/apps/:app_id/pkgs","type":0,"val":"pkgs","end":""}],
     types: placeholder as Registry['apps.pkgs.index']['types'],
   },
+  'apps.pkgs.store': {
+    methods: ["POST"],
+    pattern: '/api/apps/:app_id/pkgs',
+    tokens: [{"old":"/api/apps/:app_id/pkgs","type":0,"val":"api","end":""},{"old":"/api/apps/:app_id/pkgs","type":0,"val":"apps","end":""},{"old":"/api/apps/:app_id/pkgs","type":1,"val":"app_id","end":""},{"old":"/api/apps/:app_id/pkgs","type":0,"val":"pkgs","end":""}],
+    types: placeholder as Registry['apps.pkgs.store']['types'],
+  },
   'images.index': {
     methods: ["GET","HEAD"],
     pattern: '/api/images',

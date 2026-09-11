@@ -235,6 +235,18 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/pkgs_controller').default['index']>>>
     }
   }
+  'apps.pkgs.store': {
+    methods: ["POST"]
+    pattern: '/api/apps/:app_id/pkgs'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { app_id: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/pkgs_controller').default['store']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/pkgs_controller').default['store']>>>
+    }
+  }
   'images.index': {
     methods: ["GET","HEAD"]
     pattern: '/api/images'

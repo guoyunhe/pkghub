@@ -35,6 +35,7 @@
   },
   "common": {
     "cancel": "取消",
+    "close": "关闭",
     "download": "下载",
     "notSpecified": "未指定"
   },
@@ -90,6 +91,13 @@
     "notFound": "未找到软件包。",
     "loadError": "无法加载软件包",
     "addPackage": "添加软件包",
+    "uploadPackage": "上传软件包文件",
+    "uploadDrop": "拖入 .deb、.rpm 或 .AppImage 文件，或点击选择文件",
+    "uploadAccept": "松开即可上传软件包",
+    "uploadRejected": "仅支持不超过 2 GB 的 .deb、.rpm 与 .AppImage 文件",
+    "uploadHint": "名称、版本、发布版本与架构等元数据会从上传的文件中自动解析。",
+    "uploadError": "无法上传软件包文件",
+    "uploadSuccess": "已将“{{name}}”添加到该应用",
     "editPackage": "编辑软件包",
     "newEntry": "新建软件包",
     "editEntry": "软件包",

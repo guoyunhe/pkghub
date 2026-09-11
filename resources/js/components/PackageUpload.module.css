@@ -1,0 +1,14 @@
+.dropzone {
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  min-height: 144px;
+  padding: var(--mantine-spacing-md);
+  text-align: center;
+  width: 100%;
+}
+
+.icon {
+  color: var(--mantine-color-dimmed);
+}

@@ -43,7 +43,10 @@ router
       .resource('apps.reviews', controllers.Reviews)
       .only(['index', 'store', 'destroy'])
       .use(['store', 'destroy'], middleware.auth())
-    router.resource('apps.pkgs', controllers.Pkgs).only(['index'])
+    router
+      .resource('apps.pkgs', controllers.Pkgs)
+      .only(['index', 'store'])
+      .use(['store'], [middleware.auth(), middleware.admin()])
 
     // Images
     router.resource('images', controllers.Images).apiOnly().use('*', middleware.auth())

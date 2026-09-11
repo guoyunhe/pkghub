@@ -60,7 +60,7 @@ const bodyParserConfig = defineConfig({
     /**
      * Routes where multipart processing is handled manually.
      */
-    processManually: [],
+    processManually: ['/api/apps/:app_id/pkgs'],
 
     /**
      * Maximum accepted payload size for multipart requests.

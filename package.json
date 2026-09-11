@@ -74,7 +74,8 @@
     "reflect-metadata": "^0.2.2",
     "sharp": "^0.35.4",
     "wouter": "^3.11.0",
-    "xior": "^0.8.4"
+    "xior": "^0.8.4",
+    "xz-decompress": "^0.2.3"
   },
   "devDependencies": {
     "@adonisjs/assembler": "^8.5.0",

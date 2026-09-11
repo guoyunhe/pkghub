@@ -35,6 +35,7 @@
   },
   "common": {
     "cancel": "Cancel",
+    "close": "Close",
     "download": "Download",
     "notSpecified": "Not specified"
   },
@@ -90,6 +91,13 @@
     "notFound": "No packages found.",
     "loadError": "Unable to load packages",
     "addPackage": "Add package",
+    "uploadPackage": "Upload package file",
+    "uploadDrop": "Drop a .deb, .rpm or .AppImage file here, or click to select",
+    "uploadAccept": "Drop the package file to upload",
+    "uploadRejected": "Only .deb, .rpm and .AppImage files up to 2 GB are allowed",
+    "uploadHint": "The name, version, release and architecture are read from the uploaded file.",
+    "uploadError": "Unable to upload the package file",
+    "uploadSuccess": "“{{name}}” was added to this application",
     "editPackage": "Edit package",
     "newEntry": "New package",
     "editEntry": "Package",

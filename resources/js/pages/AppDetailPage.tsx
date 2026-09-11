@@ -12,6 +12,7 @@ import { Link, useLocation, useRoute } from 'wouter'
 import { useAuth } from '../auth'
 import AverageRating from '../components/AverageRating'
 import FavoriteButton from '../components/FavoriteButton'
+import PackageUpload from '../components/PackageUpload'
 import ReviewForm from '../components/ReviewForm'
 import ReviewList from '../components/ReviewList'
 import ScreenshotCarousel from '../components/ScreenshotCarousel'
@@ -126,6 +127,11 @@ export default function AppDetailPage() {
   function handleReviewSubmitted() {
     setReviewsPage(1)
     setReviewsRefresh((value) => value + 1)
+  }
+
+  function handlePackageUploaded() {
+    setPackagesPage(1)
+    setPackagesRefresh((value) => value + 1)
   }
 
   async function handleDeleteReview(review: Data.Review) {
@@ -275,14 +281,17 @@ export default function AppDetailPage() {
         <Group align='center' justify='space-between'>
           <Title order={2}>{t('detail.packages')}</Title>
           {isAdmin && (
-            <Button
-              component={Link}
-              href={`/packages/new?appId=${app.id}`}
-              leftSection={<PlusIcon size={16} weight='bold' />}
-              size='xs'
-            >
-              {t('detail.addPackage')}
-            </Button>
+            <Group gap='xs'>
+              <PackageUpload appId={app.id} onUploaded={handlePackageUploaded} />
+              <Button
+                component={Link}
+                href={`/packages/new?appId=${app.id}`}
+                leftSection={<PlusIcon size={16} weight='bold' />}
+                size='xs'
+              >
+                {t('detail.addPackage')}
+              </Button>
+            </Group>
           )}
         </Group>
         {packagesError && <Alert color='red'>{packagesError}</Alert>}
