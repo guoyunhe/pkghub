@@ -14,10 +14,10 @@ export default class extends BaseSchema {
       table.string('license').nullable()
 
       table.string('appstream_id').nullable().unique()
-      table.text('appstream_xml', 'longtext').nullable()
+      table.text('appstream_content', 'longtext').nullable()
       table.string('appstream_url').nullable()
 
-      table.text('desktop').nullable()
+      table.text('desktop_content').nullable()
       table.string('desktop_url').nullable()
 
       table.integer('icon_id').nullable()

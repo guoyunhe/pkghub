@@ -57,8 +57,8 @@ export const appValidator = vine.create({
     })
     .nullable(),
   appstreamUrl: vine.string().parse(emptyToNull).trim().maxLength(255).nullable(),
-  appstreamXml: vine.string().parse(emptyToNull).trim().nullable(),
+  appstreamContent: vine.string().parse(emptyToNull).trim().nullable(),
   desktopUrl: vine.string().parse(emptyToNull).trim().maxLength(255).nullable(),
-  desktop: vine.string().parse(emptyToNull).trim().nullable(),
+  desktopContent: vine.string().parse(emptyToNull).trim().nullable(),
   iconId: vine.number().parse(emptyToNull).exists({ table: 'images', column: 'id' }).nullable(),
 })

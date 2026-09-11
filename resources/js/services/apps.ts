@@ -11,9 +11,9 @@ export type AppPayload = {
   license?: string
   appstreamId?: string
   appstreamUrl?: string
-  appstreamXml?: string
+  appstreamContent?: string
   desktopUrl?: string
-  desktop?: string
+  desktopContent?: string
   iconId?: number | null
 }
 

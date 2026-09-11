@@ -170,11 +170,11 @@
     "license": "许可证",
     "appstreamId": "AppStream ID",
     "appstreamUrl": "AppStream URL",
-    "appstreamXml": "AppStream XML",
-    "appstreamXmlHint": "AppStream 原始元数据，通常从 AppStream URL 导入。",
+    "appstreamContent": "AppStream XML",
+    "appstreamContentHint": "AppStream 原始元数据，通常从 AppStream URL 导入。",
     "desktopUrl": "Desktop URL",
-    "desktop": "Desktop 文件",
-    "desktopHint": ".desktop 文件内容，通常从 Desktop URL 导入。",
+    "desktopContent": "Desktop 文件",
+    "desktopContentHint": ".desktop 文件内容，通常从 Desktop URL 导入。",
     "save": "保存应用"
   },
   "repos": {

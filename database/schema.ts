@@ -8,18 +8,18 @@ import { BaseModel, column } from '@adonisjs/lucid/orm'
 import { DateTime } from 'luxon'
 
 export class AppSchema extends BaseModel {
-  static $columns = ['appstreamId', 'appstreamUrl', 'appstreamXml', 'createdAt', 'desktop', 'desktopUrl', 'iconId', 'id', 'license', 'name', 'summary', 'updatedAt', 'version'] as const
+  static $columns = ['appstreamContent', 'appstreamId', 'appstreamUrl', 'createdAt', 'desktopContent', 'desktopUrl', 'iconId', 'id', 'license', 'name', 'summary', 'updatedAt', 'version'] as const
   $columns = AppSchema.$columns
+  @column()
+  declare appstreamContent: string | null
   @column()
   declare appstreamId: string | null
   @column()
   declare appstreamUrl: string | null
-  @column()
-  declare appstreamXml: string | null
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
   @column()
-  declare desktop: string | null
+  declare desktopContent: string | null
   @column()
   declare desktopUrl: string | null
   @column()

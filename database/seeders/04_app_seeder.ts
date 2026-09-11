@@ -98,13 +98,19 @@ export default class AppSeeder extends BaseSeeder {
   async run() {
     for (const { appstreamUrl, desktopUrl, iconUrl, packages = [] } of applications) {
       const appstreamData = await this.download(appstreamUrl, 'AppStream XML')
-      const appstreamXml = appstreamData.toString('utf8')
-      const application = parseAppStream(appstreamXml)
-      const desktop = desktopUrl ? await this.downloadDesktop(desktopUrl) : null
+      const appstreamContent = appstreamData.toString('utf8')
+      const application = parseAppStream(appstreamContent)
+      const desktopContent = desktopUrl ? await this.downloadDesktop(desktopUrl) : null
 
       const app = await App.updateOrCreate(
         { appstreamId: application.appstreamId },
-        { ...application, appstreamUrl, appstreamXml, desktopUrl: desktopUrl ?? null, desktop },
+        {
+          ...application,
+          appstreamUrl,
+          appstreamContent,
+          desktopUrl: desktopUrl ?? null,
+          desktopContent,
+        },
       )
       await this.updateIcon(app, iconUrl)
       await this.updatePackages(app, packages)
@@ -135,8 +141,8 @@ export default class AppSeeder extends BaseSeeder {
   }
 
   private async downloadDesktop(desktopUrl: string) {
-    const desktop = await this.download(desktopUrl, 'desktop file')
-    return desktop.toString('utf8')
+    const desktopContent = await this.download(desktopUrl, 'desktop file')
+    return desktopContent.toString('utf8')
   }
 
   private async updateIcon(app: App, iconUrl: string) {

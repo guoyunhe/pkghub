@@ -29,9 +29,9 @@ const emptyForm: AppPayload = {
   license: '',
   appstreamId: '',
   appstreamUrl: '',
-  appstreamXml: '',
+  appstreamContent: '',
   desktopUrl: '',
-  desktop: '',
+  desktopContent: '',
   iconId: null,
 }
 
@@ -43,9 +43,9 @@ function formFromApp(app: Data.App): AppPayload {
     license: app.license ?? '',
     appstreamId: app.appstreamId ?? '',
     appstreamUrl: app.appstreamUrl ?? '',
-    appstreamXml: app.appstreamXml ?? '',
+    appstreamContent: app.appstreamContent ?? '',
     desktopUrl: app.desktopUrl ?? '',
-    desktop: app.desktop ?? '',
+    desktopContent: app.desktopContent ?? '',
     iconId: app.iconId,
   }
 }
@@ -179,11 +179,11 @@ export default function AppFormPage() {
         />
         <Textarea
           autosize
-          description={t('form.appstreamXmlHint')}
-          label={t('form.appstreamXml')}
+          description={t('form.appstreamContentHint')}
+          label={t('form.appstreamContent')}
           minRows={4}
-          value={form.appstreamXml ?? ''}
-          onChange={(event) => setForm({ ...form, appstreamXml: event.currentTarget.value })}
+          value={form.appstreamContent ?? ''}
+          onChange={(event) => setForm({ ...form, appstreamContent: event.currentTarget.value })}
         />
         <TextInput
           label={t('form.desktopUrl')}
@@ -192,11 +192,11 @@ export default function AppFormPage() {
         />
         <Textarea
           autosize
-          description={t('form.desktopHint')}
-          label={t('form.desktop')}
+          description={t('form.desktopContentHint')}
+          label={t('form.desktopContent')}
           minRows={4}
-          value={form.desktop ?? ''}
-          onChange={(event) => setForm({ ...form, desktop: event.currentTarget.value })}
+          value={form.desktopContent ?? ''}
+          onChange={(event) => setForm({ ...form, desktopContent: event.currentTarget.value })}
         />
         <Group justify='flex-end'>
           <Button

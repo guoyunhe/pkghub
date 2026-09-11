@@ -170,11 +170,11 @@
     "license": "License",
     "appstreamId": "AppStream ID",
     "appstreamUrl": "AppStream URL",
-    "appstreamXml": "AppStream XML",
-    "appstreamXmlHint": "Raw AppStream metadata, usually imported from the AppStream URL.",
+    "appstreamContent": "AppStream XML",
+    "appstreamContentHint": "Raw AppStream metadata, usually imported from the AppStream URL.",
     "desktopUrl": "Desktop URL",
-    "desktop": "Desktop entry",
-    "desktopHint": "Contents of the .desktop file, usually imported from the desktop URL.",
+    "desktopContent": "Desktop entry",
+    "desktopContentHint": "Contents of the .desktop file, usually imported from the desktop URL.",
     "save": "Save application"
   },
   "repos": {
