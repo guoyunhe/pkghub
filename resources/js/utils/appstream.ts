@@ -1,3 +1,5 @@
+import { fallbackLanguage, scriptForRegion } from './languages'
+
 export type LocalizedText = Record<string, string>
 
 export type AppStreamScreenshot = {
@@ -228,20 +230,17 @@ export function parseAppStreamContent(content: string | null | undefined): AppSt
   return { description: parseDescription(component), screenshots: parseScreenshots(component) }
 }
 
-const chineseTraditionalRegions = new Set(['hk', 'mo', 'tw'])
-
 /**
- * Splits a language tag such as `zh-Hans-CN` into its base language and script. Chinese is often
- * published as `zh-Hans` / `zh-Hant` or as a region (`zh-TW`), and a bare `zh` tag is treated as
- * Simplified Chinese, which is what this site uses for its own Chinese locale.
+ * Splits a language tag such as `zh-Hans-CN` into its base language and script, resolving scripts
+ * that are encoded as a region (`zh-TW`) through the shared language configuration.
  */
 function languageParts(tag: string) {
   const subtags = tag.toLowerCase().split(/[-_]/).filter(Boolean)
   const base = subtags[0] ?? ''
   let script = subtags.find((subtag, index) => index > 0 && subtag.length === 4)
-  if (base === 'zh' && !script) {
+  if (!script) {
     const region = subtags.find((subtag, index) => index > 0 && subtag.length <= 3)
-    script = region && chineseTraditionalRegions.has(region) ? 'hant' : 'hans'
+    script = scriptForRegion(base, region)
   }
   return { base, script }
 }
@@ -271,28 +270,28 @@ function bestLanguageKey(keys: string[], language: string) {
   return best?.key
 }
 
-function englishKey(keys: string[]) {
-  return keys.find((key) => key.toLowerCase() === 'en')
+function fallbackKey(keys: string[]) {
+  return keys.find((key) => key.toLowerCase() === fallbackLanguage)
 }
 
-/** Picks the value matching the locale, falling back to English, then to any value. */
+/** Picks the value matching the locale, falling back to the default language, then to any value. */
 export function localized(translations: LocalizedText | null | undefined, language: string) {
   if (!translations) {
     return undefined
   }
   const keys = Object.keys(translations)
-  const key = bestLanguageKey(keys, language) ?? englishKey(keys)
+  const key = bestLanguageKey(keys, language) ?? fallbackKey(keys)
   return key ? translations[key] : Object.values(translations)[0]
 }
 
 function descriptionBlocks(description: AppStreamDescription, language: string) {
   const keys = Object.keys(description.translations)
   const key = bestLanguageKey(keys, language)
-  const english = englishKey(keys)
+  const fallback = fallbackKey(keys)
   return (
     (key ? description.translations[key] : undefined) ??
     (description.default.length > 0 ? description.default : undefined) ??
-    (english ? description.translations[english] : undefined) ??
+    (fallback ? description.translations[fallback] : undefined) ??
     Object.values(description.translations)[0] ??
     []
   )
@@ -305,7 +304,7 @@ export function resolveDescription(description: AppStreamDescription, language: 
 
 /**
  * Keeps the screenshots translated to the requested language (plus the untranslated ones), falling
- * back to English, then to every screenshot when no translation matches.
+ * back to the default language, then to every screenshot when no translation matches.
  */
 export function selectScreenshots(screenshots: AppStreamScreenshot[], language: string) {
   if (screenshots.length === 0) {
@@ -326,8 +325,8 @@ export function selectScreenshots(screenshots: AppStreamScreenshot[], language: 
     )
   }
 
-  const english = screenshots.filter(
-    (screenshot) => screenshot.language && languageScore(screenshot.language, 'en') > 0,
+  const fallback = screenshots.filter(
+    (screenshot) => screenshot.language && languageScore(screenshot.language, fallbackLanguage) > 0,
   )
-  return english.length > 0 ? english : screenshots
+  return fallback.length > 0 ? fallback : screenshots
 }

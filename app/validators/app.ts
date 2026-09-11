@@ -9,8 +9,8 @@ type LocalizedText = Record<string, string>
 const emptyToNull = (value: unknown) => (value === '' || value === undefined ? null : value)
 
 /**
- * Localized text is a JSON object of locale => text. The "en" translation is required, while blank
- * and non-string translations are dropped.
+ * Localized text is a JSON object of locale => text. At least one translation is required, while
+ * blank and non-string translations are dropped.
  */
 const localizedTextRule = vine.createRule((value, _options, field) => {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return
@@ -23,8 +23,8 @@ const localizedTextRule = vine.createRule((value, _options, field) => {
     if (locale && trimmed) localized[locale] = trimmed
   }
 
-  if (!localized.en) {
-    field.report('The {{ field }} field must have an "en" translation', 'localizedText', field)
+  if (Object.keys(localized).length === 0) {
+    field.report('The {{ field }} field must have at least one translation', 'localizedText', field)
     return
   }
 

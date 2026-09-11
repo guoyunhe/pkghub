@@ -4,6 +4,7 @@ import {
   Button,
   Group,
   Loader,
+  Select,
   Stack,
   Text,
   Textarea,
@@ -12,27 +13,30 @@ import {
 } from '@mantine/core'
 import { FloppyDiskIcon } from '@phosphor-icons/react/FloppyDisk'
 import { XIcon } from '@phosphor-icons/react/X'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Redirect, useLocation, useRoute } from 'wouter'
 
 import { useAuth } from '../auth'
 import IconUpload from '../components/IconUpload'
 import { createApp, getApp, updateApp, type AppPayload } from '../services/apps'
+import { defaultLanguage, languageOptions } from '../utils/languages'
 
 import styles from './AppFormPage.module.css'
 
-const emptyForm: AppPayload = {
-  name: { en: '' },
-  summary: { en: '' },
-  version: '',
-  license: '',
-  appstreamId: '',
-  appstreamUrl: '',
-  appstreamContent: '',
-  desktopUrl: '',
-  desktopContent: '',
-  iconId: null,
+function emptyForm(language: string): AppPayload {
+  return {
+    name: { [language]: '' },
+    summary: { [language]: '' },
+    version: '',
+    license: '',
+    appstreamId: '',
+    appstreamUrl: '',
+    appstreamContent: '',
+    desktopUrl: '',
+    desktopContent: '',
+    iconId: null,
+  }
 }
 
 function formFromApp(app: Data.App): AppPayload {
@@ -51,16 +55,33 @@ function formFromApp(app: Data.App): AppPayload {
 }
 
 export default function AppFormPage() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const { ready, user } = useAuth()
   const [, navigate] = useLocation()
   const [, params] = useRoute('/apps/:id/edit')
   const appId = params?.id ? Number(params.id) : undefined
-  const [form, setForm] = useState<AppPayload>(emptyForm)
+  const [form, setForm] = useState<AppPayload>(() => emptyForm(defaultLanguage([], i18n.language)))
   const [iconUrl, setIconUrl] = useState<string | null>(null)
   const [loading, setLoading] = useState(Boolean(appId))
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  // Localized text is edited one language at a time. The form owns its language selector, so the
+  // interface language only decides which language the form starts with.
+  const [chosenLanguage, setChosenLanguage] = useState<string | null>(null)
+  const usedLanguages = useMemo(
+    () => [...new Set([...Object.keys(form.name), ...Object.keys(form.summary)])],
+    [form.name, form.summary],
+  )
+  const languages = useMemo(
+    () => languageOptions(usedLanguages, i18n.language),
+    [usedLanguages, i18n.language],
+  )
+  const editingLanguage =
+    chosenLanguage && languages.some((option) => option.value === chosenLanguage)
+      ? chosenLanguage
+      : defaultLanguage(usedLanguages, i18n.language)
+  const nameMissing = !Object.values(form.name).some((value) => value?.trim())
+  const summaryMissing = !Object.values(form.summary).some((value) => value?.trim())
 
   useEffect(() => {
     if (!appId) return
@@ -127,36 +148,38 @@ export default function AppFormPage() {
           value={form.iconId ?? null}
           onChange={(iconId) => setForm((current) => ({ ...current, iconId }))}
         />
+        <Select
+          allowDeselect={false}
+          data={languages}
+          label={t('form.editingLanguage')}
+          maw={280}
+          searchable
+          value={editingLanguage}
+          onChange={(value) => setChosenLanguage(value)}
+        />
         <TextInput
-          label={t('form.nameEn')}
-          required
-          value={form.name.en}
+          label={t('form.name')}
+          value={form.name[editingLanguage] ?? ''}
           onChange={(event) =>
-            setForm({ ...form, name: { ...form.name, en: event.currentTarget.value } })
+            setForm({
+              ...form,
+              name: { ...form.name, [editingLanguage]: event.currentTarget.value },
+            })
           }
         />
         <TextInput
-          label={t('form.nameZh')}
-          value={form.name.zh ?? ''}
+          label={t('form.summary')}
+          value={form.summary[editingLanguage] ?? ''}
           onChange={(event) =>
-            setForm({ ...form, name: { ...form.name, zh: event.currentTarget.value } })
+            setForm({
+              ...form,
+              summary: { ...form.summary, [editingLanguage]: event.currentTarget.value },
+            })
           }
         />
-        <TextInput
-          label={t('form.summaryEn')}
-          required
-          value={form.summary.en}
-          onChange={(event) =>
-            setForm({ ...form, summary: { ...form.summary, en: event.currentTarget.value } })
-          }
-        />
-        <TextInput
-          label={t('form.summaryZh')}
-          value={form.summary.zh ?? ''}
-          onChange={(event) =>
-            setForm({ ...form, summary: { ...form.summary, zh: event.currentTarget.value } })
-          }
-        />
+        {(nameMissing || summaryMissing) && (
+          <Alert color='yellow'>{t('form.localizedRequired')}</Alert>
+        )}
         <TextInput
           label={t('form.version')}
           value={form.version ?? ''}
