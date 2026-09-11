@@ -11,6 +11,7 @@ import {
   TextInput,
   Title,
 } from '@mantine/core'
+import { useForm } from '@mantine/form'
 import { FloppyDiskIcon } from '@phosphor-icons/react/FloppyDisk'
 import { XIcon } from '@phosphor-icons/react/X'
 import { useEffect, useMemo, useState } from 'react'
@@ -19,40 +20,29 @@ import { Redirect, useLocation, useRoute, useSearchParams } from 'wouter'
 
 import { useAuth } from '../auth'
 import { getApps } from '../services/apps'
-import { createPkg, getPkg, updatePkg, type PkgPayload } from '../services/pkgs'
+import { createPkg, getPkg, updatePkg } from '../services/pkgs'
 
 import styles from './AppFormPage.module.css'
 
 const packageTypes = ['deb', 'rpm', 'appimage', 'flatpak', 'snap', 'tar.gz']
 const checksumTypes = ['sha256', 'sha512', 'sha1', 'md5']
 
-const emptyForm: PkgPayload = {
-  appId: null,
-  type: 'deb',
-  name: '',
-  version: '',
-  release: '',
-  arch: '',
-  downloadUrl: '',
-  checksum: '',
-  checksumType: 'sha256',
-  size: '',
-  installCommand: '',
-}
+// The API takes a flat `appId` (and not the `app` object the transformer returns).
+type PkgFormValues = Partial<Data.Pkg> & { appId: number | null }
 
-function formFromPkg(pkg: Data.Pkg): PkgPayload {
+function emptyForm(): PkgFormValues {
   return {
-    appId: pkg.app?.id ?? null,
-    type: pkg.type,
-    name: pkg.name,
-    version: pkg.version ?? '',
-    release: pkg.release ?? '',
-    arch: pkg.arch ?? '',
-    downloadUrl: pkg.downloadUrl ?? '',
-    checksum: pkg.checksum ?? '',
-    checksumType: pkg.checksumType ?? '',
-    size: pkg.size === null ? '' : String(pkg.size),
-    installCommand: pkg.installCommand ?? '',
+    appId: null,
+    type: 'deb',
+    name: '',
+    version: '',
+    release: '',
+    arch: '',
+    downloadUrl: '',
+    checksum: '',
+    checksumType: 'sha256',
+    size: null,
+    installCommand: '',
   }
 }
 
@@ -74,11 +64,12 @@ export default function PkgFormPage() {
   const pkgId = params?.id ? Number(params.id) : undefined
   const presetAppId = searchParams.get('appId')
 
-  const [form, setForm] = useState<PkgPayload>(emptyForm)
   const [apps, setApps] = useState<Data.App[]>([])
   const [loading, setLoading] = useState(Boolean(pkgId))
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  const form = useForm<PkgFormValues>({ initialValues: emptyForm() })
 
   useEffect(() => {
     getApps('', 1, 50)
@@ -89,19 +80,31 @@ export default function PkgFormPage() {
   useEffect(() => {
     if (!pkgId) return
     getPkg(pkgId)
-      .then((pkg) => setForm(formFromPkg(pkg)))
+      .then((pkg) =>
+        form.initialize({
+          appId: pkg.app?.id ?? null,
+          type: pkg.type,
+          name: pkg.name,
+          version: pkg.version ?? '',
+          release: pkg.release ?? '',
+          arch: pkg.arch ?? '',
+          downloadUrl: pkg.downloadUrl ?? '',
+          checksum: pkg.checksum ?? '',
+          checksumType: pkg.checksumType ?? '',
+          size: pkg.size,
+          installCommand: pkg.installCommand ?? '',
+        }),
+      )
       .catch((reason) =>
         setError(reason instanceof Error ? reason.message : t('packages.loadError')),
       )
       .finally(() => setLoading(false))
-  }, [pkgId, t])
+  }, [pkgId])
 
   useEffect(() => {
     if (pkgId || !presetAppId) return
     const id = Number(presetAppId)
-    if (Number.isInteger(id) && id > 0) {
-      setForm((current) => ({ ...current, appId: id }))
-    }
+    if (Number.isInteger(id) && id > 0) form.setFieldValue('appId', id)
   }, [pkgId, presetAppId])
 
   const appOptions = useMemo(
@@ -128,15 +131,12 @@ export default function PkgFormPage() {
       </div>
     )
 
-  function update<K extends keyof PkgPayload>(key: K, value: PkgPayload[K]) {
-    setForm((current) => ({ ...current, [key]: value }))
-  }
-
-  async function save() {
+  async function handleSubmit(values: PkgFormValues) {
     try {
       setSaving(true)
-      if (pkgId) await updatePkg(pkgId, form)
-      else await createPkg(form)
+      setError(null)
+      if (pkgId) await updatePkg(pkgId, values)
+      else await createPkg(values)
       navigate('/packages')
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : t('packages.saveError'))
@@ -167,82 +167,59 @@ export default function PkgFormPage() {
           {error}
         </Alert>
       )}
-      <Stack className={styles.form}>
-        <Select
-          label={t('packages.fields.app')}
-          required
-          searchable
-          data={appOptions}
-          value={form.appId === null ? null : String(form.appId)}
-          onChange={(value) => update('appId', value ? Number(value) : null)}
-        />
-        <Select
-          label={t('packages.fields.type')}
-          required
-          allowDeselect={false}
-          data={packageTypes}
-          value={form.type}
-          onChange={(value) => update('type', value ?? 'deb')}
-        />
-        <TextInput
-          label={t('packages.fields.name')}
-          required
-          value={form.name}
-          onChange={(event) => update('name', event.currentTarget.value)}
-        />
-        <TextInput
-          label={t('packages.fields.version')}
-          value={form.version}
-          onChange={(event) => update('version', event.currentTarget.value)}
-        />
-        <TextInput
-          label={t('packages.fields.release')}
-          value={form.release}
-          onChange={(event) => update('release', event.currentTarget.value)}
-        />
-        <TextInput
-          label={t('packages.fields.arch')}
-          value={form.arch}
-          onChange={(event) => update('arch', event.currentTarget.value)}
-        />
-        <TextInput
-          label={t('packages.fields.downloadUrl')}
-          value={form.downloadUrl}
-          onChange={(event) => update('downloadUrl', event.currentTarget.value)}
-        />
-        <TextInput
-          label={t('packages.fields.checksum')}
-          value={form.checksum}
-          onChange={(event) => update('checksum', event.currentTarget.value)}
-        />
-        <Select
-          label={t('packages.fields.checksumType')}
-          clearable
-          data={checksumTypes}
-          value={form.checksumType || null}
-          onChange={(value) => update('checksumType', value ?? '')}
-        />
-        <NumberInput
-          label={t('packages.fields.size')}
-          min={0}
-          value={form.size === '' ? '' : Number(form.size)}
-          onChange={(value) => update('size', value === '' ? '' : String(value))}
-        />
-        <TextInput
-          label={t('packages.fields.installCommand')}
-          value={form.installCommand}
-          onChange={(event) => update('installCommand', event.currentTarget.value)}
-        />
-        <Group justify='flex-end'>
-          <Button
-            leftSection={<FloppyDiskIcon size={18} />}
-            loading={saving}
-            onClick={() => void save()}
-          >
-            {t('packages.save')}
-          </Button>
-        </Group>
-      </Stack>
+      <form onSubmit={form.onSubmit(handleSubmit)}>
+        <Stack className={styles.form}>
+          <Select
+            label={t('packages.fields.app')}
+            required
+            searchable
+            data={appOptions}
+            value={form.values.appId === null ? null : String(form.values.appId)}
+            onChange={(value) => form.setFieldValue('appId', value ? Number(value) : null)}
+            error={form.errors.appId}
+          />
+          <Select
+            label={t('packages.fields.type')}
+            required
+            allowDeselect={false}
+            data={packageTypes}
+            {...form.getInputProps('type')}
+          />
+          <TextInput label={t('packages.fields.name')} required {...form.getInputProps('name')} />
+          <TextInput label={t('packages.fields.version')} {...form.getInputProps('version')} />
+          <TextInput label={t('packages.fields.release')} {...form.getInputProps('release')} />
+          <TextInput label={t('packages.fields.arch')} {...form.getInputProps('arch')} />
+          <TextInput
+            label={t('packages.fields.downloadUrl')}
+            {...form.getInputProps('downloadUrl')}
+          />
+          <TextInput label={t('packages.fields.checksum')} {...form.getInputProps('checksum')} />
+          <Select
+            label={t('packages.fields.checksumType')}
+            clearable
+            data={checksumTypes}
+            value={form.values.checksumType || null}
+            onChange={(value) => form.setFieldValue('checksumType', value ?? '')}
+            error={form.errors.checksumType}
+          />
+          <NumberInput
+            label={t('packages.fields.size')}
+            min={0}
+            value={form.values.size ?? ''}
+            onChange={(value) => form.setFieldValue('size', value === '' ? null : Number(value))}
+            error={form.errors.size}
+          />
+          <TextInput
+            label={t('packages.fields.installCommand')}
+            {...form.getInputProps('installCommand')}
+          />
+          <Group justify='flex-end'>
+            <Button type='submit' leftSection={<FloppyDiskIcon size={18} />} loading={saving}>
+              {t('packages.save')}
+            </Button>
+          </Group>
+        </Stack>
+      </form>
     </main>
   )
 }

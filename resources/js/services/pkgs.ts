@@ -3,20 +3,6 @@ import xior from 'xior'
 
 import { getAuthToken } from './auth'
 
-export type PkgPayload = {
-  appId: number | null
-  type: string
-  name: string
-  version: string
-  release: string
-  arch: string
-  downloadUrl: string
-  checksum: string
-  checksumType: string
-  size: string
-  installCommand: string
-}
-
 const api = xior.create({ baseURL: import.meta.env.VITE_API_URL ?? '/api' })
 
 function authHeaders() {
@@ -31,14 +17,14 @@ export async function getPkg(id: number) {
   return data.data
 }
 
-export async function createPkg(payload: PkgPayload) {
+export async function createPkg(payload: Partial<Data.Pkg>) {
   const { data } = await api.post<{ data: Data.Pkg }>('/pkgs', payload, {
     headers: authHeaders(),
   })
   return data.data
 }
 
-export async function updatePkg(id: number, payload: PkgPayload) {
+export async function updatePkg(id: number, payload: Partial<Data.Pkg>) {
   const { data } = await api.patch<{ data: Data.Pkg }>(`/pkgs/${id}`, payload, {
     headers: authHeaders(),
   })
