@@ -239,12 +239,12 @@ export interface Registry {
     methods: ["POST"]
     pattern: '/api/apps/:app_id/pkgs'
     types: {
-      body: {}
+      body: ExtractBody<InferInput<(typeof import('#validators/pkg').pkgValidator)>>
       paramsTuple: [ParamValue]
       params: { app_id: ParamValue }
-      query: {}
+      query: ExtractQuery<InferInput<(typeof import('#validators/pkg').pkgValidator)>>
       response: ExtractResponse<Awaited<ReturnType<import('#controllers/pkgs_controller').default['store']>>>
-      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/pkgs_controller').default['store']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/pkgs_controller').default['store']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
   'images.index': {
@@ -323,12 +323,12 @@ export interface Registry {
     methods: ["POST"]
     pattern: '/api/pkgs'
     types: {
-      body: {}
+      body: ExtractBody<InferInput<(typeof import('#validators/pkg').pkgValidator)>>
       paramsTuple: []
       params: {}
-      query: {}
+      query: ExtractQuery<InferInput<(typeof import('#validators/pkg').pkgValidator)>>
       response: ExtractResponse<Awaited<ReturnType<import('#controllers/pkgs_controller').default['store']>>>
-      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/pkgs_controller').default['store']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/pkgs_controller').default['store']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
   'pkgs.show': {
@@ -347,12 +347,12 @@ export interface Registry {
     methods: ["PUT","PATCH"]
     pattern: '/api/pkgs/:id'
     types: {
-      body: {}
+      body: ExtractBody<InferInput<(typeof import('#validators/pkg').pkgValidator)>>
       paramsTuple: [ParamValue]
       params: { id: ParamValue }
-      query: {}
+      query: ExtractQuery<InferInput<(typeof import('#validators/pkg').pkgValidator)>>
       response: ExtractResponse<Awaited<ReturnType<import('#controllers/pkgs_controller').default['update']>>>
-      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/pkgs_controller').default['update']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/pkgs_controller').default['update']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
   'pkgs.destroy': {

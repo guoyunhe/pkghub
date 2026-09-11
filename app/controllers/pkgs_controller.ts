@@ -15,8 +15,7 @@ import App from '#models/app'
 import Pkg from '#models/pkg'
 import PackageFileExtractor from '#services/package_file_extractor'
 import PkgTransformer from '#transformers/pkg_transformer'
-
-const pkgTypes = ['deb', 'rpm', 'appimage', 'flatpak', 'snap', 'tar.gz'] as const
+import { pkgValidator } from '#validators/pkg'
 
 // Package files are uploaded outside of the global multipart limit (see config/bodyparser.ts)
 // and streamed to the disk instead of being buffered in memory.
@@ -64,7 +63,9 @@ export default class PkgsController {
     if (context.params.app_id) return this.storeFromUpload(context)
 
     const { request, response, serialize } = context
-    const pkg = await Pkg.create(await this.attributes(request))
+    const payload = await request.validateUsing(pkgValidator)
+
+    const pkg = await Pkg.create(payload)
     await pkg.load('app')
     response.created()
     return serialize(PkgTransformer.transform(pkg))
@@ -113,7 +114,9 @@ export default class PkgsController {
 
   async update({ params, request, serialize }: HttpContext) {
     const pkg = await Pkg.findOrFail(params.id)
-    await pkg.merge(await this.attributes(request)).save()
+    const payload = await request.validateUsing(pkgValidator)
+
+    await pkg.merge(payload).save()
     await pkg.load('app')
     return serialize(PkgTransformer.transform(pkg))
   }
@@ -126,61 +129,6 @@ export default class PkgsController {
     if (path) await this.deleteStoredFile(path)
 
     return response.noContent()
-  }
-
-  private async attributes(request: HttpContext['request']) {
-    const name = this.requiredString(request.input('name'), 'name')
-    const type = this.requiredString(request.input('type'), 'type')
-    if (!pkgTypes.includes(type as (typeof pkgTypes)[number])) {
-      throw new Exception(`type must be one of ${pkgTypes.join(', ')}`, { status: 422 })
-    }
-
-    const appId = this.requiredPositiveInteger(request.input('appId'))
-    await App.findOrFail(appId)
-
-    return {
-      name,
-      type,
-      appId,
-      version: this.optionalString(request.input('version')),
-      release: this.optionalString(request.input('release')),
-      arch: this.optionalString(request.input('arch')),
-      downloadUrl: this.optionalString(request.input('downloadUrl')),
-      checksum: this.optionalString(request.input('checksum')),
-      checksumType: this.optionalString(request.input('checksumType')),
-      installCommand: this.optionalString(request.input('installCommand')),
-      size: this.optionalNumber(request.input('size')),
-    }
-  }
-
-  private requiredString(value: unknown, field: string) {
-    if (typeof value !== 'string' || !value.trim()) {
-      throw new Exception(`${field} is required`, { status: 422 })
-    }
-    return value.trim()
-  }
-
-  private optionalString(value: unknown) {
-    if (value === undefined || value === null || value === '') return null
-    if (typeof value !== 'string') throw new Exception('Value must be a string', { status: 422 })
-    return value.trim() || null
-  }
-
-  private requiredPositiveInteger(value: unknown) {
-    const parsed = Number(value)
-    if (!Number.isInteger(parsed) || parsed <= 0) {
-      throw new Exception('appId must be a positive integer', { status: 422 })
-    }
-    return parsed
-  }
-
-  private optionalNumber(value: unknown) {
-    if (value === undefined || value === null || value === '') return null
-    const parsed = Number(value)
-    if (!Number.isFinite(parsed) || parsed < 0) {
-      throw new Exception('Value must be a non-negative number', { status: 422 })
-    }
-    return parsed
   }
 
   private positiveInteger(value: unknown, fallback: number) {
