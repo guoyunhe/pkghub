@@ -60,17 +60,17 @@ const routes = {
     tokens: [{"old":"/api/apps","type":0,"val":"api","end":""},{"old":"/api/apps","type":0,"val":"apps","end":""}],
     types: placeholder as Registry['apps.index']['types'],
   },
-  'apps.show': {
-    methods: ["GET","HEAD"],
-    pattern: '/api/apps/:id',
-    tokens: [{"old":"/api/apps/:id","type":0,"val":"api","end":""},{"old":"/api/apps/:id","type":0,"val":"apps","end":""},{"old":"/api/apps/:id","type":1,"val":"id","end":""}],
-    types: placeholder as Registry['apps.show']['types'],
-  },
   'apps.store': {
     methods: ["POST"],
     pattern: '/api/apps',
     tokens: [{"old":"/api/apps","type":0,"val":"api","end":""},{"old":"/api/apps","type":0,"val":"apps","end":""}],
     types: placeholder as Registry['apps.store']['types'],
+  },
+  'apps.show': {
+    methods: ["GET","HEAD"],
+    pattern: '/api/apps/:id',
+    tokens: [{"old":"/api/apps/:id","type":0,"val":"api","end":""},{"old":"/api/apps/:id","type":0,"val":"apps","end":""},{"old":"/api/apps/:id","type":1,"val":"id","end":""}],
+    types: placeholder as Registry['apps.show']['types'],
   },
   'apps.update': {
     methods: ["PUT","PATCH"],

@@ -13,8 +13,8 @@ export type ScannedRoutes = {
     'users.favorites': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'reviews.user_index': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'apps.index': { paramsTuple?: []; params?: {} }
-    'apps.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'apps.store': { paramsTuple?: []; params?: {} }
+    'apps.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'apps.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'apps.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'favorites.store': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }

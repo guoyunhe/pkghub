@@ -33,12 +33,10 @@ router
     router.get('users/:id/reviews', [controllers.Reviews, 'userIndex'])
 
     // Apps
-    router.get('apps', [controllers.Apps, 'index'])
-    router.get('apps/:id', [controllers.Apps, 'show'])
     router
       .resource('apps', controllers.Apps)
-      .only(['store', 'update', 'destroy'])
-      .use('*', [middleware.auth(), middleware.admin()])
+      .apiOnly()
+      .use(['store', 'update', 'destroy'], [middleware.auth(), middleware.admin()])
     router.post('apps/:id/favorite', [controllers.Favorites, 'store']).use(middleware.auth())
     router.delete('apps/:id/favorite', [controllers.Favorites, 'destroy']).use(middleware.auth())
     router.get('apps/:id/reviews', [controllers.Reviews, 'index'])

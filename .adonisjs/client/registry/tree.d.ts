@@ -25,8 +25,8 @@ export interface ApiDefinition {
   }
   apps: {
     index: typeof routes['apps.index']
-    show: typeof routes['apps.show']
     store: typeof routes['apps.store']
+    show: typeof routes['apps.show']
     update: typeof routes['apps.update']
     destroy: typeof routes['apps.destroy']
     pkgs: {
