@@ -159,6 +159,7 @@ export default function RepoFormPage() {
           <Textarea
             autosize
             label={t('repos.fields.configUrl')}
+            maxRows={6}
             minRows={2}
             {...form.getInputProps('configUrl')}
           />
@@ -166,6 +167,7 @@ export default function RepoFormPage() {
           <Textarea
             autosize
             label={t('repos.fields.configContent')}
+            maxRows={12}
             minRows={2}
             {...form.getInputProps('configContent')}
           />
@@ -174,6 +176,7 @@ export default function RepoFormPage() {
             autosize
             description={t('repos.installScriptHint')}
             label={t('repos.fields.installScript')}
+            maxRows={6}
             minRows={2}
             {...form.getInputProps('installScript')}
           />

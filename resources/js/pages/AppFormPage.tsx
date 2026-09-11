@@ -181,6 +181,7 @@ export default function AppFormPage() {
           autosize
           description={t('form.appstreamContentHint')}
           label={t('form.appstreamContent')}
+          maxRows={12}
           minRows={4}
           value={form.appstreamContent ?? ''}
           onChange={(event) => setForm({ ...form, appstreamContent: event.currentTarget.value })}
@@ -194,6 +195,7 @@ export default function AppFormPage() {
           autosize
           description={t('form.desktopContentHint')}
           label={t('form.desktopContent')}
+          maxRows={12}
           minRows={4}
           value={form.desktopContent ?? ''}
           onChange={(event) => setForm({ ...form, desktopContent: event.currentTarget.value })}
