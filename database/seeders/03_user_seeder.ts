@@ -1,5 +1,6 @@
 import { BaseSeeder } from '@adonisjs/lucid/seeders'
 
+import { UserFactory } from '#database/factories/user_factory'
 import User from '#models/user'
 
 const users = [
@@ -17,10 +18,22 @@ const users = [
   },
 ]
 
+const randomUserCount = 20
+
 export default class UserSeeder extends BaseSeeder {
   async run() {
     for (const user of users) {
       await User.updateOrCreate({ email: user.email }, user)
+    }
+
+    for (let i = 0; i < randomUserCount; i++) {
+      const email = `user${String(i + 1).padStart(3, '0')}@example.com`
+      const user = await UserFactory.merge({ email }).make()
+
+      await User.updateOrCreate(
+        { email },
+        { name: user.name, password: user.password, role: user.role },
+      )
     }
   }
 }
