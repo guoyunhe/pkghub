@@ -15,8 +15,9 @@ export default class extends BaseSchema {
         .inTable('distros')
         .onDelete('SET NULL')
 
+      table.string('name').notNullable().index()
       table.string('type').notNullable().index()
-      table.string('name').notNullable().unique()
+      table.string('source').notNullable().index()
 
       table.string('base_url').notNullable()
       table.string('key_url').nullable()
@@ -24,6 +25,8 @@ export default class extends BaseSchema {
       table.text('repository_file').nullable()
       table.boolean('enabled').notNullable().defaultTo(true)
       table.integer('priority').unsigned().nullable()
+
+      table.string('install_script').nullable()
 
       // Synchronization interval in days; null means the repo is only synced manually.
       table.integer('sync_interval_days').unsigned().nullable()

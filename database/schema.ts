@@ -176,23 +176,8 @@ export class PkgSchema extends BaseModel {
   declare version: string | null
 }
 
-export class PkgFavoriteSchema extends BaseModel {
-  static $columns = ['createdAt', 'id', 'pkgId', 'updatedAt', 'userId'] as const
-  $columns = PkgFavoriteSchema.$columns
-  @column.dateTime({ autoCreate: true })
-  declare createdAt: DateTime
-  @column({ isPrimary: true })
-  declare id: number
-  @column()
-  declare pkgId: number
-  @column.dateTime({ autoCreate: true, autoUpdate: true })
-  declare updatedAt: DateTime | null
-  @column()
-  declare userId: number
-}
-
 export class RepoSchema extends BaseModel {
-  static $columns = ['baseUrl', 'createdAt', 'distroId', 'enabled', 'id', 'keyFingerprint', 'keyUrl', 'lastSyncedAt', 'name', 'priority', 'repositoryFile', 'syncIntervalDays', 'type', 'updatedAt'] as const
+  static $columns = ['baseUrl', 'createdAt', 'distroId', 'enabled', 'id', 'installScript', 'keyFingerprint', 'keyUrl', 'lastSyncedAt', 'name', 'priority', 'repositoryFile', 'source', 'syncIntervalDays', 'type', 'updatedAt'] as const
   $columns = RepoSchema.$columns
   @column()
   declare baseUrl: string
@@ -205,6 +190,8 @@ export class RepoSchema extends BaseModel {
   @column({ isPrimary: true })
   declare id: number
   @column()
+  declare installScript: string | null
+  @column()
   declare keyFingerprint: string | null
   @column()
   declare keyUrl: string | null
@@ -216,6 +203,8 @@ export class RepoSchema extends BaseModel {
   declare priority: number | null
   @column()
   declare repositoryFile: string | null
+  @column()
+  declare source: string
   @column()
   declare syncIntervalDays: number | null
   @column()
