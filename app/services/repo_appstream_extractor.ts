@@ -2,6 +2,7 @@ import { basename } from 'node:path'
 import { gunzipSync } from 'node:zlib'
 
 import { XMLBuilder, XMLParser } from 'fast-xml-parser'
+import sharp from 'sharp'
 import xior, { isXiorError } from 'xior'
 import { parse as parseYaml } from 'yaml'
 
@@ -356,7 +357,7 @@ export default class RepoAppstreamExtractor {
     const app = apps.find((entry) => isSameAppstreamId(entry.appstreamId, appstreamId)) ?? null
     if (!app) return null
 
-    return { app, icon: packagedIcon(files, app, appstreamId, pkg.name) }
+    return { app, icon: await packagedIcon(files, app, appstreamId, pkg.name) }
   }
 
   /**
@@ -645,39 +646,55 @@ const iconFileExtensions = ['.png', '.svg']
 /** Directories a package installs its icons in, searched when the metadata names the icon file. */
 const packagedIconPatterns = ['/usr/share/icons/**/apps/*', '/usr/share/pixmaps/*']
 
+type IconCandidate = { data: Buffer; vector: boolean; pixels: number }
+
 /**
  * Icon of a component inside the package payload. The metadata names either the icon file or a
  * themed icon, and packages also name the icon after the application, so those names are matched
- * against the files the package installs. Vector icons are preferred because they scale, then the
- * raster icon stored in the largest size.
+ * against the icons the package installs, whether it puts them in a themed directory or in the
+ * shared `/usr/share/pixmaps` one.
  */
-function packagedIcon(
+async function packagedIcon(
   files: Map<string, Buffer>,
   app: ExtractedApp,
   appstreamId: string,
   pkgName: string,
-): Buffer | null {
+): Promise<Buffer | null> {
   const wanted = iconBaseNames(app, appstreamId, pkgName)
-  let best: { data: Buffer; score: number } | null = null
+  let best: IconCandidate | null = null
 
   for (const [path, data] of files) {
     if (!wanted.has(basename(path).toLowerCase())) continue
 
-    const score = iconScore(path, data)
-    if (!best || score > best.score) best = { data, score }
+    const pixels = await iconPixels(data)
+    if (pixels === null) continue
+
+    const candidate = { data, vector: path.toLowerCase().endsWith('.svg'), pixels }
+    if (!best || isBetterIcon(candidate, best)) best = candidate
   }
 
   return best?.data ?? null
 }
 
+/** Vector icons win because they scale, then the icon with more pixels, then the larger file. */
+function isBetterIcon(candidate: IconCandidate, best: IconCandidate) {
+  if (candidate.vector !== best.vector) return candidate.vector
+  if (candidate.pixels !== best.pixels) return candidate.pixels > best.pixels
+  return candidate.data.length > best.data.length
+}
+
 /**
- * Ranks an icon by how well it scales: a vector icon beats every raster one, raster icons are
- * ranked by the size their path declares, and the file size breaks ties between equally sized
- * ones.
+ * Pixels an icon covers, read from the image itself. Measuring keeps the icons that carry no size
+ * in their path, such as the ones in `/usr/share/pixmaps`, comparable with the icons stored in a
+ * sized themed directory. Data that is not an image, a symlink for example, has no size.
  */
-function iconScore(path: string, data: Buffer) {
-  if (path.toLowerCase().endsWith('.svg')) return 2_000_000_000
-  return iconPathSize(path) * 1000 + Math.min(data.length, 999)
+async function iconPixels(data: Buffer): Promise<number | null> {
+  try {
+    const { width, height } = await sharp(data).metadata()
+    return width && height ? width * height : null
+  } catch {
+    return null
+  }
 }
 
 /** File names the icon may have, taken from the metadata and from the application name. */
@@ -699,12 +716,6 @@ function iconBaseNames(app: ExtractedApp, appstreamId: string, pkgName: string) 
   add(appstreamId.split('.').pop())
   add(pkgName)
   return names
-}
-
-/** Pixels of the size a package stores an icon in, e.g. `256x256`; `0` for unsigned directories. */
-function iconPathSize(path: string) {
-  const match = /\/(\d+)x(\d+)\//.exec(path)
-  return match ? Number(match[1]) * Number(match[2]) : 0
 }
 
 function joinUrl(base: string, path: string) {
