@@ -16,6 +16,8 @@ import RepoAppstreamExtractor, {
 import RepoPackageExtractor from '#services/repo_package_extractor'
 import type { ExtractedPackage } from '#services/repo_package_extractor'
 
+import { compareVersions } from '../app/utils/version.js'
+
 type PackageIdentity = Pick<ExtractedPackage, 'name' | 'version' | 'release' | 'arch'>
 
 export default class RepoSync extends BaseCommand {
@@ -191,7 +193,8 @@ export default class RepoSync extends BaseCommand {
   /**
    * Create or update the applications a repository publishes, store the largest of their icons and
    * link the packages they belong to. An application that declares its own `appstreamUrl` keeps
-   * that metadata, and only components that name a package of the repository are imported.
+   * that metadata, only components that name a package of the repository are imported, and a known
+   * application is only rewritten when the component announces a newer version.
    */
   private async saveApps(
     repo: Repo,
@@ -223,22 +226,28 @@ export default class RepoSync extends BaseCommand {
       }
 
       const app = current ?? new App()
-      app.merge({
-        appstreamId: entry.appstreamId,
-        name: entry.name,
-        summary: entry.summary,
-        version: entry.version,
-        license: entry.license,
-        homepage: entry.homepage,
-        appstreamContent: entry.content,
-      })
-      await app.save()
-      if (current) result.updated += 1
-      else result.created += 1
+      if (current && !appstreamVersionIsNewer(current, entry.version)) {
+        result.skipped += 1
+      } else {
+        app.merge({
+          appstreamId: entry.appstreamId,
+          name: entry.name,
+          summary: entry.summary,
+          version: entry.version,
+          license: entry.license,
+          homepage: entry.homepage,
+          appstreamContent: entry.content,
+        })
+        await app.save()
+        if (current) result.updated += 1
+        else result.created += 1
 
-      const icon = entry.icons[0]
-      if (icon && appstreamIconIsLarger(app, icon)) pendingIcons.push({ app, icon })
+        const icon = entry.icons[0]
+        if (icon && appstreamIconIsLarger(app, icon)) pendingIcons.push({ app, icon })
+      }
 
+      // Packages are linked even when the metadata is not imported, so that new packages of an
+      // already known application still show up on its page
       const names = entry.pkgNames.filter((name) => pkgNames.has(name))
       if (names.length > 0) {
         await Pkg.query().where('repoId', repo.id).whereIn('name', names).update({ appId: app.id })
@@ -275,4 +284,16 @@ function appstreamIconIsLarger(app: App, icon: AppstreamIcon) {
   if (size <= 0) return false
   if (!app.icon) return true
   return size > Math.min(app.icon.width, app.icon.height)
+}
+
+/**
+ * Repository metadata only replaces the metadata of a known application when it announces a newer
+ * version, so that synchronizing a repository never downgrades an application that was updated
+ * elsewhere. An application without a version is always considered older, while a component without
+ * a release version has nothing to compare and is not imported at all.
+ */
+function appstreamVersionIsNewer(app: App, version: string | null) {
+  if (!version) return false
+  if (!app.version) return true
+  return compareVersions(version, app.version) > 0
 }
