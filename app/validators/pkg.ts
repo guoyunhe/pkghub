@@ -23,7 +23,7 @@ export const pkgValidator = vine.create({
   version: vine.string().parse(emptyToNull).trim().maxLength(255).nullable(),
   release: vine.string().parse(emptyToNull).trim().maxLength(255).nullable(),
   arch: vine.string().parse(emptyToNull).trim().maxLength(255).nullable(),
-  license: vine.string().parse(emptyToNull).trim().maxLength(255).nullable(),
+  license: vine.string().parse(emptyToNull).trim().nullable(),
   summary: vine.string().parse(emptyToNull).trim().nullable(),
   description: vine.string().parse(emptyToNull).trim().nullable(),
   downloadUrl: vine.string().parse(emptyToNull).trim().maxLength(255).nullable(),
