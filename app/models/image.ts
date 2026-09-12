@@ -53,11 +53,13 @@ export default class Image extends ImageSchema {
     return this.replaceFromBuffer(image, await this.download(url), options)
   }
 
-  private static async createFromBuffer(data: Buffer, options: ImageOptions) {
+  /**
+   * Store an image from raw bytes. Files are content addressed, so identical bytes reuse the
+   * existing row instead of being stored twice.
+   */
+  static async createFromBuffer(data: Buffer, options: ImageOptions = {}) {
     const attributes = await this.process(data, options)
 
-    // Files are content addressed (named after the md5 of their bytes), so the same image
-    // uploaded twice keeps a single file and a single row — "path" is unique in the table.
     const existing = await this.findBy('path', attributes.path)
     if (existing) return existing
 

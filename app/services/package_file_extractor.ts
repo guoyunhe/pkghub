@@ -10,6 +10,8 @@ import { gunzipSync, zstdDecompressSync } from 'node:zlib'
 
 import { Exception } from '@adonisjs/core/exceptions'
 
+import { readTarEntries } from '../utils/tar.js'
+
 // The package is a webpack UMD bundle and does not expose its named exports to the ESM loader.
 const require = createRequire(import.meta.url)
 const { XzReadableStream } = require('xz-decompress') as typeof import('xz-decompress')
@@ -38,12 +40,6 @@ type PackageMetadata = {
 
 type ArEntry = {
   name: string
-  data: Buffer
-}
-
-type TarEntry = {
-  name: string
-  typeFlag: string
   data: Buffer
 }
 
@@ -184,7 +180,7 @@ export default class PackageFileExtractor {
     }
 
     const controlArchive = await this.decompress(controlEntry.data, extname(controlEntry.name))
-    const controlFile = this.tarEntries(controlArchive).find((entry) => entry.name === 'control')
+    const controlFile = readTarEntries(controlArchive).find((entry) => entry.name === 'control')
     if (!controlFile) {
       throw new Exception('Not a valid Debian package: the control file is missing', {
         status: 422,
@@ -321,49 +317,6 @@ export default class PackageFileExtractor {
     }
 
     return entries
-  }
-
-  private tarEntries(data: Buffer): TarEntry[] {
-    const entries: TarEntry[] = []
-    let offset = 0
-    let longName: string | null = null
-
-    while (offset + 512 <= data.length) {
-      const header = data.subarray(offset, offset + 512)
-      if (header.every((byte) => byte === 0)) break
-
-      const size = Number.parseInt(this.readTarString(header, 124, 12) || '0', 8)
-      const typeFlag = String.fromCharCode(header[156] ?? 0)
-      const prefix = this.readTarString(header, 345, 155)
-      let name = this.readTarString(header, 0, 100)
-      if (prefix) name = `${prefix}/${name}`
-
-      offset += 512
-      const contents = data.subarray(offset, offset + Math.max(size, 0))
-      offset += Math.ceil(Math.max(size, 0) / 512) * 512
-
-      if (typeFlag === 'L') {
-        longName = contents.toString('utf8').replace(/\0+$/, '')
-        continue
-      }
-
-      const entryName = (longName ?? name).replace(/^\.\/+/, '')
-      longName = null
-      if (typeFlag === '0' || typeFlag === '\0' || !typeFlag) {
-        entries.push({ name: entryName, typeFlag, data: contents })
-      }
-    }
-
-    return entries
-  }
-
-  private readTarString(header: Buffer, offset: number, length: number) {
-    const value = header.subarray(offset, offset + length)
-    const end = value.indexOf(0)
-    return value
-      .subarray(0, end === -1 ? value.length : end)
-      .toString('utf8')
-      .trim()
   }
 
   private parseControlFields(content: string): Record<string, string> {

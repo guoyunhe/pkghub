@@ -113,6 +113,9 @@ importers:
       xz-decompress:
         specifier: ^0.2.3
         version: 0.2.3
+      yaml:
+        specifier: 2.9.0
+        version: 2.9.0
     devDependencies:
       '@adonisjs/assembler':
         specifier: ^8.5.0
@@ -6596,8 +6599,7 @@ snapshots:
 
   xz-decompress@0.2.3: {}
 
-  yaml@2.9.0:
-    optional: true
+  yaml@2.9.0: {}
 
   yargs-parser@22.0.0: {}
 

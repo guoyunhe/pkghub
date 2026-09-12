@@ -23,11 +23,19 @@ export type ExtractOptions = {
   arch?: string
 }
 
-type DebSource = {
+export type DebSource = {
   uri: string
   suite: string
   components: string[]
   arch: string | null
+}
+
+/** A deb source with its architecture resolved, ready to build metadata URLs from. */
+export type ResolvedDebSource = {
+  uri: string
+  suite: string
+  components: string[]
+  arch: string
 }
 
 type XmlDataEntry = {
@@ -133,8 +141,7 @@ export default class RepoPackageExtractor {
   }
 
   private async extractDeb(repo: Repo, archOverride: string | null): Promise<ExtractedPackage[]> {
-    const requestedArch = archOverride ? this.toDebArch(archOverride) : null
-    const sources = this.sourcesFor(repo, requestedArch)
+    const sources = this.debSources(repo, archOverride)
     const seen = new Set<string>()
     const result: ExtractedPackage[] = []
 
@@ -183,7 +190,13 @@ export default class RepoPackageExtractor {
     return result
   }
 
-  private sourcesFor(repo: Repo, requestedArch: string | null): Required<DebSource>[] {
+  /**
+   * Deb lines of the repository, applied to the architecture a sync was asked for (or the one the
+   * source declares), so AppStream metadata can be located next to the packages. The architecture
+   * is given in its platform form (`x86_64`) and mapped to the deb form (`amd64`).
+   */
+  debSources(repo: Repo, platformArch: string | null = null): ResolvedDebSource[] {
+    const requestedArch = platformArch ? this.toDebArch(platformArch) : null
     const parsed = this.parseDebSources(repo.configContent)
     const matching = parsed.filter((source) => this.sameBase(source.uri, repo.baseUrl))
     const selected = matching.length > 0 ? matching : parsed

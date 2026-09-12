@@ -3,8 +3,16 @@ import type { CommandOptions } from '@adonisjs/core/types/ace'
 import chalk from 'chalk'
 import { DateTime } from 'luxon'
 
+import App from '#models/app'
+import Image from '#models/image'
 import Pkg from '#models/pkg'
 import Repo from '#models/repo'
+import RepoAppstreamExtractor, {
+  desktopAppTypes,
+  iconKey,
+  type AppstreamIcon,
+  type ExtractedApp,
+} from '#services/repo_appstream_extractor'
 import RepoPackageExtractor from '#services/repo_package_extractor'
 import type { ExtractedPackage } from '#services/repo_package_extractor'
 
@@ -46,6 +54,7 @@ export default class RepoSync extends BaseCommand {
     }
 
     const extractor = new RepoPackageExtractor()
+    const appstream = new RepoAppstreamExtractor()
     let synced = 0
 
     for (const repo of repos) {
@@ -60,6 +69,8 @@ export default class RepoSync extends BaseCommand {
       try {
         const packages = await extractor.extract(repo, { arch: this.arch || undefined })
         const { created, updated, deleted } = await this.savePackages(repo, packages)
+        const entries = await appstream.extract(repo, { arch: this.arch || undefined })
+        const apps = await this.saveApps(repo, appstream, entries, packages)
         repo.lastSyncedAt = DateTime.now()
         await repo.save()
         this.logger.info(
@@ -67,6 +78,16 @@ export default class RepoSync extends BaseCommand {
             ` (${chalk.green(String(created))} created, ${chalk.yellow(String(updated))} updated,` +
             ` ${chalk.red(String(deleted))} removed)`,
         )
+        if (entries.length > 0) {
+          this.logger.info(
+            `${repo.name}: ${chalk.green(String(entries.length))} appstream components` +
+              ` (${chalk.green(String(apps.created))} apps created,` +
+              ` ${chalk.yellow(String(apps.updated))} apps updated,` +
+              ` ${chalk.dim(String(apps.skipped))} skipped,` +
+              ` ${chalk.green(String(apps.icons))} icons,` +
+              ` ${chalk.green(String(apps.linked))} packages linked)`,
+          )
+        }
         for (const pkg of packages.slice(0, this.limit)) {
           const details = [pkg.version, pkg.release, pkg.arch].filter(Boolean).join(' ')
           this.logger.info(`  ${pkg.name}${details ? ` ${chalk.dim(details)}` : ''}`)
@@ -163,4 +184,92 @@ export default class RepoSync extends BaseCommand {
   private packageKey(pkg: PackageIdentity) {
     return [pkg.name, pkg.version, pkg.release, pkg.arch].map((value) => value ?? '').join('\u0000')
   }
+
+  /**
+   * Create or update the applications a repository publishes, store the largest of their icons and
+   * link the packages they belong to. An application that declares its own `appstreamUrl` keeps
+   * that metadata, and only components that name a package of the repository are imported.
+   */
+  private async saveApps(
+    repo: Repo,
+    appstream: RepoAppstreamExtractor,
+    entries: ExtractedApp[],
+    packages: ExtractedPackage[],
+  ) {
+    const result = { created: 0, updated: 0, skipped: 0, icons: 0, linked: 0 }
+    const pkgNames = new Set(packages.map((pkg) => pkg.name))
+    const candidates = entries.filter(
+      (entry) =>
+        entry.type !== null &&
+        desktopAppTypes.includes(entry.type) &&
+        Object.keys(entry.name).length > 0 &&
+        Object.keys(entry.summary).length > 0 &&
+        entry.pkgNames.some((name) => pkgNames.has(name)),
+    )
+    if (candidates.length === 0) return result
+
+    const known = new Map((await App.query().preload('icon')).map((app) => [app.appstreamId, app]))
+    const pendingIcons: Array<{ app: App; icon: AppstreamIcon }> = []
+
+    for (const entry of candidates) {
+      const current = known.get(entry.appstreamId)
+      // Applications with their own AppStream URL are not overwritten by repository metadata
+      if (current?.appstreamUrl) {
+        result.skipped += 1
+        continue
+      }
+
+      const app = current ?? new App()
+      app.merge({
+        appstreamId: entry.appstreamId,
+        name: entry.name,
+        summary: entry.summary,
+        version: entry.version,
+        license: entry.license,
+        homepage: entry.homepage,
+        appstreamContent: entry.content,
+      })
+      await app.save()
+      if (current) result.updated += 1
+      else result.created += 1
+
+      const icon = entry.icons[0]
+      if (icon && appstreamIconIsLarger(app, icon)) pendingIcons.push({ app, icon })
+
+      const names = entry.pkgNames.filter((name) => pkgNames.has(name))
+      if (names.length > 0) {
+        await Pkg.query().where('repoId', repo.id).whereIn('name', names).update({ appId: app.id })
+        result.linked += names.length
+      }
+    }
+
+    if (pendingIcons.length > 0) {
+      const buffers = await appstream.readIcons(
+        repo,
+        pendingIcons.map((item) => item.icon),
+      )
+      for (const { app, icon } of pendingIcons) {
+        const data = buffers.get(iconKey(icon))
+        if (!data) continue
+
+        const image = await Image.createFromBuffer(data)
+        app.iconId = image.id
+        await app.save()
+        result.icons += 1
+      }
+    }
+
+    return result
+  }
+}
+
+/**
+ * A repository icon is only stored when it is larger than the icon an application already has, so
+ * that synchronizing a repository does not downgrade curated artwork.
+ */
+function appstreamIconIsLarger(app: App, icon: AppstreamIcon) {
+  const size = Math.min(icon.width ?? 0, icon.height ?? 0)
+  if (size <= 0) return false
+  if (!app.icon) return true
+  return size > Math.min(app.icon.width, app.icon.height)
 }
