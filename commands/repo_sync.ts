@@ -49,8 +49,9 @@ export default class RepoSync extends BaseCommand {
     let synced = 0
 
     for (const repo of repos) {
-      if (!this.isDue(repo)) {
-        this.logger.info(`${repo.name}: ${chalk.dim(`skipped, ${this.skipReason(repo)}`)}`)
+      const skipReason = this.syncSkipReason(repo)
+      if (skipReason) {
+        this.logger.info(`${repo.name}: ${chalk.dim(`skipped, ${skipReason}`)}`)
         continue
       }
 
@@ -83,20 +84,17 @@ export default class RepoSync extends BaseCommand {
   }
 
   /**
-   * A repository is synchronized once its interval has elapsed since the last successful sync.
-   * Repositories without an interval are only synchronized manually, which is what `--force` does.
+   * Returns why a repository is not synchronized, or `null` when it is. A repository that was never
+   * synchronized always runs, while one without an interval is only synchronized manually once it
+   * has been synchronized before, which is what `--force` does.
    */
-  private isDue(repo: Repo) {
-    if (this.force) return true
-    if (repo.syncIntervalDays === null) return false
-    if (!repo.lastSyncedAt) return true
-    return repo.lastSyncedAt.plus({ days: repo.syncIntervalDays }) <= DateTime.now()
-  }
-
-  private skipReason(repo: Repo) {
+  private syncSkipReason(repo: Repo): string | null {
+    if (this.force) return null
+    if (!repo.lastSyncedAt) return null
     if (repo.syncIntervalDays === null) return 'no sync interval, use --force to sync'
-    if (!repo.lastSyncedAt) return 'never synced'
+
     const nextSync = repo.lastSyncedAt.plus({ days: repo.syncIntervalDays })
+    if (nextSync <= DateTime.now()) return null
     return `next sync at ${nextSync.toFormat('yyyy-MM-dd HH:mm')}, use --force to sync now`
   }
 
