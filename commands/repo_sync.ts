@@ -13,6 +13,7 @@ import RepoAppstreamExtractor, {
   iconKey,
   type AppstreamIcon,
   type ExtractedApp,
+  type InferredComponent,
 } from '#services/repo_appstream_extractor'
 import RepoPackageExtractor from '#services/repo_package_extractor'
 import type { ExtractedPackage } from '#services/repo_package_extractor'
@@ -92,10 +93,11 @@ export default class RepoSync extends BaseCommand {
               ` ${chalk.green(String(apps.categories))} categories linked)`,
           )
         }
-        if (apps.inferred > 0 || apps.inferredLinked > 0) {
+        if (apps.inferred > 0 || apps.inferredLinked > 0 || apps.inferredExtracted > 0) {
           this.logger.info(
             `${repo.name}: ${chalk.green(String(apps.inferred))} app(s) inferred from package` +
-              ` file lists (${chalk.green(String(apps.inferredLinked))} packages linked)`,
+              ` file lists (${chalk.green(String(apps.inferredLinked))} packages linked,` +
+              ` ${chalk.green(String(apps.inferredExtracted))} metadata files extracted)`,
           )
         }
         for (const pkg of packages.slice(0, this.limit)) {
@@ -217,6 +219,7 @@ export default class RepoSync extends BaseCommand {
       categories: 0,
       inferred: 0,
       inferredLinked: 0,
+      inferredExtracted: 0,
     }
     const pkgNames = new Set(packages.map((pkg) => pkg.name))
     const candidates = entries.filter(
@@ -234,6 +237,7 @@ export default class RepoSync extends BaseCommand {
         const inferred = await this.saveInferredApps(repo, appstream, packages, pkgNames)
         result.inferred = inferred.created
         result.inferredLinked = inferred.linked
+        result.inferredExtracted = inferred.extracted
       }
       return result
     }
@@ -309,6 +313,9 @@ export default class RepoSync extends BaseCommand {
    * used to link those packages to a known application. An application the catalog does not know
    * yet is created from the package metadata as a placeholder, so that the packages have a page and
    * a later synchronization or an editor can complete its metadata.
+   *
+   * An application without AppStream content is then completed with the metadata file the package
+   * ships, because repositories without an AppStream catalog only carry it inside the packages.
    */
   private async saveInferredApps(
     repo: Repo,
@@ -316,10 +323,10 @@ export default class RepoSync extends BaseCommand {
     packages: ExtractedPackage[],
     pkgNames: Set<string>,
   ) {
-    const result = { created: 0, linked: 0 }
+    const result = { created: 0, linked: 0, extracted: 0 }
     const components = await appstream.inferredComponents(repo)
     const candidates = components.filter((component) =>
-      component.pkgNames.some((name) => pkgNames.has(name)),
+      component.files.some((file) => pkgNames.has(file.pkgName)),
     )
     if (candidates.length === 0) return result
 
@@ -328,28 +335,89 @@ export default class RepoSync extends BaseCommand {
       candidates.map((component) => component.appstreamId),
     )
     const known = new Map(storedApps.map((app) => [app.appstreamId, app]))
-    const byName = new Map(packages.map((pkg) => [pkg.name, pkg]))
+    const byName = new Map<string, ExtractedPackage[]>()
+    for (const pkg of packages) {
+      const siblings = byName.get(pkg.name) ?? []
+      siblings.push(pkg)
+      byName.set(pkg.name, siblings)
+    }
+
+    const pending: Array<{ app: App; component: InferredComponent }> = []
 
     for (const component of candidates) {
       let app = known.get(component.appstreamId)
       if (!app) {
-        const source = component.pkgNames.map((name) => byName.get(name)).find(Boolean)
         app = await App.create({
           appstreamId: component.appstreamId,
-          ...placeholderAppMetadata(source),
+          ...placeholderAppMetadata(this.inferredFile(component, byName)?.pkg),
         })
         known.set(component.appstreamId, app)
         result.created += 1
       }
 
-      const names = component.pkgNames.filter((name) => pkgNames.has(name))
-      if (names.length === 0) continue
+      const files = component.files.filter((file) => pkgNames.has(file.pkgName))
+      if (files.length > 0) {
+        await Pkg.query()
+          .where('repoId', repo.id)
+          .whereIn(
+            'name',
+            files.map((file) => file.pkgName),
+          )
+          .update({ appId: app.id })
+        result.linked += files.length
+      }
 
-      await Pkg.query().where('repoId', repo.id).whereIn('name', names).update({ appId: app.id })
-      result.linked += names.length
+      if (!app.appstreamContent) pending.push({ app, component })
+    }
+
+    for (const { app, component } of pending) {
+      const file = this.inferredFile(component, byName)
+      if (!file) continue
+
+      try {
+        const extracted = await appstream.readPackagedApp(
+          file.pkg,
+          file.path,
+          component.appstreamId,
+        )
+        if (!extracted) continue
+
+        app.merge({
+          name: Object.keys(extracted.name).length > 0 ? extracted.name : app.name,
+          summary: Object.keys(extracted.summary).length > 0 ? extracted.summary : app.summary,
+          version: extracted.version ?? app.version,
+          license: extracted.license ?? app.license,
+          homepage: extracted.homepage ?? app.homepage,
+          appstreamContent: extracted.content,
+        })
+        await app.save()
+        result.extracted += 1
+      } catch (error) {
+        this.logger.warning(
+          `${repo.name}: ${component.appstreamId}: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        )
+      }
     }
 
     return result
+  }
+
+  /**
+   * Package that best represents an inferred component, together with the path of its metadata
+   * file. Only binary packages carry that file, and a package named after the application is
+   * preferred over its subpackages.
+   */
+  private inferredFile(
+    component: InferredComponent,
+    packages: Map<string, ExtractedPackage[]>,
+  ): { pkg: ExtractedPackage; path: string } | null {
+    const candidates = component.files.flatMap((file) =>
+      (packages.get(file.pkgName) ?? []).map((pkg) => ({ pkg, path: file.path })),
+    )
+    const preferred = candidates.find((candidate) => candidate.pkg.arch !== 'src')
+    return preferred ?? candidates.at(0) ?? null
   }
 
   /**

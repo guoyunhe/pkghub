@@ -6,8 +6,9 @@ import xior, { isXiorError } from 'xior'
 import { parse as parseYaml } from 'yaml'
 
 import type Repo from '#models/repo'
+import PackageFileExtractor from '#services/package_file_extractor'
 import RepoPackageExtractor from '#services/repo_package_extractor'
-import type { ResolvedDebSource } from '#services/repo_package_extractor'
+import type { ExtractedPackage, ResolvedDebSource } from '#services/repo_package_extractor'
 
 import { readTarEntries } from '../utils/tar.js'
 
@@ -41,8 +42,8 @@ export type ExtractedApp = {
 /** An AppStream component a package announces through its file list, without any metadata. */
 export type InferredComponent = {
   appstreamId: string
-  /** Names of the repository packages that ship the component metadata file. */
-  pkgNames: string[]
+  /** Repository packages that ship the component metadata file, with its path inside the package. */
+  files: Array<{ pkgName: string; path: string }>
 }
 
 /** AppStream component types that describe an application users can install. */
@@ -296,12 +297,33 @@ export default class RepoAppstreamExtractor {
   }
 
   /**
+   * Read the AppStream metadata of an application from the metadata file its package ships.
+   * Repositories that publish no AppStream catalog only carry the metadata inside the packages, so
+   * the package itself is downloaded first.
+   */
+  async readPackagedApp(
+    pkg: ExtractedPackage,
+    path: string,
+    appstreamId: string,
+  ): Promise<ExtractedApp | null> {
+    const archive = await this.download(pkg.downloadUrl)
+    if (!archive) return null
+
+    const files = await new PackageFileExtractor().readFiles(pkg.type, archive, [path])
+    const content = files.get(path)
+    if (!content) return null
+
+    const apps = this.parseAppstreamXml(content.toString('utf8'))
+    return apps.find((app) => app.appstreamId === appstreamId) ?? null
+  }
+
+  /**
    * The file list is a flat document of every package with the files it owns. It is scanned with
    * regular expressions instead of being parsed into objects, because it is much larger than the
    * other metadata documents.
    */
   private parseFilelists(content: string): InferredComponent[] {
-    const components = new Map<string, Set<string>>()
+    const components = new Map<string, Map<string, string>>()
 
     for (const match of content.matchAll(/<package\b([^>]*)>([\s\S]*?)<\/package>/g)) {
       const name = /\bname="([^"]*)"/.exec(match[1])?.[1]
@@ -311,15 +333,15 @@ export default class RepoAppstreamExtractor {
         const appstreamId = appstreamFileId(file[1])
         if (!appstreamId) continue
 
-        const packages = components.get(appstreamId) ?? new Set<string>()
-        packages.add(name)
-        components.set(appstreamId, packages)
+        const files = components.get(appstreamId) ?? new Map<string, string>()
+        files.set(name, file[1].trim())
+        components.set(appstreamId, files)
       }
     }
 
-    return [...components].map(([appstreamId, names]) => ({
+    return [...components].map(([appstreamId, files]) => ({
       appstreamId,
-      pkgNames: [...names].sort(),
+      files: [...files].map(([pkgName, path]) => ({ pkgName, path })),
     }))
   }
 

@@ -11,7 +11,7 @@ import { gunzipSync, zstdDecompressSync } from 'node:zlib'
 import { Exception } from '@adonisjs/core/exceptions'
 
 import { splitDebDescription, splitDebVersion } from '../utils/deb.js'
-import { readTarEntries } from '../utils/tar.js'
+import { readTarEntries, type TarEntry } from '../utils/tar.js'
 
 // The package is a webpack UMD bundle and does not expose its named exports to the ESM loader.
 const require = createRequire(import.meta.url)
@@ -81,9 +81,19 @@ const rpmTags = {
   description: 1005,
   license: 1014,
   arch: 1022,
+  payloadFormat: 1124,
+  payloadCompressor: 1125,
 } as const
 const rpmStringType = 6
 const rpmI18nStringType = 9
+
+/** Length of the fixed part of a SVR4 "newc" cpio entry, which is followed by the file name. */
+const cpioHeaderSize = 110
+
+/** Paths inside a package carry a leading `./` or `/`; they are compared without it. */
+function normalizePackagePath(path: string) {
+  return path.trim().replace(/^\.?\//, '')
+}
 
 const elfMachines: Record<number, string> = {
   3: 'i386',
@@ -140,6 +150,40 @@ export default class PackageFileExtractor {
   }
 
   /**
+   * Read files from an in-memory deb or rpm package, keyed by the path that was asked for. The
+   * payload is decompressed in memory and only the wanted files are kept, so a package can be read
+   * without being written to disk.
+   */
+  async readFiles(
+    type: UploadedPackageType,
+    data: Buffer,
+    wantedPaths: string[],
+  ): Promise<Map<string, Buffer>> {
+    const originals = new Map(wantedPaths.map((path) => [normalizePackagePath(path), path]))
+    const result = new Map<string, Buffer>()
+    if (originals.size === 0) return result
+
+    let entries: TarEntry[]
+    switch (type) {
+      case 'rpm':
+        entries = await this.readRpmFileEntries(data, new Set(originals.keys()))
+        break
+      case 'deb':
+        entries = await this.readDebFileEntries(data, new Set(originals.keys()))
+        break
+      default:
+        throw new Exception('AppImage packages do not expose their files', { status: 422 })
+    }
+
+    for (const entry of entries) {
+      const path = originals.get(normalizePackagePath(entry.name))
+      if (path && !result.has(path)) result.set(path, entry.data)
+    }
+
+    return result
+  }
+
+  /**
    * Package archives are parsed from the beginning of the file, so only the head is kept in memory.
    * The checksum is computed by streaming the whole file.
    */
@@ -147,6 +191,119 @@ export default class PackageFileExtractor {
     const hash = createHash('sha256')
     await pipeline(createReadStream(filePath), hash)
     return hash.digest('hex')
+  }
+
+  private async readDebFileEntries(data: Buffer, wanted: Set<string>) {
+    const entries = this.readArEntries(data)
+    const dataEntry = entries.find((entry) => /^data\.tar(\.(gz|xz|zst))?$/.test(entry.name))
+    if (!dataEntry) {
+      throw new Exception('Not a valid Debian package: the data archive is missing', {
+        status: 422,
+      })
+    }
+
+    const archive = await this.decompress(dataEntry.data, extname(dataEntry.name))
+    return readTarEntries(archive).filter((entry) => wanted.has(normalizePackagePath(entry.name)))
+  }
+
+  private async readRpmFileEntries(data: Buffer, wanted: Set<string>): Promise<TarEntry[]> {
+    // RPM layout: a 96 byte lead, the signature header (padded to 8 bytes) and the main header.
+    const signature = this.readRpmHeader(data, 96)
+    if (!signature) {
+      throw new Exception('Not a valid RPM package: the signature header is malformed', {
+        status: 422,
+      })
+    }
+
+    const header = this.readRpmHeader(data, signature.end + ((8 - (signature.end % 8)) % 8))
+    if (!header) {
+      throw new Exception('Not a valid RPM package: the header is malformed', { status: 422 })
+    }
+
+    const format = this.readRpmString(header, rpmTags.payloadFormat)
+    if (format && format !== 'cpio') {
+      throw new Exception(`Unsupported RPM payload format: ${format}`, { status: 422 })
+    }
+
+    const compressor = this.readRpmString(header, rpmTags.payloadCompressor)
+    const payload = await this.decompressRpmPayload(data, header, compressor)
+    return this.readCpioEntries(payload, wanted)
+  }
+
+  /**
+   * The payload follows the main header. Some tools pad the header to an 8 byte boundary, so the
+   * offsets are tried until the payload can be decompressed.
+   */
+  private async decompressRpmPayload(data: Buffer, header: RpmHeader, compressor: string | null) {
+    const offsets = [header.end, header.end + ((8 - (header.end % 8)) % 8)]
+    let lastError: unknown = null
+
+    for (const offset of new Set(offsets)) {
+      try {
+        return await this.decompressPayload(data.subarray(offset), compressor)
+      } catch (error) {
+        lastError = error
+      }
+    }
+
+    throw new Exception(
+      `Unable to decompress the RPM payload${
+        lastError instanceof Error ? `: ${lastError.message}` : ''
+      }`,
+      { status: 422 },
+    )
+  }
+
+  private async decompressPayload(payload: Buffer, compressor: string | null) {
+    switch ((compressor ?? 'gzip').toLowerCase()) {
+      case 'gzip':
+      case 'gz':
+        return gunzipSync(payload)
+      case 'zstd':
+        return zstdDecompressSync(payload)
+      case 'xz':
+      case 'lzma':
+        return this.decompress(payload, '.xz')
+      case 'none':
+        return payload
+      default:
+        throw new Exception(`Unsupported RPM payload compression: ${compressor}`)
+    }
+  }
+
+  /**
+   * RPM payloads are SVR4 "newc" cpio archives with one entry per file. Entries are walked by their
+   * declared lengths and only the wanted files are kept.
+   */
+  private readCpioEntries(data: Buffer, wanted: Set<string>) {
+    const entries: TarEntry[] = []
+    let offset = 0
+
+    while (offset + cpioHeaderSize <= data.length) {
+      const magic = data.subarray(offset, offset + 6).toString('latin1')
+      if (magic !== '070701' && magic !== '070702') break
+
+      const readHex = (at: number) =>
+        Number.parseInt(data.subarray(offset + at, offset + at + 8).toString('latin1'), 16)
+      const fileSize = readHex(54)
+      const nameSize = readHex(94)
+      if (!Number.isInteger(fileSize) || !Number.isInteger(nameSize) || nameSize < 1) break
+
+      const name = data
+        .subarray(offset + cpioHeaderSize, offset + cpioHeaderSize + nameSize - 1)
+        .toString('utf8')
+      offset += cpioHeaderSize + nameSize
+      offset += (4 - (offset % 4)) % 4
+
+      const contents = data.subarray(offset, offset + fileSize)
+      offset += fileSize
+      offset += (4 - (offset % 4)) % 4
+
+      if (name === 'TRAILER!!!') break
+      if (wanted.has(normalizePackagePath(name))) entries.push({ name, data: contents })
+    }
+
+    return entries
   }
 
   private detectType(data: Buffer, fileName: string): UploadedPackageType {
