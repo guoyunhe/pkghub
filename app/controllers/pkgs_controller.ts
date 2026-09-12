@@ -89,8 +89,8 @@ export default class PkgsController {
   }
 
   /**
-   * Create a package by uploading a deb, rpm or AppImage file. The name, version, release and
-   * architecture are read from the file itself.
+   * Create a package by uploading a deb, rpm or AppImage file. The name, version, release,
+   * architecture, license, summary and description are read from the file itself when available.
    */
   private async storeFromUpload({ auth, params, request, response, serialize }: HttpContext) {
     const application = await App.findOrFail(params.app_id)
@@ -117,6 +117,9 @@ export default class PkgsController {
       version: metadata.version,
       release: metadata.release,
       arch: metadata.arch,
+      license: metadata.license,
+      summary: metadata.summary,
+      description: metadata.description,
       size: metadata.size,
       checksum: metadata.checksum,
       checksumType: metadata.checksumType,

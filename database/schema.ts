@@ -127,7 +127,7 @@ export class ImageSchema extends BaseModel {
 }
 
 export class PkgSchema extends BaseModel {
-  static $columns = ['appId', 'arch', 'checksum', 'checksumType', 'createdAt', 'downloadUrl', 'id', 'installCommand', 'name', 'path', 'release', 'repoId', 'size', 'type', 'updatedAt', 'userId', 'version'] as const
+  static $columns = ['appId', 'arch', 'checksum', 'checksumType', 'createdAt', 'description', 'downloadUrl', 'id', 'installCommand', 'license', 'name', 'path', 'release', 'repoId', 'size', 'summary', 'type', 'updatedAt', 'userId', 'version'] as const
   $columns = PkgSchema.$columns
   @column()
   declare appId: number | null
@@ -140,11 +140,15 @@ export class PkgSchema extends BaseModel {
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime | null
   @column()
+  declare description: string | null
+  @column()
   declare downloadUrl: string | null
   @column({ isPrimary: true })
   declare id: number
   @column()
   declare installCommand: string | null
+  @column()
+  declare license: string | null
   @column()
   declare name: string
   @column()
@@ -155,6 +159,8 @@ export class PkgSchema extends BaseModel {
   declare repoId: number | null
   @column()
   declare size: number | null
+  @column()
+  declare summary: string | null
   @column()
   declare type: string
   @column.dateTime({ autoCreate: true, autoUpdate: true })

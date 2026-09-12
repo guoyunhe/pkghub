@@ -343,7 +343,13 @@ export default function AppDetailPage() {
                       {pkg.version && <span>{pkg.version}</span>}
                       {pkg.release && <span>{pkg.release}</span>}
                       {pkg.arch && <span>{pkg.arch}</span>}
+                      {pkg.license && <span>{pkg.license}</span>}
                     </div>
+                    {pkg.summary && (
+                      <Text c='dimmed' size='sm'>
+                        {pkg.summary}
+                      </Text>
+                    )}
                     {pkg.installCommand && (
                       <Text className={styles.installCommand} component='code' size='sm'>
                         {pkg.installCommand}

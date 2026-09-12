@@ -10,6 +10,7 @@ import { gunzipSync, zstdDecompressSync } from 'node:zlib'
 
 import { Exception } from '@adonisjs/core/exceptions'
 
+import { splitDebDescription, splitDebVersion } from '../utils/deb.js'
 import { readTarEntries } from '../utils/tar.js'
 
 // The package is a webpack UMD bundle and does not expose its named exports to the ESM loader.
@@ -26,6 +27,9 @@ export type ExtractedPackageFile = {
   version: string | null
   release: string | null
   arch: string | null
+  license: string | null
+  summary: string | null
+  description: string | null
   size: number
   checksum: string
   checksumType: 'sha256'
@@ -36,6 +40,9 @@ type PackageMetadata = {
   version: string | null
   release: string | null
   arch: string | null
+  license: string | null
+  summary: string | null
+  description: string | null
 }
 
 type ArEntry = {
@@ -64,9 +71,19 @@ const appImageMagic = Buffer.from([0x41, 0x49])
 // Everything we read (ar entries, RPM headers, ELF header) lives at the beginning of the file.
 const maxHeadSize = 32 * 1024 * 1024
 
-// RPM header tags we read. All of them are stored as plain (non translated) strings.
-const rpmTags = { name: 1000, version: 1001, release: 1002, arch: 1022 } as const
+// RPM header tags we read. Name, version, release, arch and license are plain strings, while the
+// summary and description are localized strings (the first value is the C locale).
+const rpmTags = {
+  name: 1000,
+  version: 1001,
+  release: 1002,
+  summary: 1004,
+  description: 1005,
+  license: 1014,
+  arch: 1022,
+} as const
 const rpmStringType = 6
+const rpmI18nStringType = 9
 
 const elfMachines: Record<number, string> = {
   3: 'i386',
@@ -96,8 +113,8 @@ const appImageArchNames: Record<string, string> = {
 export default class PackageFileExtractor {
   /**
    * Read a deb, rpm or AppImage file and extract the metadata used to create a package entry: the
-   * package format, its name, version, release and architecture, plus the size and the checksum of
-   * the uploaded bytes.
+   * package format, its name, version, release and architecture, its license, summary and
+   * description, plus the size and the checksum of the uploaded bytes.
    */
   async extract(filePath: string, fileName: string): Promise<ExtractedPackageFile> {
     const handle = await open(filePath, 'r')
@@ -195,12 +212,16 @@ export default class PackageFileExtractor {
       })
     }
 
-    const version = this.splitDebVersion(fields.Version)
+    const version = splitDebVersion(fields.Version)
+    const description = splitDebDescription(fields.Description)
     return {
       name,
       version: version.version,
       release: version.release,
       arch: fields.Architecture ? this.fromDebArch(fields.Architecture) : null,
+      license: fields.License ?? null,
+      summary: description.summary,
+      description: description.description,
     }
   }
 
@@ -228,6 +249,9 @@ export default class PackageFileExtractor {
       version: this.readRpmString(header, rpmTags.version),
       release: this.readRpmString(header, rpmTags.release),
       arch: this.readRpmString(header, rpmTags.arch),
+      license: this.readRpmLocalizedString(header, rpmTags.license),
+      summary: this.readRpmLocalizedString(header, rpmTags.summary),
+      description: this.readRpmLocalizedString(header, rpmTags.description),
     }
   }
 
@@ -245,6 +269,9 @@ export default class PackageFileExtractor {
       version: name.version,
       release: null,
       arch: this.readElfArch(data) ?? name.arch,
+      license: null,
+      summary: null,
+      description: null,
     }
   }
 
@@ -328,8 +355,11 @@ export default class PackageFileExtractor {
         current = null
         continue
       }
+      // Continuation lines start with a space; a lone "dot" line stands for an empty line.
       if (/^\s/.test(line)) {
-        if (current) fields[current] += ` ${line.trim()}`
+        if (!current) continue
+        const continued = line.replace(/^\s/, '')
+        fields[current] += `\n${continued === '.' ? '' : continued}`
         continue
       }
       const separator = line.indexOf(':')
@@ -339,24 +369,6 @@ export default class PackageFileExtractor {
     }
 
     return fields
-  }
-
-  private splitDebVersion(value: string | undefined): {
-    version: string | null
-    release: string | null
-  } {
-    const upstream = value?.trim()
-    if (!upstream) return { version: null, release: null }
-    const withoutEpoch = upstream.includes(':')
-      ? upstream.slice(upstream.indexOf(':') + 1)
-      : upstream
-    const dash = withoutEpoch.lastIndexOf('-')
-    return dash === -1
-      ? { version: withoutEpoch, release: null }
-      : {
-          version: withoutEpoch.slice(0, dash),
-          release: withoutEpoch.slice(dash + 1),
-        }
   }
 
   private readRpmHeader(data: Buffer, offset: number): RpmHeader | null {
@@ -389,11 +401,26 @@ export default class PackageFileExtractor {
 
   private readRpmString(header: RpmHeader, tag: number): string | null {
     const entry = header.entries.find((row) => row.tag === tag && row.type === rpmStringType)
-    if (!entry || entry.offset >= header.store.length) return null
+    return entry ? this.readRpmStoreString(header, entry.offset) : null
+  }
 
-    const end = header.store.indexOf(0, entry.offset)
+  /**
+   * Summary, description and license can be stored as localized strings, in which case several
+   * translations are packed into the store and the first one is the C locale.
+   */
+  private readRpmLocalizedString(header: RpmHeader, tag: number): string | null {
+    const entry = header.entries.find(
+      (row) => row.tag === tag && (row.type === rpmStringType || row.type === rpmI18nStringType),
+    )
+    return entry ? this.readRpmStoreString(header, entry.offset) : null
+  }
+
+  private readRpmStoreString(header: RpmHeader, offset: number): string | null {
+    if (offset >= header.store.length) return null
+
+    const end = header.store.indexOf(0, offset)
     const value = header.store
-      .subarray(entry.offset, end === -1 ? header.store.length : end)
+      .subarray(offset, end === -1 ? header.store.length : end)
       .toString('utf8')
       .trim()
 

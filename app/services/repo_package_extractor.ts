@@ -5,6 +5,8 @@ import xior, { isXiorError } from 'xior'
 
 import type Repo from '#models/repo'
 
+import { splitDebDescription, splitDebVersion } from '../utils/deb.js'
+
 export type RepoPackageType = 'rpm' | 'deb'
 
 export type ExtractedPackage = {
@@ -13,6 +15,9 @@ export type ExtractedPackage = {
   version: string | null
   release: string | null
   arch: string | null
+  license: string | null
+  summary: string | null
+  description: string | null
   downloadUrl: string
   checksum: string | null
   checksumType: string | null
@@ -55,9 +60,12 @@ type XmlRpmPackage = {
   name?: string
   arch?: string
   version?: { '@_ver'?: string; '@_rel'?: string }
+  summary?: unknown
+  description?: unknown
   location?: { '@_href'?: string }
   checksum?: XmlChecksum
   size?: { '@_package'?: string }
+  format?: Record<string, unknown>
 }
 
 const requestHeaders = { Accept: '*/*', 'User-Agent': 'curl/8.0' }
@@ -77,16 +85,45 @@ function parseDebStanzas(content: string): Record<string, string>[] {
     .split(/\n\s*\n/)
     .map((block) => {
       const fields: Record<string, string> = {}
+      let currentKey: string | null = null
       for (const line of block.split('\n')) {
-        if (/^\s/.test(line) || !line.includes(':')) continue
+        // Indented lines continue the previous field, which is how deb packages carry the long
+        // description. A lone "dot" line stands for an empty line.
+        if (/^\s/.test(line)) {
+          if (!currentKey) continue
+          const continued = line.replace(/^\s/, '')
+          fields[currentKey] += `\n${continued === '.' ? '' : continued}`
+          continue
+        }
+        if (!line.includes(':')) continue
         const separator = line.indexOf(':')
         const key = line.slice(0, separator)
         const value = line.slice(separator + 1).trim()
-        if (key) fields[key] = value
+        if (!key) continue
+        fields[key] = value
+        currentKey = key
       }
       return fields
     })
     .filter((fields) => fields.Package && fields.Filename)
+}
+
+/**
+ * Some XML metadata values carry attributes (e.g. `xml:lang`), which turns them into objects, and
+ * the parser may return a list of translations. Take the first usable text.
+ */
+function readXmlText(value: unknown): string | null {
+  if (Array.isArray(value)) {
+    for (const item of value) {
+      const found = readXmlText(item)
+      if (found) return found
+    }
+    return null
+  }
+  if (value && typeof value === 'object') {
+    return text((value as { '#text'?: unknown })['#text'])
+  }
+  return text(value)
 }
 
 export default class RepoPackageExtractor {
@@ -131,6 +168,9 @@ export default class RepoPackageExtractor {
           version: text(entry.version?.['@_ver']),
           release: text(entry.version?.['@_rel']),
           arch: text(entry.arch),
+          license: readXmlText(entry.format?.['rpm:license'] ?? entry.format?.license),
+          summary: readXmlText(entry.summary),
+          description: readXmlText(entry.description),
           downloadUrl: joinUrl(repo.baseUrl, location),
           checksum: checksum.checksum,
           checksumType: checksum.checksumType,
@@ -161,8 +201,9 @@ export default class RepoPackageExtractor {
         const content = await this.downloadText(url, { optional: true })
         if (content === null) continue
         for (const stanza of parseDebStanzas(content)) {
-          const version = this.splitDebVersion(stanza.Version)
+          const version = splitDebVersion(stanza.Version)
           const arch = text(stanza.Architecture)
+          const description = splitDebDescription(stanza.Description)
           const key = `${stanza.Package}|${stanza.Version}|${arch ?? ''}`
           if (seen.has(key)) continue
           seen.add(key)
@@ -172,6 +213,9 @@ export default class RepoPackageExtractor {
             version: version.version,
             release: version.release,
             arch: arch ? this.fromDebArch(arch) : null,
+            license: text(stanza.License),
+            summary: description.summary,
+            description: description.description,
             downloadUrl: joinUrl(source.uri, stanza.Filename),
             checksum: stanza.SHA256 ?? stanza.SHA1 ?? stanza.MD5sum ?? null,
             checksumType: stanza.SHA256
@@ -249,24 +293,6 @@ export default class RepoPackageExtractor {
     }
 
     return sources
-  }
-
-  private splitDebVersion(value: string | undefined): {
-    version: string | null
-    release: string | null
-  } {
-    const upstream = text(value)
-    if (!upstream) return { version: null, release: null }
-    const withoutEpoch = upstream.includes(':')
-      ? upstream.slice(upstream.indexOf(':') + 1)
-      : upstream
-    const dash = withoutEpoch.lastIndexOf('-')
-    return dash === -1
-      ? { version: withoutEpoch, release: null }
-      : {
-          version: withoutEpoch.slice(0, dash),
-          release: withoutEpoch.slice(dash + 1),
-        }
   }
 
   private readChecksum(node: XmlChecksum): {

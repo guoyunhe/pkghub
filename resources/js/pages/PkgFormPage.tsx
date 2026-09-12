@@ -8,6 +8,7 @@ import {
   Select,
   Stack,
   Text,
+  Textarea,
   TextInput,
   Title,
 } from '@mantine/core'
@@ -38,6 +39,9 @@ function emptyForm(): PkgFormValues {
     version: '',
     release: '',
     arch: '',
+    license: '',
+    summary: '',
+    description: '',
     downloadUrl: '',
     checksum: '',
     checksumType: 'sha256',
@@ -88,6 +92,9 @@ export default function PkgFormPage() {
           version: pkg.version ?? '',
           release: pkg.release ?? '',
           arch: pkg.arch ?? '',
+          license: pkg.license ?? '',
+          summary: pkg.summary ?? '',
+          description: pkg.description ?? '',
           downloadUrl: pkg.downloadUrl ?? '',
           checksum: pkg.checksum ?? '',
           checksumType: pkg.checksumType ?? '',
@@ -189,6 +196,14 @@ export default function PkgFormPage() {
           <TextInput label={t('packages.fields.version')} {...form.getInputProps('version')} />
           <TextInput label={t('packages.fields.release')} {...form.getInputProps('release')} />
           <TextInput label={t('packages.fields.arch')} {...form.getInputProps('arch')} />
+          <TextInput label={t('packages.fields.license')} {...form.getInputProps('license')} />
+          <TextInput label={t('packages.fields.summary')} {...form.getInputProps('summary')} />
+          <Textarea
+            autosize
+            label={t('packages.fields.description')}
+            minRows={3}
+            {...form.getInputProps('description')}
+          />
           <TextInput
             label={t('packages.fields.downloadUrl')}
             {...form.getInputProps('downloadUrl')}
