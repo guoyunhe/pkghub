@@ -4,8 +4,8 @@
  */
 export const commonLanguages = [
   'en',
-  'zh-Hans',
-  'zh-Hant',
+  'zh-CN',
+  'zh-TW',
   'zh',
   'ja',
   'ko',
@@ -142,7 +142,9 @@ export function languageOptions(used: string[], uiLanguage: string): LanguageOpt
 /** Picks the language a form starts with: the data's own language, else the interface language. */
 export function defaultLanguage(used: string[], uiLanguage?: string) {
   const pool = dedupe([...used, ...commonLanguages])
-  const code = uiLanguage?.split('-')[0]?.toLowerCase()
-  const interfaceLanguage = code && pool.find((tag) => tag.toLowerCase() === code)
-  return used[0] ?? interfaceLanguage ?? fallbackLanguage
+  const wanted = uiLanguage?.toLowerCase()
+  const exact = wanted ? pool.find((tag) => tag.toLowerCase() === wanted) : undefined
+  const base = wanted?.split('-')[0]
+  const interfaceLanguage = base ? pool.find((tag) => tag.toLowerCase() === base) : undefined
+  return used[0] ?? exact ?? interfaceLanguage ?? fallbackLanguage
 }
