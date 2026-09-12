@@ -9,6 +9,8 @@ import Image from '#models/image'
 import Pkg from '#models/pkg'
 import Repo from '#models/repo'
 import RepoAppstreamExtractor, {
+  appstreamIdVariants,
+  canonicalAppstreamId,
   desktopAppTypes,
   iconKey,
   type AppstreamIcon,
@@ -251,7 +253,11 @@ export default class RepoSync extends BaseCommand {
     }
 
     const storedApps = await App.query().preload('icon')
-    const known = new Map(storedApps.map((app) => [app.appstreamId, app]))
+    // Older catalogs identify a component by its desktop file name, so a stored application may
+    // carry the `.desktop` form of the ID the metadata now uses.
+    const known = new Map(
+      storedApps.map((app) => [canonicalAppstreamId(app.appstreamId ?? ''), app]),
+    )
     const pendingIcons: Array<{ app: App; icon: AppstreamIcon }> = []
 
     for (const entry of candidates) {
@@ -340,11 +346,12 @@ export default class RepoSync extends BaseCommand {
 
     const storedApps = await App.query()
       .preload('icon')
-      .whereIn(
-        'appstreamId',
-        candidates.map((component) => component.appstreamId),
-      )
-    const known = new Map(storedApps.map((app) => [app.appstreamId, app]))
+      .whereIn('appstreamId', [
+        ...new Set(candidates.flatMap((component) => appstreamIdVariants(component.appstreamId))),
+      ])
+    const known = new Map(
+      storedApps.map((app) => [canonicalAppstreamId(app.appstreamId ?? ''), app]),
+    )
     const byName = new Map<string, ExtractedPackage[]>()
     for (const pkg of packages) {
       const siblings = byName.get(pkg.name) ?? []

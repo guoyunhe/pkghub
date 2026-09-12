@@ -70,13 +70,22 @@ const appstreamFileSuffixes = ['.metainfo.xml', '.appdata.xml']
  * Component ID of a component. Legacy `appdata.xml` files identified a component by the name of its
  * desktop file, so the `.desktop` suffix they carry is dropped; modern IDs cannot have it.
  */
-function canonicalAppstreamId(id: string) {
+export function canonicalAppstreamId(id: string) {
   return id.endsWith('.desktop') ? id.slice(0, -'.desktop'.length) : id
 }
 
 /** Whether two component IDs name the same component. */
 function isSameAppstreamId(left: string, right: string) {
   return canonicalAppstreamId(left) === canonicalAppstreamId(right)
+}
+
+/**
+ * Component IDs a stored application may carry: the canonical one and the legacy `.desktop` form,
+ * which older catalogs identify a component by.
+ */
+export function appstreamIdVariants(id: string) {
+  const canonical = canonicalAppstreamId(id)
+  return canonical === id ? [id, `${id}.desktop`] : [id, canonical]
 }
 
 /**
