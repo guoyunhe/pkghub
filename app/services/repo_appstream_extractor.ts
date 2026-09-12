@@ -6,7 +6,7 @@ import xior, { isXiorError } from 'xior'
 import { parse as parseYaml } from 'yaml'
 
 import type Repo from '#models/repo'
-import PackageFileExtractor from '#services/package_file_extractor'
+import PackageFileExtractor, { normalizePackagePath } from '#services/package_file_extractor'
 import RepoPackageExtractor from '#services/repo_package_extractor'
 import type { ExtractedPackage, ResolvedDebSource } from '#services/repo_package_extractor'
 
@@ -35,8 +35,14 @@ export type ExtractedApp = {
   pkgNames: string[]
   /** AppStream XML of the component, stored as `appstreamContent`. */
   content: string
-  /** Cached icons declared by the metadata, largest first. */
+  /** Icons declared by the metadata, cached ones (which name a file) before themed ones. */
   icons: AppstreamIcon[]
+}
+
+/** An application together with the icon its package installs, when it ships a matching one. */
+export type PackagedApp = {
+  app: ExtractedApp
+  icon: Buffer | null
 }
 
 /** An AppStream component a package announces through its file list, without any metadata. */
@@ -299,22 +305,30 @@ export default class RepoAppstreamExtractor {
   /**
    * Read the AppStream metadata of an application from the metadata file its package ships.
    * Repositories that publish no AppStream catalog only carry the metadata inside the packages, so
-   * the package itself is downloaded first.
+   * the package itself is downloaded first and its payload is searched for the metadata file and,
+   * when the metadata does not name a file in an icon archive, for the icon as well.
    */
   async readPackagedApp(
     pkg: ExtractedPackage,
     path: string,
     appstreamId: string,
-  ): Promise<ExtractedApp | null> {
+  ): Promise<PackagedApp | null> {
     const archive = await this.download(pkg.downloadUrl)
     if (!archive) return null
 
-    const files = await new PackageFileExtractor().readFiles(pkg.type, archive, [path])
-    const content = files.get(path)
+    const files = await new PackageFileExtractor().readMatchingFiles(pkg.type, archive, [
+      path,
+      ...packagedIconPatterns,
+    ])
+
+    const content = files.get(normalizePackagePath(path))
     if (!content) return null
 
     const apps = this.parseAppstreamXml(content.toString('utf8'))
-    return apps.find((app) => app.appstreamId === appstreamId) ?? null
+    const app = apps.find((entry) => entry.appstreamId === appstreamId) ?? null
+    if (!app) return null
+
+    return { app, icon: packagedIcon(files, app, appstreamId, pkg.name) }
   }
 
   /**
@@ -444,24 +458,29 @@ export default class RepoAppstreamExtractor {
         categories: categoryCodes(component.categories?.category),
         pkgNames: [...new Set(pkgNames)],
         content: this.xmlBuilder.build({ component }),
-        icons: this.cachedIcons(component),
+        icons: this.declaredIcons(component),
       })
     }
 
     return apps
   }
 
-  private cachedIcons(component: XmlComponent): AppstreamIcon[] {
+  /**
+   * Icons the component declares. A cached icon names a file in the AppStream icon archive, while a
+   * stock icon names a themed icon; both are kept so that the icon can also be found inside the
+   * package, which is where repositories without a catalog keep it.
+   */
+  private declaredIcons(component: XmlComponent): AppstreamIcon[] {
     const nodes = Array.isArray(component.icon) ? component.icon : [component.icon]
     const icons: AppstreamIcon[] = []
 
     for (const node of nodes) {
       if (!node || typeof node === 'string') continue
-      if (node['@_type'] !== 'cached') continue
+      if (node['@_type'] !== 'cached' && node['@_type'] !== 'stock') continue
       const name = text(node)
       if (!name) continue
       icons.push({
-        name: basename(name),
+        name: node['@_type'] === 'cached' ? basename(name) : name,
         width: number(node['@_width']),
         height: number(node['@_height']),
       })
@@ -589,6 +608,60 @@ export default class RepoAppstreamExtractor {
 
 function iconSize(icon: AppstreamIcon) {
   return Math.min(icon.width ?? 0, icon.height ?? 0)
+}
+
+/** Extensions of icons that can be stored as an image, tried when the metadata names a themed icon. */
+const iconFileExtensions = ['.png', '.svg']
+
+/** Directories a package installs its icons in, searched when the metadata names the icon file. */
+const packagedIconPatterns = ['/usr/share/icons/**/apps/*', '/usr/share/pixmaps/*']
+
+/**
+ * Icon of a component inside the package payload. The metadata names either the icon file or a
+ * themed icon, and packages also name the icon after the application, so those names are matched
+ * against the files the package installs and the largest one is used.
+ */
+function packagedIcon(
+  files: Map<string, Buffer>,
+  app: ExtractedApp,
+  appstreamId: string,
+  pkgName: string,
+): Buffer | null {
+  const wanted = iconBaseNames(app, appstreamId, pkgName)
+  let best: { data: Buffer; score: number } | null = null
+
+  for (const [path, data] of files) {
+    if (!wanted.has(basename(path).toLowerCase())) continue
+
+    const score = iconPathSize(path) + data.length
+    if (!best || score > best.score) best = { data, score }
+  }
+
+  return best?.data ?? null
+}
+
+/** File names the icon may have, taken from the metadata and from the application name. */
+function iconBaseNames(app: ExtractedApp, appstreamId: string, pkgName: string) {
+  const names = new Set<string>()
+  const add = (name: string | null | undefined) => {
+    const base = basename(name?.trim() ?? '').toLowerCase()
+    if (!base) return
+
+    names.add(base)
+    if (iconFileExtensions.some((extension) => base.endsWith(extension))) return
+    for (const extension of iconFileExtensions) names.add(`${base}${extension}`)
+  }
+
+  for (const icon of app.icons) add(icon.name)
+  add(appstreamId.split('.').pop())
+  add(pkgName)
+  return names
+}
+
+/** Pixels of the size a package stores an icon in, e.g. `256x256`; `0` for unsigned directories. */
+function iconPathSize(path: string) {
+  const match = /\/(\d+)x(\d+)\//.exec(path)
+  return match ? Number(match[1]) * Number(match[2]) : 0
 }
 
 function joinUrl(base: string, path: string) {

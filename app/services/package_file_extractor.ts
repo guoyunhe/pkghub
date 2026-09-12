@@ -91,8 +91,27 @@ const rpmI18nStringType = 9
 const cpioHeaderSize = 110
 
 /** Paths inside a package carry a leading `./` or `/`; they are compared without it. */
-function normalizePackagePath(path: string) {
+export function normalizePackagePath(path: string) {
   return path.trim().replace(/^\.?\//, '')
+}
+
+/**
+ * Regular expression of a package path pattern: `*` matches one path segment and `**` matches any
+ * number of them, so a file can be looked up without knowing the directory layout of the package.
+ */
+function compilePackagePattern(pattern: string) {
+  const source = normalizePackagePath(pattern)
+    .split('/')
+    .map((segment) => {
+      if (segment === '**') return '.*'
+      return segment
+        .split('*')
+        .map((part) => part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+        .join('[^/]*')
+    })
+    .join('/')
+
+  return new RegExp(`^${source}$`)
 }
 
 const elfMachines: Record<number, string> = {
@@ -163,24 +182,47 @@ export default class PackageFileExtractor {
     const result = new Map<string, Buffer>()
     if (originals.size === 0) return result
 
-    let entries: TarEntry[]
-    switch (type) {
-      case 'rpm':
-        entries = await this.readRpmFileEntries(data, new Set(originals.keys()))
-        break
-      case 'deb':
-        entries = await this.readDebFileEntries(data, new Set(originals.keys()))
-        break
-      default:
-        throw new Exception('AppImage packages do not expose their files', { status: 422 })
-    }
-
+    const entries = await this.readPackageEntries(type, data, (path) => originals.has(path))
     for (const entry of entries) {
       const path = originals.get(normalizePackagePath(entry.name))
       if (path && !result.has(path)) result.set(path, entry.data)
     }
 
     return result
+  }
+
+  /**
+   * Read every file of an in-memory deb or rpm package whose path matches one of the patterns,
+   * keyed by the path inside the package. Patterns may use `*` for one path segment and `**` for
+   * any number of them.
+   */
+  async readMatchingFiles(
+    type: UploadedPackageType,
+    data: Buffer,
+    patterns: string[],
+  ): Promise<Map<string, Buffer>> {
+    const matchers = patterns.map(compilePackagePattern)
+    if (matchers.length === 0) return new Map()
+
+    const entries = await this.readPackageEntries(type, data, (path) =>
+      matchers.some((matcher) => matcher.test(path)),
+    )
+    return new Map(entries.map((entry) => [normalizePackagePath(entry.name), entry.data]))
+  }
+
+  private async readPackageEntries(
+    type: UploadedPackageType,
+    data: Buffer,
+    match: (path: string) => boolean,
+  ): Promise<TarEntry[]> {
+    switch (type) {
+      case 'rpm':
+        return this.readRpmFileEntries(data, match)
+      case 'deb':
+        return this.readDebFileEntries(data, match)
+      default:
+        throw new Exception('AppImage packages do not expose their files', { status: 422 })
+    }
   }
 
   /**
@@ -193,7 +235,7 @@ export default class PackageFileExtractor {
     return hash.digest('hex')
   }
 
-  private async readDebFileEntries(data: Buffer, wanted: Set<string>) {
+  private async readDebFileEntries(data: Buffer, match: (path: string) => boolean) {
     const entries = this.readArEntries(data)
     const dataEntry = entries.find((entry) => /^data\.tar(\.(gz|xz|zst))?$/.test(entry.name))
     if (!dataEntry) {
@@ -203,10 +245,13 @@ export default class PackageFileExtractor {
     }
 
     const archive = await this.decompress(dataEntry.data, extname(dataEntry.name))
-    return readTarEntries(archive).filter((entry) => wanted.has(normalizePackagePath(entry.name)))
+    return readTarEntries(archive).filter((entry) => match(normalizePackagePath(entry.name)))
   }
 
-  private async readRpmFileEntries(data: Buffer, wanted: Set<string>): Promise<TarEntry[]> {
+  private async readRpmFileEntries(
+    data: Buffer,
+    match: (path: string) => boolean,
+  ): Promise<TarEntry[]> {
     // RPM layout: a 96 byte lead, the signature header (padded to 8 bytes) and the main header.
     const signature = this.readRpmHeader(data, 96)
     if (!signature) {
@@ -227,7 +272,7 @@ export default class PackageFileExtractor {
 
     const compressor = this.readRpmString(header, rpmTags.payloadCompressor)
     const payload = await this.decompressRpmPayload(data, header, compressor)
-    return this.readCpioEntries(payload, wanted)
+    return this.readCpioEntries(payload, match)
   }
 
   /**
@@ -273,9 +318,9 @@ export default class PackageFileExtractor {
 
   /**
    * RPM payloads are SVR4 "newc" cpio archives with one entry per file. Entries are walked by their
-   * declared lengths and only the wanted files are kept.
+   * declared lengths and only the matching files are kept.
    */
-  private readCpioEntries(data: Buffer, wanted: Set<string>) {
+  private readCpioEntries(data: Buffer, match: (path: string) => boolean) {
     const entries: TarEntry[] = []
     let offset = 0
 
@@ -300,7 +345,7 @@ export default class PackageFileExtractor {
       offset += (4 - (offset % 4)) % 4
 
       if (name === 'TRAILER!!!') break
-      if (wanted.has(normalizePackagePath(name))) entries.push({ name, data: contents })
+      if (match(normalizePackagePath(name))) entries.push({ name, data: contents })
     }
 
     return entries
