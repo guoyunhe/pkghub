@@ -1,6 +1,5 @@
 import type { Data } from '@generated/data'
-import { Alert, Button, Group, Loader, Pagination, Text, Title } from '@mantine/core'
-import { DownloadSimpleIcon } from '@phosphor-icons/react/DownloadSimple'
+import { Alert, Button, Loader, Pagination, Text, Title } from '@mantine/core'
 import { PencilSimpleIcon } from '@phosphor-icons/react/PencilSimple'
 import { PlusIcon } from '@phosphor-icons/react/Plus'
 import { TrashIcon } from '@phosphor-icons/react/Trash'
@@ -10,13 +9,12 @@ import { Link } from 'wouter'
 
 import { useAuth } from '../auth'
 import PkgFilters, { useStoredPkgFilters } from '../components/PkgFilters'
+import PkgList from '../components/PkgList'
 import { searchPackages } from '../services/apps'
 import { deletePkg } from '../services/pkgs'
 import type { Paginated } from '../types/pagination'
 
 import styles from './AppsPage.module.css'
-
-const packageTypesWithIcons = new Set(['rpm', 'deb', 'appimage'])
 
 export default function PkgsPage() {
   const { t } = useTranslation()
@@ -96,44 +94,11 @@ export default function PkgsPage() {
         </div>
       ) : result && result.data.length > 0 ? (
         <>
-          <section className={styles.grid}>
-            {result.data.map((pkg) => (
-              <article className={styles.pkgItem} key={pkg.id}>
-                {packageTypesWithIcons.has(pkg.type) ? (
-                  <img alt='' className={styles.pkgTypeIcon} src={`/packages/${pkg.type}.svg`} />
-                ) : (
-                  <div className={styles.pkgTypeIcon} />
-                )}
-                <div className={styles.copy}>
-                  <Title order={3}>
-                    {pkg.app ? (
-                      <Link className={styles.link} href={`/apps/${pkg.app.id}`}>
-                        {pkg.name}
-                      </Link>
-                    ) : (
-                      pkg.name
-                    )}
-                  </Title>
-                  <div className={styles.meta}>
-                    <span>{pkg.type}</span>
-                    {pkg.version && <span>{pkg.version}</span>}
-                    {pkg.release && <span>{pkg.release}</span>}
-                    {pkg.arch && <span>{pkg.arch}</span>}
-                  </div>
-                </div>
-                <Group gap='xs'>
-                  {pkg.downloadUrl && (
-                    <Button
-                      component='a'
-                      href={pkg.downloadUrl}
-                      leftSection={<DownloadSimpleIcon size={16} />}
-                      size='xs'
-                      variant='default'
-                    >
-                      {t('common.download')}
-                    </Button>
-                  )}
-                  {isAdmin && (
+          <PkgList
+            pkgs={result.data}
+            renderActions={
+              isAdmin
+                ? (pkg) => (
                     <>
                       <Button
                         aria-label={t('packages.editPackage')}
@@ -154,11 +119,10 @@ export default function PkgsPage() {
                         <TrashIcon size={16} />
                       </Button>
                     </>
-                  )}
-                </Group>
-              </article>
-            ))}
-          </section>
+                  )
+                : undefined
+            }
+          />
           {result.meta.lastPage > 1 && (
             <Pagination
               className={styles.pagination}

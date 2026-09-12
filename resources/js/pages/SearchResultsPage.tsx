@@ -1,22 +1,17 @@
 import type { Data } from '@generated/data'
-import { Alert, Badge, Button, Group, Loader, Pagination, Tabs, Text, Title } from '@mantine/core'
-import { ArrowRightIcon } from '@phosphor-icons/react/ArrowRight'
-import { DownloadSimpleIcon } from '@phosphor-icons/react/DownloadSimple'
+import { Alert, Badge, Loader, Pagination, Tabs, Text, Title } from '@mantine/core'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSearchParams } from 'wouter'
-import { Link } from 'wouter'
 
-import CategoryBadges from '../components/CategoryBadges'
+import AppList from '../components/AppList'
 import CategoryFilter from '../components/CategoryFilter'
 import PkgFilters, { useStoredPkgFilters } from '../components/PkgFilters'
+import PkgList from '../components/PkgList'
 import { getApps, searchPackages } from '../services/apps'
 import type { Paginated } from '../types/pagination'
-import { localized } from '../utils/appstream'
 
 import styles from './AppsPage.module.css'
-
-const packageTypesWithIcons = new Set(['rpm', 'deb', 'appimage'])
 
 type SearchTab = 'apps' | 'packages'
 
@@ -32,7 +27,7 @@ function CountBadge({ count, loading }: { count?: number; loading: boolean }) {
 }
 
 export default function SearchResultsPage() {
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
   const [searchParams] = useSearchParams()
   const query = searchParams.get('q')?.trim() ?? ''
 
@@ -145,31 +140,7 @@ export default function SearchResultsPage() {
           </div>
         ) : appsResult && appsResult.data.length > 0 ? (
           <>
-            <section className={styles.grid}>
-              {appsResult.data.map((app) => (
-                <article className={styles.item} key={app.id}>
-                  {app.icon ? (
-                    <img alt='' className={styles.icon} src={app.icon.url} />
-                  ) : (
-                    <div className={`${styles.icon} ${styles.emptyIcon}`} />
-                  )}
-                  <div className={styles.copy}>
-                    <Title order={3}>
-                      <Link className={styles.link} href={`/apps/${app.id}`}>
-                        {localized(app.name, i18n.language)}{' '}
-                        <ArrowRightIcon size={18} weight='bold' />
-                      </Link>
-                    </Title>
-                    <Text c='dimmed'>{localized(app.summary, i18n.language)}</Text>
-                    <CategoryBadges categories={app.categories} />
-                    <div className={styles.meta}>
-                      {app.version && <span>{app.version}</span>}
-                      {app.license && <span>{app.license}</span>}
-                    </div>
-                  </div>
-                </article>
-              ))}
-            </section>
+            <AppList apps={appsResult.data} />
             {appsResult.meta.lastPage > 1 && (
               <Pagination
                 className={styles.pagination}
@@ -192,47 +163,7 @@ export default function SearchResultsPage() {
           </div>
         ) : pkgsResult && pkgsResult.data.length > 0 ? (
           <>
-            <section className={styles.grid}>
-              {pkgsResult.data.map((pkg) => (
-                <article className={styles.pkgItem} key={pkg.id}>
-                  {packageTypesWithIcons.has(pkg.type) ? (
-                    <img alt='' className={styles.pkgTypeIcon} src={`/packages/${pkg.type}.svg`} />
-                  ) : (
-                    <div className={styles.pkgTypeIcon} />
-                  )}
-                  <div className={styles.copy}>
-                    <Title order={3}>
-                      {pkg.app ? (
-                        <Link className={styles.link} href={`/apps/${pkg.app.id}`}>
-                          {pkg.name}
-                        </Link>
-                      ) : (
-                        pkg.name
-                      )}
-                    </Title>
-                    <div className={styles.meta}>
-                      <span>{pkg.type}</span>
-                      {pkg.version && <span>{pkg.version}</span>}
-                      {pkg.release && <span>{pkg.release}</span>}
-                      {pkg.arch && <span>{pkg.arch}</span>}
-                    </div>
-                  </div>
-                  <Group>
-                    {pkg.downloadUrl && (
-                      <Button
-                        component='a'
-                        href={pkg.downloadUrl}
-                        leftSection={<DownloadSimpleIcon size={16} />}
-                        size='xs'
-                        variant='default'
-                      >
-                        {t('common.download')}
-                      </Button>
-                    )}
-                  </Group>
-                </article>
-              ))}
-            </section>
+            <PkgList pkgs={pkgsResult.data} />
             {pkgsResult.meta.lastPage > 1 && (
               <Pagination
                 className={styles.pagination}

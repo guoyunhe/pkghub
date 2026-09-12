@@ -1,24 +1,21 @@
 import type { Data } from '@generated/data'
 import { Alert, Button, Loader, Pagination, Text, Title } from '@mantine/core'
-import { ArrowRightIcon } from '@phosphor-icons/react/ArrowRight'
 import { PlusIcon } from '@phosphor-icons/react/Plus'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useLocation, useSearchParams } from 'wouter'
 
 import { useAuth } from '../auth'
-import AverageRating from '../components/AverageRating'
-import CategoryBadges from '../components/CategoryBadges'
+import AppList from '../components/AppList'
 import CategoryFilter from '../components/CategoryFilter'
 import FavoriteButton from '../components/FavoriteButton'
 import { getApps } from '../services/apps'
 import type { Paginated } from '../types/pagination'
-import { localized } from '../utils/appstream'
 
 import styles from './AppsPage.module.css'
 
 export default function AppsPage() {
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
   const { ready, user } = useAuth()
   const isAdmin = ready && user?.role === 'admin'
   const [, navigate] = useLocation()
@@ -93,35 +90,10 @@ export default function AppsPage() {
             <Text c='dimmed'>{t('apps.notFound')}</Text>
           ) : (
             <>
-              <section className={styles.grid}>
-                {result?.data.map((app: Data.App) => (
-                  <article className={styles.item} key={app.id}>
-                    {app.icon ? (
-                      <img alt='' className={styles.icon} src={app.icon.url} />
-                    ) : (
-                      <div className={`${styles.icon} ${styles.emptyIcon}`} />
-                    )}
-                    <div className={styles.copy}>
-                      <Title order={3}>
-                        <Link className={styles.link} href={`/apps/${app.id}`}>
-                          {localized(app.name, i18n.language)}{' '}
-                          <ArrowRightIcon size={18} weight='bold' />
-                        </Link>
-                      </Title>
-                      <Text c='dimmed'>{localized(app.summary, i18n.language)}</Text>
-                      <CategoryBadges categories={app.categories} />
-                      <AverageRating value={app.avgRating} />
-                      <div className={styles.metadata}>
-                        {app.version && <span>{app.version}</span>}
-                        {app.license && <span>{app.license}</span>}
-                      </div>
-                    </div>
-                    <div className={styles.favorite}>
-                      <FavoriteButton appId={app.id} favorite={app.isFavorite} />
-                    </div>
-                  </article>
-                ))}
-              </section>
+              <AppList
+                apps={result?.data ?? []}
+                renderActions={(app) => <FavoriteButton appId={app.id} favorite={app.isFavorite} />}
+              />
               {result && result.meta.lastPage > 1 && (
                 <Pagination
                   className={styles.pagination}
