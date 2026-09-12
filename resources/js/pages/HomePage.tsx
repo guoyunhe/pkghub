@@ -7,7 +7,8 @@ import { Link } from 'wouter'
 
 import HomeAppCard from '../components/home/HomeAppCard'
 import HomeDistroCard from '../components/home/HomeDistroCard'
-import { getApps, getDistros, type Distro } from '../services/apps'
+import { getApps } from '../services/apps'
+import { getDistros, type Distro } from '../services/distros'
 
 import styles from './HomePage.module.css'
 

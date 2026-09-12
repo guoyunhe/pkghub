@@ -439,6 +439,54 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/distros_controller').default['index']>>>
     }
   }
+  'distros.store': {
+    methods: ["POST"]
+    pattern: '/api/distros'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/distro').distroValidator)>>
+      paramsTuple: []
+      params: {}
+      query: ExtractQuery<InferInput<(typeof import('#validators/distro').distroValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/distros_controller').default['store']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/distros_controller').default['store']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'distros.show': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/distros/:id'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { id: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/distros_controller').default['show']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/distros_controller').default['show']>>>
+    }
+  }
+  'distros.update': {
+    methods: ["PUT","PATCH"]
+    pattern: '/api/distros/:id'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/distro').distroValidator)>>
+      paramsTuple: [ParamValue]
+      params: { id: ParamValue }
+      query: ExtractQuery<InferInput<(typeof import('#validators/distro').distroValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/distros_controller').default['update']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/distros_controller').default['update']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'distros.destroy': {
+    methods: ["DELETE"]
+    pattern: '/api/distros/:id'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { id: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/distros_controller').default['destroy']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/distros_controller').default['destroy']>>>
+    }
+  }
   'categories.index': {
     methods: ["GET","HEAD"]
     pattern: '/api/categories'

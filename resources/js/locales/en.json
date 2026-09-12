@@ -26,6 +26,7 @@
     "addApplication": "Add application",
     "applications": "Applications",
     "repositories": "Repositories",
+    "distributions": "Distributions",
     "packages": "Packages",
     "theme": "Theme",
     "themeAuto": "System",
@@ -248,6 +249,42 @@
     "sources": {
       "distro": "Provided by the distribution",
       "community": "Community repository"
+    }
+  },
+  "distros": {
+    "eyebrow": "Administration",
+    "title": "Distributions",
+    "subtitle": "Linux distributions with their package format, architectures and life cycle.",
+    "addDistro": "Add distribution",
+    "editDistro": "Edit distribution",
+    "newEntry": "New distribution",
+    "editEntry": "Distribution",
+    "save": "Save distribution",
+    "edit": "Edit",
+    "delete": "Delete",
+    "confirmDelete": "Delete distribution “{{name}}”?",
+    "notFound": "No distributions configured yet.",
+    "loadError": "Unable to load distributions",
+    "saveError": "Unable to save distribution",
+    "deleteError": "Unable to delete distribution",
+    "columns": {
+      "name": "Distribution",
+      "version": "Version",
+      "pkgType": "Package format",
+      "arch": "Architectures",
+      "releaseDate": "Released",
+      "eolDate": "End of life"
+    },
+    "fields": {
+      "name": "Name",
+      "version": "Version",
+      "versionHint": "Leave empty for rolling releases that have no version number.",
+      "pkgType": "Package format",
+      "pkgTypeHint": "Leave empty for distributions that ship no native packages.",
+      "arch": "Architectures",
+      "archHint": "Architecture names as reported by uname -m. Press Enter to add one.",
+      "releaseDate": "Release date",
+      "eolDate": "End of life date"
     }
   }
 }

@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import type { PkgFilters as PkgFiltersValue } from '../services/apps'
-import { getDistros } from '../services/apps'
+import { getDistros } from '../services/distros'
 import { packageTypes } from '../utils/pkgTypes'
 
 import styles from './PkgFilters.module.css'

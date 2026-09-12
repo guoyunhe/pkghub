@@ -1,6 +1,6 @@
 import { Card, Text } from '@mantine/core'
 
-import type { Distro } from '../../services/apps'
+import type { Distro } from '../../services/distros'
 
 import styles from './HomeCards.module.css'
 

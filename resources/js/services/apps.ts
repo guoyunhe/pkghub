@@ -18,16 +18,6 @@ export type AppPayload = {
   iconId?: number | null
 }
 
-export type Distro = {
-  id: number
-  name: string
-  version: string | null
-  pkgType: string | null
-  arch: string[]
-  releaseDate: string | null
-  eolDate: string | null
-}
-
 /** A category of the freedesktop.org registry, as returned by `GET /api/categories`. */
 export type Category = {
   id: number
@@ -73,11 +63,6 @@ export async function getApps(query = '', page = 1, perPage = 12, category: stri
 
 export async function getCategories() {
   const { data } = await api.get<{ data: Category[] }>('/categories')
-  return data.data
-}
-
-export async function getDistros() {
-  const { data } = await api.get<{ data: Distro[] }>('/distros')
   return data.data
 }
 

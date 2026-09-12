@@ -20,7 +20,7 @@ import { useTranslation } from 'react-i18next'
 import { Redirect, useLocation, useRoute } from 'wouter'
 
 import { useAuth } from '../auth'
-import { getDistros } from '../services/apps'
+import { getDistros } from '../services/distros'
 import { createRepo, getRepo, updateRepo } from '../services/repos'
 
 import styles from './AppFormPage.module.css'

@@ -63,6 +63,10 @@ export interface ApiDefinition {
   }
   distros: {
     index: typeof routes['distros.index']
+    store: typeof routes['distros.store']
+    show: typeof routes['distros.show']
+    update: typeof routes['distros.update']
+    destroy: typeof routes['distros.destroy']
   }
   categories: {
     index: typeof routes['categories.index']

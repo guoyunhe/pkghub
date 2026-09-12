@@ -222,6 +222,30 @@ const routes = {
     tokens: [{"old":"/api/distros","type":0,"val":"api","end":""},{"old":"/api/distros","type":0,"val":"distros","end":""}],
     types: placeholder as Registry['distros.index']['types'],
   },
+  'distros.store': {
+    methods: ["POST"],
+    pattern: '/api/distros',
+    tokens: [{"old":"/api/distros","type":0,"val":"api","end":""},{"old":"/api/distros","type":0,"val":"distros","end":""}],
+    types: placeholder as Registry['distros.store']['types'],
+  },
+  'distros.show': {
+    methods: ["GET","HEAD"],
+    pattern: '/api/distros/:id',
+    tokens: [{"old":"/api/distros/:id","type":0,"val":"api","end":""},{"old":"/api/distros/:id","type":0,"val":"distros","end":""},{"old":"/api/distros/:id","type":1,"val":"id","end":""}],
+    types: placeholder as Registry['distros.show']['types'],
+  },
+  'distros.update': {
+    methods: ["PUT","PATCH"],
+    pattern: '/api/distros/:id',
+    tokens: [{"old":"/api/distros/:id","type":0,"val":"api","end":""},{"old":"/api/distros/:id","type":0,"val":"distros","end":""},{"old":"/api/distros/:id","type":1,"val":"id","end":""}],
+    types: placeholder as Registry['distros.update']['types'],
+  },
+  'distros.destroy': {
+    methods: ["DELETE"],
+    pattern: '/api/distros/:id',
+    tokens: [{"old":"/api/distros/:id","type":0,"val":"api","end":""},{"old":"/api/distros/:id","type":0,"val":"distros","end":""},{"old":"/api/distros/:id","type":1,"val":"id","end":""}],
+    types: placeholder as Registry['distros.destroy']['types'],
+  },
   'categories.index': {
     methods: ["GET","HEAD"],
     pattern: '/api/categories',

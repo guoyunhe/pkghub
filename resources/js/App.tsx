@@ -14,6 +14,7 @@ import { CheckIcon } from '@phosphor-icons/react/Check'
 import { DesktopIcon } from '@phosphor-icons/react/Desktop'
 import { GlobeIcon } from '@phosphor-icons/react/Globe'
 import { HardDrivesIcon } from '@phosphor-icons/react/HardDrives'
+import { LinuxLogoIcon } from '@phosphor-icons/react/LinuxLogo'
 import { MagnifyingGlassIcon } from '@phosphor-icons/react/MagnifyingGlass'
 import { MoonIcon } from '@phosphor-icons/react/Moon'
 import { PackageIcon } from '@phosphor-icons/react/Package'
@@ -32,6 +33,8 @@ import { AuthProvider, useAuth } from './auth'
 import AppDetailPage from './pages/AppDetailPage'
 import AppFormPage from './pages/AppFormPage'
 import AppsPage from './pages/AppsPage'
+import DistroFormPage from './pages/DistroFormPage'
+import DistrosPage from './pages/DistrosPage'
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
 import PkgFormPage from './pages/PkgFormPage'
@@ -54,6 +57,9 @@ function AppRoutes() {
       <Route path='/repos/new' component={RepoFormPage} />
       <Route path='/repos/:id/edit' component={RepoFormPage} />
       <Route path='/repos' component={ReposPage} />
+      <Route path='/distros/new' component={DistroFormPage} />
+      <Route path='/distros/:id/edit' component={DistroFormPage} />
+      <Route path='/distros' component={DistrosPage} />
       <Route path='/users/:id' component={UserDetailPage} />
       <Route path='/apps/new' component={AppFormPage} />
       <Route path='/apps/:id/edit' component={AppFormPage} />
@@ -113,6 +119,16 @@ function AppHeader() {
             variant='subtle'
           >
             {t('header.repositories')}
+          </Button>
+          <Button
+            component={Link}
+            href='/distros'
+            className='app-header__nav-button'
+            color='gray'
+            leftSection={<LinuxLogoIcon size={18} />}
+            variant='subtle'
+          >
+            {t('header.distributions')}
           </Button>
           <Button
             component={Link}

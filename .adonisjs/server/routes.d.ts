@@ -40,6 +40,10 @@ export type ScannedRoutes = {
     'repos.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'repos.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'distros.index': { paramsTuple?: []; params?: {} }
+    'distros.store': { paramsTuple?: []; params?: {} }
+    'distros.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'distros.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'distros.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'categories.index': { paramsTuple?: []; params?: {} }
   }
   GET: {
@@ -59,6 +63,7 @@ export type ScannedRoutes = {
     'repos.index': { paramsTuple?: []; params?: {} }
     'repos.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'distros.index': { paramsTuple?: []; params?: {} }
+    'distros.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'categories.index': { paramsTuple?: []; params?: {} }
   }
   HEAD: {
@@ -78,6 +83,7 @@ export type ScannedRoutes = {
     'repos.index': { paramsTuple?: []; params?: {} }
     'repos.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'distros.index': { paramsTuple?: []; params?: {} }
+    'distros.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'categories.index': { paramsTuple?: []; params?: {} }
   }
   POST: {
@@ -91,18 +97,21 @@ export type ScannedRoutes = {
     'images.store': { paramsTuple?: []; params?: {} }
     'pkgs.store': { paramsTuple?: []; params?: {} }
     'repos.store': { paramsTuple?: []; params?: {} }
+    'distros.store': { paramsTuple?: []; params?: {} }
   }
   PUT: {
     'apps.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'images.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'pkgs.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'repos.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'distros.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
   }
   PATCH: {
     'apps.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'images.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'pkgs.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'repos.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'distros.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
   }
   DELETE: {
     'apps.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
@@ -111,6 +120,7 @@ export type ScannedRoutes = {
     'images.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'pkgs.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'repos.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'distros.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
   }
 }
 declare module '@adonisjs/core/types/http' {

@@ -64,7 +64,10 @@ router
       .use(['store', 'update', 'destroy'], [middleware.auth(), middleware.admin()])
 
     // Distros
-    router.get('distros', [controllers.Distros, 'index'])
+    router
+      .resource('distros', controllers.Distros)
+      .apiOnly()
+      .use(['store', 'update', 'destroy'], [middleware.auth(), middleware.admin()])
 
     // Categories
     router.get('categories', [controllers.Categories, 'index'])

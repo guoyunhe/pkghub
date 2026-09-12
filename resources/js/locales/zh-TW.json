@@ -26,6 +26,7 @@
     "addApplication": "新增應用程式",
     "applications": "應用程式",
     "repositories": "軟體來源",
+    "distributions": "發行版",
     "packages": "軟體套件",
     "theme": "佈景主題",
     "themeAuto": "跟隨系統",
@@ -248,6 +249,42 @@
     "sources": {
       "distro": "發行版內建",
       "community": "社群倉庫"
+    }
+  },
+  "distros": {
+    "eyebrow": "系統管理",
+    "title": "發行版",
+    "subtitle": "各 Linux 發行版的套件格式、架構與生命週期。",
+    "addDistro": "新增發行版",
+    "editDistro": "編輯發行版",
+    "newEntry": "新增發行版",
+    "editEntry": "發行版",
+    "save": "儲存發行版",
+    "edit": "編輯",
+    "delete": "刪除",
+    "confirmDelete": "確定要刪除發行版「{{name}}」嗎？",
+    "notFound": "尚未新增任何發行版。",
+    "loadError": "無法載入發行版",
+    "saveError": "無法儲存發行版",
+    "deleteError": "無法刪除發行版",
+    "columns": {
+      "name": "發行版",
+      "version": "版本",
+      "pkgType": "套件格式",
+      "arch": "架構",
+      "releaseDate": "發行日期",
+      "eolDate": "停止支援"
+    },
+    "fields": {
+      "name": "名稱",
+      "version": "版本",
+      "versionHint": "滾動發行版沒有版本號，可留空。",
+      "pkgType": "套件格式",
+      "pkgTypeHint": "不提供原生套件的發行版可留空。",
+      "arch": "架構",
+      "archHint": "使用 uname -m 輸出的架構名稱，按 Enter 新增。",
+      "releaseDate": "發行日期",
+      "eolDate": "停止支援日期"
     }
   }
 }
