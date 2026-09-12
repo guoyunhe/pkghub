@@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises'
 
 import { Exception } from '@adonisjs/core/exceptions'
 import drive from '@adonisjs/drive/services/main'
-import sharp, { type FitEnum, type FormatEnum } from 'sharp'
+import sharp, { type FitEnum } from 'sharp'
 import xior from 'xior'
 
 import { ImageSchema } from '#database/schema'
@@ -12,15 +12,21 @@ const DEFAULT_MAX_SIZE = 10 * 1024 * 1024
 
 export const imageFormats = ['svg', 'png', 'jpeg', 'webp', 'avif', 'gif'] as const
 
+export type ImageFormat = (typeof imageFormats)[number]
+
+function isImageFormat(format: string): format is ImageFormat {
+  return (imageFormats as readonly string[]).includes(format)
+}
+
 export type ImageOptions = {
   userId?: number | null
   path?: string
   width?: number
   height?: number
   fit?: keyof FitEnum
-  format?: keyof FormatEnum
+  format?: ImageFormat
   maxSize?: number
-  acceptedFormats?: ReadonlyArray<(typeof imageFormats)[number]>
+  acceptedFormats?: ReadonlyArray<ImageFormat>
   minimumPngSize?: number
 }
 
@@ -93,7 +99,8 @@ export default class Image extends ImageSchema {
     const preserveSvg =
       sourceMetadata.format === 'svg' && !options.width && !options.height && !options.format
     let outputData = data
-    let { format, width, height } = sourceMetadata
+    let format: string | undefined = sourceMetadata.format
+    let { width, height } = sourceMetadata
 
     if (!preserveSvg) {
       let processor = sharp(data).rotate()
@@ -108,11 +115,16 @@ export default class Image extends ImageSchema {
 
       const output = await processor.toBuffer({ resolveWithObject: true })
       outputData = output.data
-      ;({ format, width, height } = output.info)
+      format = output.info.format
+      width = output.info.width
+      height = output.info.height
     }
 
     if (!format || !width || !height) {
       throw new Exception('Unable to determine image metadata', { status: 422 })
+    }
+    if (!isImageFormat(format)) {
+      throw new Exception(`Unsupported image format: ${format}`, { status: 422 })
     }
     if (outputData.length > maxSize) {
       throw new Exception(`Image exceeds the ${maxSize / 1024 / 1024} MB size limit`, {

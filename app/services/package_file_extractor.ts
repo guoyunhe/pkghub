@@ -431,7 +431,11 @@ export default class PackageFileExtractor {
     if (extension === '.gz') return gunzipSync(data)
     if (extension === '.zst') return zstdDecompressSync(data)
     if (extension === '.xz') {
-      const compressed = Readable.toWeb(Readable.from([data])) as WebReadableStream<Uint8Array>
+      // "xz-decompress" expects the global (WHATWG) ReadableStream type, which differs from the
+      // "node:stream/web" one once the DOM lib is part of the program (client project).
+      const compressed = Readable.toWeb(
+        Readable.from([data]),
+      ) as unknown as ReadableStream<Uint8Array>
       const stream = new XzReadableStream(compressed)
       const chunks: Buffer[] = []
       for await (const chunk of Readable.fromWeb(

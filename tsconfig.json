@@ -3,9 +3,7 @@
   "compilerOptions": {
     "rootDir": "./",
     "jsx": "react",
-    "outDir": "./build",
-    "paths": {
-      "@generated/*": ["../.adonisjs/client/*"]
-    }
-  }
+    "outDir": "./build"
+  },
+  "exclude": ["node_modules", "build", "resources/js"]
 }

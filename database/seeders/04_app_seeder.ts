@@ -98,8 +98,8 @@ function parseAppStream(xml: string) {
 
   return {
     appstreamId,
-    name: JSON.stringify(name),
-    summary: JSON.stringify(summary),
+    name,
+    summary,
     version: latestRelease?.['@_version'] ?? null,
     license: text(component?.project_license) ?? null,
     homepage: homepageUrl(component?.url),

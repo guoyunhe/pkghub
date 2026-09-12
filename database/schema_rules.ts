@@ -19,21 +19,6 @@ function jsonColumn(tsType: string): ColumnInfo {
   }
 }
 
-/**
- * Shared rule for boolean columns stored as TINYINT(1) (e.g. MariaDB/MySQL).
- */
-const booleanColumn: ColumnInfo = {
-  tsType: 'boolean',
-  decorators: [
-    {
-      name: '@column',
-      args: {
-        consume: (value: any) => Boolean(value),
-      },
-    },
-  ],
-}
-
 export default {
   tables: {
     apps: {

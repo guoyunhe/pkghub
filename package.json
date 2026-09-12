@@ -38,7 +38,7 @@
     "prepare": "husky",
     "start": "node bin/server.js",
     "test": "node ace test",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit && tsc --noEmit -p resources/js"
   },
   "dependencies": {
     "@adonisjs/auth": "^10.1.0",
