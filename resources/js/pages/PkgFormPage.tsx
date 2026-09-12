@@ -171,7 +171,7 @@ export default function PkgFormPage() {
         <Stack className={styles.form}>
           <Select
             label={t('packages.fields.app')}
-            required
+            clearable
             searchable
             data={appOptions}
             value={form.values.appId === null ? null : String(form.values.appId)}

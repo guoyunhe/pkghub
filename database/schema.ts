@@ -130,7 +130,7 @@ export class PkgSchema extends BaseModel {
   static $columns = ['appId', 'arch', 'checksum', 'checksumType', 'createdAt', 'downloadUrl', 'id', 'installCommand', 'name', 'path', 'release', 'repoId', 'size', 'type', 'updatedAt', 'userId', 'version'] as const
   $columns = PkgSchema.$columns
   @column()
-  declare appId: number
+  declare appId: number | null
   @column()
   declare arch: string | null
   @column()

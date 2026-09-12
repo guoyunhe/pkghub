@@ -16,7 +16,8 @@ const emptyToNull = (value: unknown) => (value === '' || value === undefined ? n
  * Validator to use when creating or updating a package.
  */
 export const pkgValidator = vine.create({
-  appId: vine.number().positive().exists({ table: 'apps', column: 'id' }),
+  // Packages extracted from a repository are not tied to a catalog application
+  appId: vine.number().parse(emptyToNull).exists({ table: 'apps', column: 'id' }).nullable(),
   type: vine.enum(pkgTypes),
   name: vine.string().trim().minLength(1).maxLength(255),
   version: vine.string().parse(emptyToNull).trim().maxLength(255).nullable(),

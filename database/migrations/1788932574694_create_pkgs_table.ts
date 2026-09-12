@@ -10,7 +10,7 @@ export default class extends BaseSchema {
       table
         .integer('app_id')
         .unsigned()
-        .notNullable()
+        .nullable()
         .references('id')
         .inTable('apps')
         .onDelete('CASCADE')
