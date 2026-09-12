@@ -112,55 +112,6 @@
   padding: 24px 0;
 }
 
-.packageList {
-  border-top: 1px solid var(--ph-border);
-}
-
-.package {
-  align-items: center;
-  border-bottom: 1px solid var(--ph-border);
-  display: flex;
-  gap: 24px;
-  justify-content: space-between;
-  padding: 18px 0;
-}
-
-.package h3 {
-  margin: 0;
-}
-
-.packageMeta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 8px;
-}
-
-.packageMeta span {
-  border: 1px solid var(--ph-border);
-  font-size: 12px;
-  padding: 2px 6px;
-}
-
-.packageType {
-  align-items: center;
-  display: inline-flex;
-  gap: 5px;
-}
-
-.packageTypeIcon {
-  border-radius: 3px;
-  display: block;
-  height: 16px;
-  width: 16px;
-}
-
-.installCommand {
-  display: block;
-  margin-top: 10px;
-  overflow-wrap: anywhere;
-}
-
 .pagination {
   margin-top: 28px;
 }
@@ -182,11 +133,5 @@
 
   .metadata {
     grid-template-columns: 1fr;
-  }
-
-  .package {
-    align-items: start;
-    flex-direction: column;
-    gap: 14px;
   }
 }

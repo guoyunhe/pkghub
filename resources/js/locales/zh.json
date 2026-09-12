@@ -171,8 +171,7 @@
     "noPackages": "暂无可用软件包。",
     "addPackage": "添加软件包",
     "editPackage": "编辑",
-    "deletePackage": "删除",
-    "download": "下载"
+    "deletePackage": "删除"
   },
   "form": {
     "newEntry": "新建目录条目",

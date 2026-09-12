@@ -171,8 +171,7 @@
     "noPackages": "No packages available.",
     "addPackage": "Add package",
     "editPackage": "Edit",
-    "deletePackage": "Delete",
-    "download": "Download"
+    "deletePackage": "Delete"
   },
   "form": {
     "newEntry": "New catalog entry",
