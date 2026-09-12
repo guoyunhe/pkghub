@@ -166,8 +166,6 @@ export default class RepoSync extends BaseCommand {
         checksum: item.checksum,
         checksumType: item.checksumType,
         size: item.size,
-        installCommand:
-          item.type === 'deb' ? `apt install ${item.name}` : `dnf install ${item.name}`,
       })
       await pkg.save()
     }
@@ -216,7 +214,8 @@ export default class RepoSync extends BaseCommand {
     )
     if (candidates.length === 0) return result
 
-    const known = new Map((await App.query().preload('icon')).map((app) => [app.appstreamId, app]))
+    const storedApps = await App.query().preload('icon')
+    const known = new Map(storedApps.map((app) => [app.appstreamId, app]))
     const pendingIcons: Array<{ app: App; icon: AppstreamIcon }> = []
 
     for (const entry of candidates) {

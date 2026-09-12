@@ -301,7 +301,8 @@ export default class RepoAppstreamExtractor {
 
   private async iconArchiveUrls(repo: Repo) {
     if (repo.type === 'rpm') {
-      const href = (await this.repomdHrefs(repo)).get('appdata-icons')
+      const hrefs = await this.repomdHrefs(repo)
+      const href = hrefs.get('appdata-icons')
       return href ? [joinUrl(repo.baseUrl, href)] : []
     }
 
