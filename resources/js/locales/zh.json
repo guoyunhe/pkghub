@@ -90,6 +90,7 @@
     "subtitle": "目录中收录的全部软件包，涵盖各个仓库与格式。",
     "filterDistro": "发行版",
     "filterArch": "架构",
+    "filterType": "类型",
     "filterAny": "全部",
     "filterClear": "清除筛选",
     "notFound": "未找到软件包。",

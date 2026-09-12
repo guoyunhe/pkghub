@@ -90,6 +90,7 @@
     "subtitle": "All packages known to the catalog, across every repository and format.",
     "filterDistro": "Distribution",
     "filterArch": "Architecture",
+    "filterType": "Type",
     "filterAny": "Any",
     "filterClear": "Clear filters",
     "notFound": "No packages found.",

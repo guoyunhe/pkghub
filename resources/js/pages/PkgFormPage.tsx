@@ -21,10 +21,10 @@ import { Redirect, useLocation, useRoute, useSearchParams } from 'wouter'
 import { useAuth } from '../auth'
 import { getApps } from '../services/apps'
 import { createPkg, getPkg, updatePkg } from '../services/pkgs'
+import { packageTypes } from '../utils/pkgTypes'
 
 import styles from './AppFormPage.module.css'
 
-const packageTypes = ['deb', 'rpm', 'appimage', 'flatpak', 'snap', 'tar.gz']
 const checksumTypes = ['sha256', 'sha512', 'sha1', 'md5']
 
 // The API takes a flat `appId` (and not the `app` object the transformer returns).

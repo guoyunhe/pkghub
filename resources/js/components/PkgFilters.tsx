@@ -6,11 +6,12 @@ import { useTranslation } from 'react-i18next'
 
 import type { PkgFilters as PkgFiltersValue } from '../services/apps'
 import { getDistros } from '../services/apps'
+import { packageTypes } from '../utils/pkgTypes'
 
 import styles from './PkgFilters.module.css'
 
 const storageKey = 'pkghub-pkg-filters'
-const emptyFilters: PkgFiltersValue = { distroId: null, arch: null }
+const emptyFilters: PkgFiltersValue = { distroId: null, type: null, arch: null }
 
 type DistroOption = {
   value: string
@@ -35,6 +36,7 @@ function parseFilters(raw: string) {
     const value = JSON.parse(raw) as Partial<PkgFiltersValue>
     return {
       distroId: typeof value.distroId === 'string' ? value.distroId : null,
+      type: typeof value.type === 'string' ? value.type : null,
       arch: typeof value.arch === 'string' ? value.arch : null,
     }
   } catch {
@@ -56,9 +58,9 @@ type PkgFiltersProps = {
 }
 
 /**
- * Distribution and architecture filters for the package listings. A distribution maps to the
- * package format it uses, which is what packages are matched against, and lists the architectures
- * it supports.
+ * Distribution, package format and architecture filters for the package listings. A distribution
+ * maps to the package format it uses, which is what packages are matched against, and lists the
+ * architectures it supports.
  */
 export default function PkgFilters({ value, onChange }: PkgFiltersProps) {
   const { t } = useTranslation()
@@ -96,7 +98,7 @@ export default function PkgFilters({ value, onChange }: PkgFiltersProps) {
   }, [])
 
   const selectedDistro = distros.find((distro) => distro.value === value.distroId)
-  const hasFilters = value.distroId !== null || value.arch !== null
+  const hasFilters = value.distroId !== null || value.type !== null || value.arch !== null
 
   return (
     <Group align='flex-end' gap='sm' mb='lg'>
@@ -128,6 +130,15 @@ export default function PkgFilters({ value, onChange }: PkgFiltersProps) {
         searchable
         value={value.arch}
         w={240}
+      />
+      <Select
+        clearable
+        data={packageTypes}
+        label={t('packages.filterType')}
+        onChange={(type) => onChange({ ...value, type })}
+        placeholder={t('packages.filterAny')}
+        value={value.type}
+        w={160}
       />
       {hasFilters && (
         <Button

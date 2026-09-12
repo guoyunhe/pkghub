@@ -31,6 +31,7 @@ export type Distro = {
 /** Filters applied to package listings. */
 export type PkgFilters = {
   distroId: string | null
+  type: string | null
   arch: string | null
 }
 
@@ -68,13 +69,14 @@ export async function getAppPackages(id: number, page = 1) {
 export async function searchPackages(
   query = '',
   page = 1,
-  filters: PkgFilters = { distroId: null, arch: null },
+  filters: PkgFilters = { distroId: null, type: null, arch: null },
 ) {
   const { data } = await api.get<SerializedPaginated<Data.Pkg>>('/pkgs', {
     params: {
       page,
       q: query || undefined,
       distro: filters.distroId ?? undefined,
+      type: filters.type ?? undefined,
       arch: filters.arch ?? undefined,
     },
   })

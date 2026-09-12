@@ -56,6 +56,9 @@ export default class PkgsController {
 
       const arch = this.queryValue(request.input('arch'))
       if (arch) pkgsQuery.where('arch', arch)
+
+      const type = this.queryValue(request.input('type'))
+      if (type) pkgsQuery.where('type', type)
     }
 
     const paginator = await pkgsQuery.paginate(page, perPage)
