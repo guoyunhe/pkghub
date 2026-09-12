@@ -38,12 +38,43 @@ export type ExtractedApp = {
   icons: AppstreamIcon[]
 }
 
+/** An AppStream component a package announces through its file list, without any metadata. */
+export type InferredComponent = {
+  appstreamId: string
+  /** Names of the repository packages that ship the component metadata file. */
+  pkgNames: string[]
+}
+
 /** AppStream component types that describe an application users can install. */
 export const desktopAppTypes = ['desktop', 'desktop-application']
 
 /** Identity of an icon inside the icon archive, e.g. `128x128/app.png`. */
 export function iconKey(icon: AppstreamIcon) {
   return `${icon.width ?? 0}x${icon.height ?? 0}/${icon.name}`
+}
+
+/** Directories packages store their AppStream metadata file in. */
+const appstreamFileDirectories = ['/usr/share/metainfo/', '/usr/share/appdata/']
+
+/** Suffixes of an AppStream metadata file; the rest of the file name is the AppStream ID. */
+const appstreamFileSuffixes = ['.metainfo.xml', '.appdata.xml']
+
+/**
+ * AppStream ID carried by a metadata file path. Packages name their application in the file name,
+ * so `/usr/share/metainfo/org.videolan.vlc.appdata.xml` declares `org.videolan.vlc`. Paths that are
+ * not AppStream metadata return `null`.
+ */
+function appstreamFileId(path: string): string | null {
+  const trimmed = path.trim()
+  if (!appstreamFileDirectories.some((directory) => trimmed.startsWith(directory))) return null
+
+  const name = basename(trimmed)
+  for (const suffix of appstreamFileSuffixes) {
+    if (!name.endsWith(suffix)) continue
+    const id = name.slice(0, -suffix.length).trim()
+    return id || null
+  }
+  return null
 }
 
 /** Debian AppStream icon archives, largest first. */
@@ -245,6 +276,51 @@ export default class RepoAppstreamExtractor {
 
     const xml = await this.downloadText(joinUrl(repo.baseUrl, appdata), { optional: true })
     return xml ? this.parseAppstreamXml(xml) : []
+  }
+
+  /**
+   * AppStream components inferred from the file list of an RPM repository. Repositories that do not
+   * publish AppStream metadata still name their applications in the files their packages ship:
+   * `/usr/share/metainfo/<id>.metainfo.xml` carries the AppStream ID in its file name, which is
+   * enough to link the packages to an application.
+   */
+  async inferredComponents(repo: Repo): Promise<InferredComponent[]> {
+    if (repo.type !== 'rpm') return []
+
+    const hrefs = await this.repomdHrefs(repo)
+    const filelists = hrefs.get('filelists')
+    if (!filelists) return []
+
+    const content = await this.downloadText(joinUrl(repo.baseUrl, filelists), { optional: true })
+    return content ? this.parseFilelists(content) : []
+  }
+
+  /**
+   * The file list is a flat document of every package with the files it owns. It is scanned with
+   * regular expressions instead of being parsed into objects, because it is much larger than the
+   * other metadata documents.
+   */
+  private parseFilelists(content: string): InferredComponent[] {
+    const components = new Map<string, Set<string>>()
+
+    for (const match of content.matchAll(/<package\b([^>]*)>([\s\S]*?)<\/package>/g)) {
+      const name = /\bname="([^"]*)"/.exec(match[1])?.[1]
+      if (!name) continue
+
+      for (const file of match[2].matchAll(/<file\b[^>]*>([^<]*)<\/file>/g)) {
+        const appstreamId = appstreamFileId(file[1])
+        if (!appstreamId) continue
+
+        const packages = components.get(appstreamId) ?? new Set<string>()
+        packages.add(name)
+        components.set(appstreamId, packages)
+      }
+    }
+
+    return [...components].map(([appstreamId, names]) => ({
+      appstreamId,
+      pkgNames: [...names].sort(),
+    }))
   }
 
   private async extractDeb(repo: Repo, archOverride: string | null): Promise<ExtractedApp[]> {

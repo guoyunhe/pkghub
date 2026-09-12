@@ -92,6 +92,12 @@ export default class RepoSync extends BaseCommand {
               ` ${chalk.green(String(apps.categories))} categories linked)`,
           )
         }
+        if (apps.inferred > 0 || apps.inferredLinked > 0) {
+          this.logger.info(
+            `${repo.name}: ${chalk.green(String(apps.inferred))} app(s) inferred from package` +
+              ` file lists (${chalk.green(String(apps.inferredLinked))} packages linked)`,
+          )
+        }
         for (const pkg of packages.slice(0, this.limit)) {
           const details = [pkg.version, pkg.release, pkg.arch].filter(Boolean).join(' ')
           this.logger.info(`  ${pkg.name}${details ? ` ${chalk.dim(details)}` : ''}`)
@@ -202,7 +208,16 @@ export default class RepoSync extends BaseCommand {
     entries: ExtractedApp[],
     packages: ExtractedPackage[],
   ) {
-    const result = { created: 0, updated: 0, skipped: 0, icons: 0, linked: 0, categories: 0 }
+    const result = {
+      created: 0,
+      updated: 0,
+      skipped: 0,
+      icons: 0,
+      linked: 0,
+      categories: 0,
+      inferred: 0,
+      inferredLinked: 0,
+    }
     const pkgNames = new Set(packages.map((pkg) => pkg.name))
     const candidates = entries.filter(
       (entry) =>
@@ -212,7 +227,16 @@ export default class RepoSync extends BaseCommand {
         Object.keys(entry.summary).length > 0 &&
         entry.pkgNames.some((name) => pkgNames.has(name)),
     )
-    if (candidates.length === 0) return result
+    if (candidates.length === 0) {
+      // Repositories that publish no AppStream metadata at all still name their applications in
+      // the files their packages ship, which the file list of the repository reveals.
+      if (entries.length === 0) {
+        const inferred = await this.saveInferredApps(repo, appstream, packages, pkgNames)
+        result.inferred = inferred.created
+        result.inferredLinked = inferred.linked
+      }
+      return result
+    }
 
     const storedApps = await App.query().preload('icon')
     const known = new Map(storedApps.map((app) => [app.appstreamId, app]))
@@ -280,6 +304,55 @@ export default class RepoSync extends BaseCommand {
   }
 
   /**
+   * Link the applications of a repository that publishes no AppStream metadata. The file list of
+   * the repository names the AppStream ID of every package that ships a metadata file, which is
+   * used to link those packages to a known application. An application the catalog does not know
+   * yet is created from the package metadata as a placeholder, so that the packages have a page and
+   * a later synchronization or an editor can complete its metadata.
+   */
+  private async saveInferredApps(
+    repo: Repo,
+    appstream: RepoAppstreamExtractor,
+    packages: ExtractedPackage[],
+    pkgNames: Set<string>,
+  ) {
+    const result = { created: 0, linked: 0 }
+    const components = await appstream.inferredComponents(repo)
+    const candidates = components.filter((component) =>
+      component.pkgNames.some((name) => pkgNames.has(name)),
+    )
+    if (candidates.length === 0) return result
+
+    const storedApps = await App.query().whereIn(
+      'appstreamId',
+      candidates.map((component) => component.appstreamId),
+    )
+    const known = new Map(storedApps.map((app) => [app.appstreamId, app]))
+    const byName = new Map(packages.map((pkg) => [pkg.name, pkg]))
+
+    for (const component of candidates) {
+      let app = known.get(component.appstreamId)
+      if (!app) {
+        const source = component.pkgNames.map((name) => byName.get(name)).find(Boolean)
+        app = await App.create({
+          appstreamId: component.appstreamId,
+          ...placeholderAppMetadata(source),
+        })
+        known.set(component.appstreamId, app)
+        result.created += 1
+      }
+
+      const names = component.pkgNames.filter((name) => pkgNames.has(name))
+      if (names.length === 0) continue
+
+      await Pkg.query().where('repoId', repo.id).whereIn('name', names).update({ appId: app.id })
+      result.linked += names.length
+    }
+
+    return result
+  }
+
+  /**
    * Attach the categories a component declares to its application. Codes that are not part of the
    * registry are created with the code as their English name, so that repository metadata is never
    * dropped, while known rows keep the translations and tree position the category seeder set up.
@@ -314,6 +387,30 @@ function appstreamIconIsLarger(app: App, icon: AppstreamIcon) {
   if (size <= 0) return false
   if (!app.icon) return true
   return size > Math.min(app.icon.width, app.icon.height)
+}
+
+/**
+ * Metadata of a placeholder application, taken from the package that ships its AppStream metadata
+ * file. The package summary is the closest thing to a display name and its first description
+ * paragraph becomes the summary, so that the application is usable until better metadata arrives.
+ */
+function placeholderAppMetadata(pkg: ExtractedPackage | undefined) {
+  const summary = pkg?.summary?.trim() || null
+  const name = summary ?? pkg?.name ?? 'Unknown application'
+  return {
+    name: { en: name },
+    summary: { en: firstParagraph(pkg?.description) ?? summary ?? name },
+    license: pkg?.license?.trim().slice(0, 255) || null,
+  }
+}
+
+/** First paragraph of a long description, collapsed into a single line. */
+function firstParagraph(text: string | null | undefined) {
+  const paragraph = text
+    ?.split(/\n\s*\n/)[0]
+    ?.replace(/\s+/g, ' ')
+    .trim()
+  return paragraph || null
 }
 
 /**
