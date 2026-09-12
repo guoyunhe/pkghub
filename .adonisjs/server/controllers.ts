@@ -7,6 +7,7 @@ export const controllers = {
   AccessTokens: () => import('#controllers/access_tokens_controller'),
   Apps: () => import('#controllers/apps_controller'),
   Auth: () => import('#controllers/auth_controller'),
+  Categories: () => import('#controllers/categories_controller'),
   Distros: () => import('#controllers/distros_controller'),
   Favorites: () => import('#controllers/favorites_controller'),
   Images: () => import('#controllers/images_controller'),
@@ -14,5 +15,4 @@ export const controllers = {
   Repos: () => import('#controllers/repos_controller'),
   Reviews: () => import('#controllers/reviews_controller'),
   Users: () => import('#controllers/users_controller'),
-  Categories: () => import('#controllers/categories_controller'),
 }

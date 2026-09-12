@@ -1,0 +1,45 @@
+.item {
+  border-bottom: 1px solid var(--ph-border);
+  gap: 18px;
+  padding: 20px 0;
+  --icon-size: 80px;
+}
+
+.iconLink {
+  align-self: start;
+  display: block;
+  height: var(--icon-size);
+  width: var(--icon-size);
+}
+
+.icon {
+  height: var(--icon-size);
+  object-fit: contain;
+  width: var(--icon-size);
+}
+
+.emptyIcon {
+  background: var(--ph-icon-bg);
+}
+
+.link {
+  align-items: center;
+  color: inherit;
+  display: inline-flex;
+  gap: 6px;
+  text-decoration: none;
+}
+
+.link:hover {
+  color: var(--ph-primary);
+}
+
+.actions {
+  justify-self: end;
+}
+
+@media (max-width: 600px) {
+  .item {
+    --icon-size: 48px;
+  }
+}

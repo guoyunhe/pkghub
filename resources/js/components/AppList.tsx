@@ -3,7 +3,7 @@ import type { ReactNode } from 'react'
 
 import AppListItem from './AppListItem'
 
-import styles from './List.module.css'
+import styles from './AppList.module.css'
 
 type AppListProps = {
   apps: Data.App[]

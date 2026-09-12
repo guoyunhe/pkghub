@@ -5,7 +5,7 @@ import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'wouter'
 
-import styles from './List.module.css'
+import styles from './PkgListItem.module.css'
 
 const packageTypesWithIcons = new Set(['rpm', 'deb', 'appimage'])
 

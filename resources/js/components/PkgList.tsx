@@ -3,7 +3,7 @@ import type { ReactNode } from 'react'
 
 import PkgListItem from './PkgListItem'
 
-import styles from './List.module.css'
+import styles from './PkgList.module.css'
 
 type PkgListProps = {
   pkgs: Data.Pkg[]
