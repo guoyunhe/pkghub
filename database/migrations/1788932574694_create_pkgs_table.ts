@@ -20,7 +20,7 @@ export default class extends BaseSchema {
       table.string('version').nullable()
       table.string('release').nullable()
       table.string('arch').nullable()
-      table.string('license').nullable()
+      table.text('license').nullable()
       table.text('summary').nullable()
       table.text('description').nullable()
       table
