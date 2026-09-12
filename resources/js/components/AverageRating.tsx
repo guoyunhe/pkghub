@@ -17,7 +17,7 @@ export default function AverageRating({ value, count, size = 'sm' }: AverageRati
   return (
     <span className={styles.rating}>
       <Rating count={5} fractions={2} readOnly size={size} value={rounded} />
-      <Text className={styles.value}>
+      <Text className={styles.value} size={size}>
         {rating.toFixed(1)}
         {count !== null && count !== undefined && ` (${count})`}
       </Text>

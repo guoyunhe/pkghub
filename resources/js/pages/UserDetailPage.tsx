@@ -130,7 +130,7 @@ export default function UserDetailPage() {
 
   const memberSince = profile.createdAt
     ? new Date(profile.createdAt).toLocaleDateString(
-        i18n.language.startsWith('zh') ? 'zh-CN' : 'en-US',
+        i18n.language.startsWith('zh') ? i18n.language : 'en-US',
         { year: 'numeric', month: 'long', day: 'numeric' },
       )
     : null

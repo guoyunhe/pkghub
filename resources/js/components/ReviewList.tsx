@@ -12,7 +12,7 @@ import styles from './ReviewList.module.css'
 function formatDate(value: string | null, language: string) {
   if (!value) return null
   const date = new Date(value)
-  return date.toLocaleDateString(language.startsWith('zh') ? 'zh-CN' : 'en-US', {
+  return date.toLocaleDateString(language.startsWith('zh') ? language : 'en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',

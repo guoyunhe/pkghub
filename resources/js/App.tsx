@@ -75,7 +75,7 @@ function AppHeader() {
   const [searchParams] = useSearchParams()
   const query = searchParams.get('q') ?? ''
   const [searchQuery, setSearchQuery] = useState(query)
-  const currentLanguage = i18n.language?.startsWith('zh') ? 'zh' : 'en'
+  const currentLanguage = i18n.resolvedLanguage ?? 'en'
 
   useEffect(() => {
     setSearchQuery(query)
@@ -185,12 +185,13 @@ function AppHeader() {
             checkIconPosition='right'
             data={[
               { value: 'en', label: 'EN' },
-              { value: 'zh', label: '中' },
+              { value: 'zh-CN', label: '简中' },
+              { value: 'zh-TW', label: '繁中' },
             ]}
             leftSection={<GlobeIcon size={15} />}
             value={currentLanguage}
             variant='default'
-            w={84}
+            w={100}
             onChange={(language) => {
               if (language) void i18n.changeLanguage(language)
             }}
