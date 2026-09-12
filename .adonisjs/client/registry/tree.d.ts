@@ -64,4 +64,7 @@ export interface ApiDefinition {
   distros: {
     index: typeof routes['distros.index']
   }
+  categories: {
+    index: typeof routes['categories.index']
+  }
 }

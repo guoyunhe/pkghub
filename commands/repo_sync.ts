@@ -4,6 +4,7 @@ import chalk from 'chalk'
 import { DateTime } from 'luxon'
 
 import App from '#models/app'
+import Category from '#models/category'
 import Image from '#models/image'
 import Pkg from '#models/pkg'
 import Repo from '#models/repo'
@@ -87,7 +88,8 @@ export default class RepoSync extends BaseCommand {
               ` ${chalk.yellow(String(apps.updated))} apps updated,` +
               ` ${chalk.dim(String(apps.skipped))} skipped,` +
               ` ${chalk.green(String(apps.icons))} icons,` +
-              ` ${chalk.green(String(apps.linked))} packages linked)`,
+              ` ${chalk.green(String(apps.linked))} packages linked,` +
+              ` ${chalk.green(String(apps.categories))} categories linked)`,
           )
         }
         for (const pkg of packages.slice(0, this.limit)) {
@@ -202,7 +204,7 @@ export default class RepoSync extends BaseCommand {
     entries: ExtractedApp[],
     packages: ExtractedPackage[],
   ) {
-    const result = { created: 0, updated: 0, skipped: 0, icons: 0, linked: 0 }
+    const result = { created: 0, updated: 0, skipped: 0, icons: 0, linked: 0, categories: 0 }
     const pkgNames = new Set(packages.map((pkg) => pkg.name))
     const candidates = entries.filter(
       (entry) =>
@@ -253,6 +255,10 @@ export default class RepoSync extends BaseCommand {
         await Pkg.query().where('repoId', repo.id).whereIn('name', names).update({ appId: app.id })
         result.linked += names.length
       }
+
+      // Categories are linked as well, so that a synchronization backfills applications that were
+      // imported before categories were extracted
+      if (app.id) result.categories += await this.syncCategories(app, entry.categories)
     }
 
     if (pendingIcons.length > 0) {
@@ -272,6 +278,31 @@ export default class RepoSync extends BaseCommand {
     }
 
     return result
+  }
+
+  /**
+   * Attach the categories a component declares to its application. Codes that are not part of the
+   * registry are created with the code as their English name, so that repository metadata is never
+   * dropped, while known rows keep the translations and tree position the category seeder set up.
+   * Categories are only added, never removed, so curating an application by hand survives the next
+   * synchronization.
+   */
+  private async syncCategories(app: App, codes: string[]) {
+    if (codes.length === 0) return 0
+
+    const known = await Category.query().whereIn('code', codes)
+    const byCode = new Map(known.map((category) => [category.code, category]))
+
+    for (const code of codes) {
+      if (byCode.has(code)) continue
+      byCode.set(code, await Category.create({ code, name: { en: code }, parentId: null }))
+    }
+
+    await app.related('categories').sync(
+      [...byCode.values()].map((category) => category.id),
+      false,
+    )
+    return byCode.size
   }
 }
 

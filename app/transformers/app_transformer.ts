@@ -22,6 +22,12 @@ export default class AppTransformer extends BaseTransformer<App> {
         'iconId',
       ]),
       icon: this.resource.icon ? ImageTransformer.transform(this.resource.icon) : null,
+      categories: (this.resource.categories ?? []).map((category) => ({
+        id: category.id,
+        code: category.code,
+        name: category.name,
+        parentId: category.parentId,
+      })),
       isFavorite: this.resource.favoritedBy ? this.resource.favoritedBy.length > 0 : false,
       avgRating: avgRating === null || avgRating === undefined ? null : Number(avgRating),
     }

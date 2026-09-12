@@ -84,6 +84,11 @@
     "notFound": "未找到应用。",
     "loadError": "无法加载应用"
   },
+  "categories": {
+    "filterLabel": "分类",
+    "filterAny": "全部分类",
+    "filterClear": "清除筛选"
+  },
   "packages": {
     "eyebrow": "Linux 软件目录",
     "title": "软件包",
@@ -154,6 +159,7 @@
     "version": "版本",
     "license": "许可证",
     "appstreamId": "AppStream ID",
+    "categories": "分类",
     "homepage": "主页",
     "previousScreenshot": "上一张截图",
     "nextScreenshot": "下一张截图",

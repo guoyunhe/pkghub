@@ -40,6 +40,7 @@ export type ScannedRoutes = {
     'repos.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'repos.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'distros.index': { paramsTuple?: []; params?: {} }
+    'categories.index': { paramsTuple?: []; params?: {} }
   }
   GET: {
     'drive.fs.serve': { paramsTuple: [...ParamValue[]]; params: {'*': ParamValue[]} }
@@ -58,6 +59,7 @@ export type ScannedRoutes = {
     'repos.index': { paramsTuple?: []; params?: {} }
     'repos.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'distros.index': { paramsTuple?: []; params?: {} }
+    'categories.index': { paramsTuple?: []; params?: {} }
   }
   HEAD: {
     'drive.fs.serve': { paramsTuple: [...ParamValue[]]; params: {'*': ParamValue[]} }
@@ -76,6 +78,7 @@ export type ScannedRoutes = {
     'repos.index': { paramsTuple?: []; params?: {} }
     'repos.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'distros.index': { paramsTuple?: []; params?: {} }
+    'categories.index': { paramsTuple?: []; params?: {} }
   }
   POST: {
     'auth.register': { paramsTuple?: []; params?: {} }

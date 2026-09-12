@@ -40,6 +40,21 @@ export class AppSchema extends BaseModel {
   declare version: string | null
 }
 
+export class AppCategorySchema extends BaseModel {
+  static $columns = ['appId', 'categoryId', 'createdAt', 'id', 'updatedAt'] as const
+  $columns = AppCategorySchema.$columns
+  @column()
+  declare appId: number
+  @column()
+  declare categoryId: number
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column({ isPrimary: true })
+  declare id: number
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+}
+
 export class AuthAccessTokenSchema extends BaseModel {
   static $columns = ['abilities', 'createdAt', 'expiresAt', 'hash', 'id', 'lastUsedAt', 'name', 'tokenableId', 'type', 'updatedAt'] as const
   $columns = AuthAccessTokenSchema.$columns
@@ -61,6 +76,23 @@ export class AuthAccessTokenSchema extends BaseModel {
   declare tokenableId: number
   @column()
   declare type: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+}
+
+export class CategorySchema extends BaseModel {
+  static $columns = ['code', 'createdAt', 'id', 'name', 'parentId', 'updatedAt'] as const
+  $columns = CategorySchema.$columns
+  @column()
+  declare code: string
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column({ isPrimary: true })
+  declare id: number
+  @column({ prepare: (value)=>value ? JSON.stringify(value) : value, consume: (value)=>typeof value === 'string' ? JSON.parse(value) : value })
+  declare name: Record<string, string>
+  @column()
+  declare parentId: number | null
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null
 }

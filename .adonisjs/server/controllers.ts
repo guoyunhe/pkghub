@@ -14,4 +14,5 @@ export const controllers = {
   Repos: () => import('#controllers/repos_controller'),
   Reviews: () => import('#controllers/reviews_controller'),
   Users: () => import('#controllers/users_controller'),
+  Categories: () => import('#controllers/categories_controller'),
 }

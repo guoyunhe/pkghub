@@ -84,6 +84,11 @@
     "notFound": "No applications found.",
     "loadError": "Unable to load applications"
   },
+  "categories": {
+    "filterLabel": "Category",
+    "filterAny": "All categories",
+    "filterClear": "Clear filters"
+  },
   "packages": {
     "eyebrow": "Linux catalog",
     "title": "Packages",
@@ -154,6 +159,7 @@
     "version": "Version",
     "license": "License",
     "appstreamId": "AppStream ID",
+    "categories": "Categories",
     "homepage": "Homepage",
     "previousScreenshot": "Previous screenshot",
     "nextScreenshot": "Next screenshot",

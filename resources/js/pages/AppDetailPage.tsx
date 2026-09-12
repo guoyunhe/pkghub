@@ -11,6 +11,7 @@ import { Link, useLocation, useRoute } from 'wouter'
 
 import { useAuth } from '../auth'
 import AverageRating from '../components/AverageRating'
+import CategoryBadges from '../components/CategoryBadges'
 import FavoriteButton from '../components/FavoriteButton'
 import PackageUpload from '../components/PackageUpload'
 import PkgFilters, { useStoredPkgFilters } from '../components/PkgFilters'
@@ -236,6 +237,14 @@ export default function AppDetailPage() {
           </Text>
           <Text>{app.appstreamId ?? t('common.notSpecified')}</Text>
         </div>
+        {app.categories.length > 0 && (
+          <div>
+            <Text size='sm' c='dimmed'>
+              {t('detail.categories')}
+            </Text>
+            <CategoryBadges categories={app.categories} />
+          </div>
+        )}
       </section>
 
       {screenshots.length > 0 && (

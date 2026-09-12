@@ -25,6 +25,11 @@ export type ExtractedApp = {
   version: string | null
   license: string | null
   homepage: string | null
+  /**
+   * Category codes of the component (`<categories><category>` / `Categories`). They are identifiers
+   * from the freedesktop.org menu specification, e.g. `Game` or `PackageManager`.
+   */
+  categories: string[]
   /** Package names the component belongs to (`<pkgname>` / `Package`), used to link packages. */
   pkgNames: string[]
   /** AppStream XML of the component, stored as `appstreamContent`. */
@@ -72,6 +77,7 @@ type XmlComponent = {
   name?: XmlNode | XmlNode[]
   summary?: XmlNode | XmlNode[]
   icon?: XmlNode | XmlNode[]
+  categories?: { category?: XmlNode | XmlNode[] }
   project_license?: XmlNode
   url?: XmlNode | XmlNode[]
   releases?: { release?: XmlRelease | XmlRelease[] }
@@ -90,6 +96,7 @@ type Dep11Record = {
       | { name?: string; width?: number; height?: number }
       | Array<{ name?: string; width?: number; height?: number }>
   }
+  Categories?: string | string[]
   Url?: Record<string, string>
   Releases?: { version?: string } | Array<{ version?: string }>
 }
@@ -134,6 +141,23 @@ function localized(
   return values
 }
 
+/** Category codes of a component, deduplicated and stripped of empty values. */
+function categoryCodes(nodes: XmlNode | XmlNode[] | undefined): string[] {
+  const codes = (Array.isArray(nodes) ? nodes : [nodes])
+    .map((node) => text(node))
+    .filter((code): code is string => Boolean(code))
+  return [...new Set(codes)]
+}
+
+/** DEP-11 stores the categories as a YAML list, or as a single string for one category. */
+function dep11Categories(value: string | string[] | undefined): string[] {
+  if (!value) return []
+  const codes = (Array.isArray(value) ? value : [value])
+    .map((code) => (typeof code === 'string' ? code.trim() : ''))
+    .filter((code) => code !== '')
+  return [...new Set(codes)]
+}
+
 function firstUrl(nodes: XmlNode | XmlNode[] | undefined, type: string) {
   for (const node of Array.isArray(nodes) ? nodes : [nodes]) {
     if (node && typeof node !== 'string' && node['@_type'] === type) {
@@ -148,7 +172,7 @@ export default class RepoAppstreamExtractor {
   private xmlParser = new XMLParser({
     ignoreAttributes: false,
     attributeNamePrefix: '@_',
-    isArray: (tagName) => ['component', 'pkgname', 'icon'].includes(tagName),
+    isArray: (tagName) => ['component', 'pkgname', 'icon', 'category'].includes(tagName),
   })
 
   private xmlBuilder = new XMLBuilder({
@@ -318,6 +342,7 @@ export default class RepoAppstreamExtractor {
         version: latestRelease?.['@_version']?.trim() || null,
         license: text(component.project_license),
         homepage: firstUrl(component.url, 'homepage'),
+        categories: categoryCodes(component.categories?.category),
         pkgNames: [...new Set(pkgNames)],
         content: this.xmlBuilder.build({ component }),
         icons: this.cachedIcons(component),
@@ -370,6 +395,7 @@ export default class RepoAppstreamExtractor {
         version: version?.trim() || null,
         license: record.ProjectLicense?.trim() || null,
         homepage: record.Url?.homepage?.trim() || null,
+        categories: dep11Categories(record.Categories),
         pkgNames: record.Package ? [record.Package] : [],
         content: this.dep11Xml(record),
         icons: this.dep11Icons(record),
@@ -407,6 +433,8 @@ export default class RepoAppstreamExtractor {
         : entries.map(([locale, value]) => ({ '#text': value, '@_xml:lang': locale }))
     }
 
+    const categories = dep11Categories(record.Categories)
+
     const component: Record<string, unknown> = {
       '@_type': record.Type ?? 'desktop-application',
       id: record.ID,
@@ -414,6 +442,7 @@ export default class RepoAppstreamExtractor {
       summary: localizedNodes(record.Summary),
       description: localizedNodes(record.Description),
       project_license: record.ProjectLicense,
+      categories: categories.length > 0 ? { category: categories } : undefined,
       url: record.Url?.homepage
         ? { '#text': record.Url.homepage, '@_type': 'homepage' }
         : undefined,

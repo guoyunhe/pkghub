@@ -43,6 +43,11 @@ export default {
         description: jsonColumn('Record<string, string>'),
       },
     },
+    categories: {
+      columns: {
+        name: jsonColumn('Record<string, string>'),
+      },
+    },
     distros: {
       columns: {
         arch: jsonColumn('string[]'),

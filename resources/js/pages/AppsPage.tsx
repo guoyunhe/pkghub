@@ -8,6 +8,8 @@ import { Link, useLocation, useSearchParams } from 'wouter'
 
 import { useAuth } from '../auth'
 import AverageRating from '../components/AverageRating'
+import CategoryBadges from '../components/CategoryBadges'
+import CategoryFilter from '../components/CategoryFilter'
 import FavoriteButton from '../components/FavoriteButton'
 import { getApps } from '../services/apps'
 import type { Paginated } from '../types/pagination'
@@ -33,12 +35,23 @@ export default function AppsPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const query = searchParams.get('q') ?? ''
+  const category = searchParams.get('category')
   const page = Number(searchParams.get('page') ?? 1) || 1
+
+  /** The listing is driven by the URL, so query, category and page stay shareable and reloadable. */
+  function appsUrl(options: { category?: string | null; page?: number } = {}) {
+    const params = new URLSearchParams()
+    if (query) params.set('q', query)
+    const nextCategory = options.category === undefined ? category : options.category
+    if (nextCategory) params.set('category', nextCategory)
+    if (options.page && options.page > 1) params.set('page', String(options.page))
+    return `/apps${params.toString() ? `?${params}` : ''}`
+  }
 
   async function loadApps() {
     try {
       setLoading(true)
-      setResult(await getApps(query, page))
+      setResult(await getApps(query, page, 12, category))
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : t('apps.loadError'))
     } finally {
@@ -48,7 +61,7 @@ export default function AppsPage() {
 
   useEffect(() => {
     void loadApps()
-  }, [page, query])
+  }, [category, page, query])
 
   return (
     <main className={styles.page}>
@@ -74,6 +87,10 @@ export default function AppsPage() {
           {error}
         </Alert>
       )}
+      <CategoryFilter
+        onChange={(nextCategory) => navigate(appsUrl({ category: nextCategory }))}
+        value={category}
+      />
       {loading ? (
         <div className={styles.loading}>
           <Loader color='orange' />
@@ -100,6 +117,7 @@ export default function AppsPage() {
                         </Link>
                       </Title>
                       <Text c='dimmed'>{localized(app.summary, i18n.language)}</Text>
+                      <CategoryBadges categories={app.categories} />
                       <AverageRating value={app.avgRating} />
                       <div className={styles.metadata}>
                         {app.version && <span>{app.version}</span>}
@@ -118,10 +136,7 @@ export default function AppsPage() {
                   total={result.meta.lastPage}
                   value={result.meta.currentPage}
                   onChange={(nextPage) => {
-                    const params = new URLSearchParams()
-                    if (query) params.set('q', query)
-                    if (nextPage > 1) params.set('page', String(nextPage))
-                    navigate(`/apps${params.toString() ? `?${params}` : ''}`)
+                    navigate(appsUrl({ page: nextPage }))
                   }}
                 />
               )}

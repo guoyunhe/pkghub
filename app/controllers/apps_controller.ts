@@ -1,6 +1,7 @@
 import type { HttpContext } from '@adonisjs/core/http'
 
 import App from '#models/app'
+import Category from '#models/category'
 import AppTransformer from '#transformers/app_transformer'
 import { appValidator } from '#validators/app'
 
@@ -12,6 +13,7 @@ export default class AppsController {
     const query = typeof rawQuery === 'string' ? rawQuery.trim().toLocaleLowerCase() : ''
     const appsQuery = App.query()
       .preload('icon')
+      .preload('categories')
       .withAggregate('reviews', (subQuery) => subQuery.avg('rating').as('avgRating'))
       .orderBy('id', 'desc')
 
@@ -31,6 +33,15 @@ export default class AppsController {
       })
     }
 
+    const categoryCodes = this.categoryCodes(request.input('category'))
+    if (categoryCodes.length > 0) {
+      const categoryIds = await this.categoryIdsWithDescendants(categoryCodes)
+      if (categoryIds.length === 0) appsQuery.whereRaw('0 = 1')
+      else {
+        appsQuery.whereHas('categories', (builder) => builder.whereIn('categories.id', categoryIds))
+      }
+    }
+
     const paginator = await appsQuery.paginate(page, perPage)
     return serialize(AppTransformer.paginate(paginator.all(), paginator.getMeta()))
   }
@@ -39,6 +50,7 @@ export default class AppsController {
     const appQuery = App.query()
       .where('id', params.id)
       .preload('icon')
+      .preload('categories')
       .withAggregate('reviews', (subQuery) => subQuery.avg('rating').as('avgRating'))
     if (auth.isAuthenticated) {
       appQuery.preload('favoritedBy', (builder) => builder.where('users.id', auth.user!.id))
@@ -52,6 +64,7 @@ export default class AppsController {
 
     const app = await App.create(payload)
     await app.load('icon')
+    await app.load('categories')
     response.created()
     return serialize(AppTransformer.transform(app))
   }
@@ -62,6 +75,7 @@ export default class AppsController {
 
     await app.merge(payload).save()
     await app.load('icon')
+    await app.load('categories')
     return serialize(AppTransformer.transform(app))
   }
 
@@ -74,5 +88,40 @@ export default class AppsController {
   private positiveInteger(value: unknown, fallback: number) {
     const parsed = Number(value)
     return Number.isInteger(parsed) && parsed > 0 ? parsed : fallback
+  }
+
+  /** Category codes of the `category` filter; the query string may repeat or comma-separate them. */
+  private categoryCodes(value: unknown) {
+    const values = Array.isArray(value) ? value : [value]
+    const codes = values
+      .flatMap((item) => (typeof item === 'string' ? item.split(',') : []))
+      .map((code) => code.trim())
+      .filter((code) => code !== '')
+    return [...new Set(codes)]
+  }
+
+  /**
+   * Ids of the selected categories together with everything nested below them, so that filtering by
+   * a main category also returns the applications filed under its more specific categories.
+   */
+  private async categoryIdsWithDescendants(codes: string[]) {
+    const categories = await Category.query().select('id', 'code', 'parentId')
+    const children = new Map<number, number[]>()
+    for (const category of categories) {
+      if (category.parentId === null) continue
+      const siblings = children.get(category.parentId) ?? []
+      siblings.push(category.id)
+      children.set(category.parentId, siblings)
+    }
+
+    const ids = new Set<number>()
+    const pending = categories.filter((category) => codes.includes(category.code)).map((c) => c.id)
+    while (pending.length > 0) {
+      const id = pending.pop()!
+      if (ids.has(id)) continue
+      ids.add(id)
+      pending.push(...(children.get(id) ?? []))
+    }
+    return [...ids]
   }
 }

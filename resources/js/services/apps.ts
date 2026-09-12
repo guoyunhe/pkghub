@@ -28,6 +28,14 @@ export type Distro = {
   eolDate: string | null
 }
 
+/** A category of the freedesktop.org registry, as returned by `GET /api/categories`. */
+export type Category = {
+  id: number
+  code: string
+  name: Record<string, string>
+  parentId: number | null
+}
+
 /** Filters applied to package listings. */
 export type PkgFilters = {
   distroId: string | null
@@ -51,11 +59,21 @@ function filterParams(filters: PkgFilters) {
   }
 }
 
-export async function getApps(query = '', page = 1, perPage = 12) {
+export async function getApps(query = '', page = 1, perPage = 12, category: string | null = null) {
   const { data } = await api.get<SerializedPaginated<Data.App>>('/apps', {
-    params: { page, perPage, q: query || undefined },
+    params: {
+      page,
+      perPage,
+      q: query || undefined,
+      category: category || undefined,
+    },
   })
   return { data: data.data, meta: data.metadata } satisfies Paginated<Data.App>
+}
+
+export async function getCategories() {
+  const { data } = await api.get<{ data: Category[] }>('/categories')
+  return data.data
 }
 
 export async function getDistros() {

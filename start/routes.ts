@@ -65,6 +65,9 @@ router
 
     // Distros
     router.get('distros', [controllers.Distros, 'index'])
+
+    // Categories
+    router.get('categories', [controllers.Categories, 'index'])
   })
   .prefix('/api')
 

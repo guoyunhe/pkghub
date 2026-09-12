@@ -12,6 +12,7 @@ import type PkgTransformer from '#transformers/pkg_transformer'
 import type RepoTransformer from '#transformers/repo_transformer'
 import type ReviewTransformer from '#transformers/review_transformer'
 import type UserTransformer from '#transformers/user_transformer'
+import type CategoryTransformer from '#transformers/category_transformer'
 
 export namespace Data {
   export type App = InferData<AppTransformer>
@@ -41,5 +42,9 @@ export namespace Data {
   export type User = InferData<UserTransformer>
   export namespace User {
     export type Variants = InferVariants<UserTransformer>
+  }
+  export type Category = InferData<CategoryTransformer>
+  export namespace Category {
+    export type Variants = InferVariants<CategoryTransformer>
   }
 }

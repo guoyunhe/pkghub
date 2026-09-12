@@ -7,6 +7,8 @@ import { useTranslation } from 'react-i18next'
 import { useSearchParams } from 'wouter'
 import { Link } from 'wouter'
 
+import CategoryBadges from '../components/CategoryBadges'
+import CategoryFilter from '../components/CategoryFilter'
 import PkgFilters, { useStoredPkgFilters } from '../components/PkgFilters'
 import { getApps, searchPackages } from '../services/apps'
 import type { Paginated } from '../types/pagination'
@@ -44,6 +46,7 @@ export default function SearchResultsPage() {
 
   const [activeTab, setActiveTab] = useState<SearchTab>('apps')
   const [appsPage, setAppsPage] = useState(1)
+  const [appsCategory, setAppsCategory] = useState<string | null>(null)
   const [pkgsPage, setPkgsPage] = useState(1)
 
   const [appsResult, setAppsResult] = useState<Paginated<Data.App> | null>(null)
@@ -65,10 +68,14 @@ export default function SearchResultsPage() {
   }, [filters])
 
   useEffect(() => {
+    setAppsPage(1)
+  }, [appsCategory])
+
+  useEffect(() => {
     let active = true
     setAppsLoading(true)
     setAppsError(null)
-    getApps(query, appsPage)
+    getApps(query, appsPage, 12, appsCategory)
       .then((result) => {
         if (active) setAppsResult(result)
       })
@@ -83,7 +90,7 @@ export default function SearchResultsPage() {
     return () => {
       active = false
     }
-  }, [appsPage, query, t])
+  }, [appsCategory, appsPage, query, t])
 
   useEffect(() => {
     let active = true
@@ -135,6 +142,8 @@ export default function SearchResultsPage() {
 
       {activeTab === 'packages' && <PkgFilters onChange={setFilters} value={filters} />}
 
+      {activeTab === 'apps' && <CategoryFilter onChange={setAppsCategory} value={appsCategory} />}
+
       {activeTab === 'apps' &&
         (appsError ? (
           <Alert color='red'>{appsError}</Alert>
@@ -160,6 +169,7 @@ export default function SearchResultsPage() {
                       </Link>
                     </Title>
                     <Text c='dimmed'>{localized(app.summary, i18n.language)}</Text>
+                    <CategoryBadges categories={app.categories} />
                     <div className={styles.meta}>
                       {app.version && <span>{app.version}</span>}
                       {app.license && <span>{app.license}</span>}
