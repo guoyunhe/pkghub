@@ -13,6 +13,7 @@ export default class AppTransformer extends BaseTransformer<App> {
         'summary',
         'version',
         'license',
+        'homepage',
         'appstreamId',
         'appstreamUrl',
         'appstreamContent',

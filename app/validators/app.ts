@@ -42,6 +42,7 @@ export const appValidator = vine.create({
   summary: localizedText(),
   version: vine.string().parse(emptyToNull).trim().maxLength(255).nullable(),
   license: vine.string().parse(emptyToNull).trim().maxLength(255).nullable(),
+  homepage: vine.string().parse(emptyToNull).trim().maxLength(255).nullable(),
   appstreamId: vine
     .string()
     .parse(emptyToNull)

@@ -9,6 +9,7 @@ export type AppPayload = {
   summary: Record<string, string>
   version?: string
   license?: string
+  homepage?: string
   appstreamId?: string
   appstreamUrl?: string
   appstreamContent?: string

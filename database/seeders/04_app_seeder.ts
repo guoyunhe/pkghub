@@ -43,11 +43,12 @@ const applications = [
   },
 ]
 
-type XmlNode = string | { '#text'?: string; '@_xml:lang'?: string }
+type XmlNode = string | { '#text'?: string; '@_xml:lang'?: string; '@_type'?: string }
 type AppStreamComponent = {
   id?: XmlNode
   name?: XmlNode | XmlNode[]
   summary?: XmlNode | XmlNode[]
+  url?: XmlNode | XmlNode[]
   project_license?: XmlNode
   releases?: { release?: { '@_version'?: string } | Array<{ '@_version'?: string }> }
 }
@@ -73,6 +74,16 @@ function localizations(nodes: XmlNode | XmlNode[] | undefined) {
   return values
 }
 
+function homepageUrl(nodes: XmlNode | XmlNode[] | undefined) {
+  for (const node of Array.isArray(nodes) ? nodes : [nodes]) {
+    if (node && typeof node !== 'string' && node['@_type'] === 'homepage') {
+      const value = text(node)
+      if (value) return value
+    }
+  }
+  return null
+}
+
 function parseAppStream(xml: string) {
   const { component } = parser.parse(xml) as { component?: AppStreamComponent }
   const appstreamId = text(component?.id)
@@ -91,6 +102,7 @@ function parseAppStream(xml: string) {
     summary: JSON.stringify(summary),
     version: latestRelease?.['@_version'] ?? null,
     license: text(component?.project_license) ?? null,
+    homepage: homepageUrl(component?.url),
   }
 }
 

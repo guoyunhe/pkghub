@@ -12,6 +12,7 @@ export default class extends BaseSchema {
 
       table.string('version').nullable()
       table.string('license').nullable()
+      table.string('homepage').nullable()
 
       table.string('appstream_id').nullable().unique()
       table.text('appstream_content', 'mediumtext').nullable()

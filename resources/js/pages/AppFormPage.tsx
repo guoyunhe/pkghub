@@ -30,6 +30,7 @@ function emptyForm(language: string): AppPayload {
     summary: { [language]: '' },
     version: '',
     license: '',
+    homepage: '',
     appstreamId: '',
     appstreamUrl: '',
     appstreamContent: '',
@@ -45,6 +46,7 @@ function formFromApp(app: Data.App): AppPayload {
     summary: app.summary,
     version: app.version ?? '',
     license: app.license ?? '',
+    homepage: app.homepage ?? '',
     appstreamId: app.appstreamId ?? '',
     appstreamUrl: app.appstreamUrl ?? '',
     appstreamContent: app.appstreamContent ?? '',
@@ -189,6 +191,11 @@ export default function AppFormPage() {
           label={t('form.license')}
           value={form.license ?? ''}
           onChange={(event) => setForm({ ...form, license: event.currentTarget.value })}
+        />
+        <TextInput
+          label={t('form.homepage')}
+          value={form.homepage ?? ''}
+          onChange={(event) => setForm({ ...form, homepage: event.currentTarget.value })}
         />
         <TextInput
           label={t('form.appstreamId')}

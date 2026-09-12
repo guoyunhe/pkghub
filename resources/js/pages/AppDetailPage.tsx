@@ -245,10 +245,22 @@ export default function AppDetailPage() {
         </section>
       )}
 
-      {(app.appstreamUrl || app.desktopUrl) && (
+      {(app.homepage || app.appstreamUrl || app.desktopUrl) && (
         <section className={styles.sources}>
           <Title order={2}>{t('detail.sources')}</Title>
           <Group gap='xs'>
+            {app.homepage && (
+              <Button
+                component='a'
+                href={app.homepage}
+                rel='noreferrer'
+                target='_blank'
+                rightSection={<ArrowSquareOutIcon size={18} />}
+                variant='default'
+              >
+                {t('detail.homepage')}
+              </Button>
+            )}
             {app.appstreamUrl && (
               <Button
                 component='a'
