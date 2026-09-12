@@ -12,6 +12,7 @@ const repos = [
     distroName: 'openSUSE Tumbleweed',
     distroVersion: null,
     configContent: null,
+    syncIntervalDays: 7,
   },
   {
     name: 'openSUSE Tumbleweed Non-OSS',
@@ -21,15 +22,7 @@ const repos = [
     distroVersion: null,
     type: 'rpm',
     configContent: null,
-  },
-  {
-    name: 'openSUSE Tumbleweed Update',
-    source: 'distro',
-    baseUrl: 'https://download.opensuse.org/update/tumbleweed/',
-    distroName: 'openSUSE Tumbleweed',
-    distroVersion: null,
-    type: 'rpm',
-    configContent: null,
+    syncIntervalDays: 7,
   },
   {
     name: 'VLC for openSUSE Tumbleweed',
@@ -48,6 +41,7 @@ enabled=1
 `,
     configUrl: 'https://download.videolan.org/SuSE/Tumbleweed/SuSE.repo',
     installScript: `pkexec zypper addrepo -y https://download.videolan.org/SuSE/Tumbleweed/SuSE.repo`,
+    syncIntervalDays: 1,
   },
   {
     name: 'Debian 13 Main',

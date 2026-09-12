@@ -59,12 +59,13 @@ export default class RepoSync extends BaseCommand {
       this.logger.info(`Extracting packages from ${chalk.cyan(repo.name)} (${repo.type})`)
       try {
         const packages = await extractor.extract(repo, { arch: this.arch || undefined })
-        const { created, updated } = await this.savePackages(repo, packages)
+        const { created, updated, deleted } = await this.savePackages(repo, packages)
         repo.lastSyncedAt = DateTime.now()
         await repo.save()
         this.logger.info(
           `${repo.name}: ${chalk.green(String(packages.length))} packages` +
-            ` (${chalk.green(String(created))} created, ${chalk.yellow(String(updated))} updated)`,
+            ` (${chalk.green(String(created))} created, ${chalk.yellow(String(updated))} updated,` +
+            ` ${chalk.red(String(deleted))} removed)`,
         )
         for (const pkg of packages.slice(0, this.limit)) {
           const details = [pkg.version, pkg.release, pkg.arch].filter(Boolean).join(' ')
@@ -101,16 +102,22 @@ export default class RepoSync extends BaseCommand {
   /**
    * Write the extracted packages to the database. Packages are keyed by repository, name, version,
    * release and architecture, so synchronizing the same repository again updates the existing rows
-   * instead of inserting duplicates. Repository packages are not tied to a catalog application.
+   * instead of inserting duplicates. Packages that are no longer in the repository are removed,
+   * unless the repository returned nothing at all, which is more likely a metadata problem than an
+   * emptied repository. Repository packages are not tied to a catalog application.
    */
   private async savePackages(repo: Repo, packages: ExtractedPackage[]) {
     const existing = await Pkg.query().where('repoId', repo.id)
     const known = new Map(existing.map((pkg) => [this.packageKey(pkg), pkg]))
+    const stale = new Map(known)
     let created = 0
     let updated = 0
+    let deleted = 0
 
     for (const item of packages) {
       const key = this.packageKey(item)
+      stale.delete(key)
+
       let pkg = known.get(key)
       if (pkg) {
         updated += 1
@@ -137,7 +144,20 @@ export default class RepoSync extends BaseCommand {
       await pkg.save()
     }
 
-    return { created, updated }
+    if (packages.length === 0) {
+      if (stale.size > 0) {
+        this.logger.warning(
+          `${repo.name}: no packages were extracted, keeping the ${stale.size} stored package(s)`,
+        )
+      }
+    } else {
+      for (const pkg of stale.values()) {
+        await pkg.delete()
+        deleted += 1
+      }
+    }
+
+    return { created, updated, deleted }
   }
 
   private packageKey(pkg: PackageIdentity) {
