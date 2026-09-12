@@ -7,7 +7,7 @@ import { createRoot } from 'react-dom/client'
 
 import App from './App'
 
-const colorSchemeManager = localStorageColorSchemeManager({ key: 'pkghub-color-scheme' })
+const colorSchemeManager = localStorageColorSchemeManager({ key: 'color-scheme' })
 
 const root = document.getElementById('root')
 

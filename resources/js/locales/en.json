@@ -1,5 +1,5 @@
 {
-  "appName": "PkgHub",
+  "appName": "PkgCat",
   "login": "Login",
   "register": "Register",
   "logout": "Logout",
@@ -8,7 +8,7 @@
   "password": "Password",
   "confirmPassword": "Confirm password",
   "name": "Name",
-  "noAccount": "New to PkgHub?",
+  "noAccount": "New to PkgCat?",
   "hasAccount": "Already have an account?",
   "welcomeBack": "Welcome back",
   "createAccount": "Create your account",

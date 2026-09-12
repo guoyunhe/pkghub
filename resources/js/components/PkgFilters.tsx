@@ -10,7 +10,7 @@ import { packageTypes } from '../utils/pkgTypes'
 
 import styles from './PkgFilters.module.css'
 
-const storageKey = 'pkghub-pkg-filters'
+const storageKey = 'pkg-filters'
 const emptyFilters: PkgFiltersValue = { distroId: null, type: null, arch: null }
 
 type DistroOption = {

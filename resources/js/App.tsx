@@ -92,7 +92,7 @@ function AppHeader() {
         <nav className='app-header__nav'>
           <Text component={Link} href='/' className='app-header__brand' fw={700}>
             <img src='/favicon.svg' alt='' className='app-header__icon' />
-            PkgHub
+            PkgCat
           </Text>
           <Button
             component={Link}

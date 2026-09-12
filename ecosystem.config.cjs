@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: 'pkghub',
+      name: 'pkgcat',
       script: './build/bin/server.js',
       instances: 'max',
       exec_mode: 'cluster',

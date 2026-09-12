@@ -174,7 +174,7 @@ export default class PkgsController {
    */
   private async receivePackageFile(request: HttpContext['request']) {
     request.multipart.onFile('file', { deferValidations: true }, async (part, reportChunk) => {
-      const tmpPath = app.tmpPath(`pkghub-${randomUUID()}`)
+      const tmpPath = app.tmpPath(`pkgcat-${randomUUID()}`)
 
       await pipeline(
         part,

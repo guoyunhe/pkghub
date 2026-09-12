@@ -1,5 +1,5 @@
 {
-  "appName": "PkgHub",
+  "appName": "PkgCat",
   "login": "登入",
   "register": "註冊",
   "logout": "登出",
@@ -8,7 +8,7 @@
   "password": "密碼",
   "confirmPassword": "確認密碼",
   "name": "名稱",
-  "noAccount": "還沒有 PkgHub 帳號？",
+  "noAccount": "還沒有 PkgCat 帳號？",
   "hasAccount": "已有帳號？",
   "welcomeBack": "歡迎回來",
   "createAccount": "建立你的帳號",
