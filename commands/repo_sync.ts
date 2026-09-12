@@ -30,6 +30,11 @@ export default class RepoSync extends BaseCommand {
   @flags.number({ description: 'Number of sample packages to print per repository', default: 5 })
   declare limit: number
 
+  @flags.boolean({
+    description: 'Synchronize repositories even when their sync interval has not elapsed',
+  })
+  declare force: boolean
+
   async run() {
     const repos = this.repoName
       ? [await Repo.findByOrFail('name', this.repoName)]
@@ -41,8 +46,15 @@ export default class RepoSync extends BaseCommand {
     }
 
     const extractor = new RepoPackageExtractor()
+    let synced = 0
 
     for (const repo of repos) {
+      if (!this.isDue(repo)) {
+        this.logger.info(`${repo.name}: ${chalk.dim(`skipped, ${this.skipReason(repo)}`)}`)
+        continue
+      }
+
+      synced += 1
       this.logger.info(`Extracting packages from ${chalk.cyan(repo.name)} (${repo.type})`)
       try {
         const packages = await extractor.extract(repo, { arch: this.arch || undefined })
@@ -64,6 +76,28 @@ export default class RepoSync extends BaseCommand {
         this.logger.error(`${repo.name}: ${error instanceof Error ? error.message : String(error)}`)
       }
     }
+
+    if (synced === 0) {
+      this.logger.warning('No repositories were synchronized, use --force to sync anyway')
+    }
+  }
+
+  /**
+   * A repository is synchronized once its interval has elapsed since the last successful sync.
+   * Repositories without an interval are only synchronized manually, which is what `--force` does.
+   */
+  private isDue(repo: Repo) {
+    if (this.force) return true
+    if (repo.syncIntervalDays === null) return false
+    if (!repo.lastSyncedAt) return true
+    return repo.lastSyncedAt.plus({ days: repo.syncIntervalDays }) <= DateTime.now()
+  }
+
+  private skipReason(repo: Repo) {
+    if (repo.syncIntervalDays === null) return 'no sync interval, use --force to sync'
+    if (!repo.lastSyncedAt) return 'never synced'
+    const nextSync = repo.lastSyncedAt.plus({ days: repo.syncIntervalDays })
+    return `next sync at ${nextSync.toFormat('yyyy-MM-dd HH:mm')}, use --force to sync now`
   }
 
   /**
