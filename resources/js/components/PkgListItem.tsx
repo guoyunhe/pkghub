@@ -5,6 +5,8 @@ import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'wouter'
 
+import { pkgDownloadUrl } from '../utils/pkgs'
+
 import styles from './PkgListItem.module.css'
 
 const packageTypesWithIcons = new Set(['rpm', 'deb', 'appimage'])
@@ -18,6 +20,7 @@ type PkgListItemProps = {
 /** A single package row: type icon, name, metadata and the download (plus extra) actions. */
 export default function PkgListItem({ pkg, actions }: PkgListItemProps) {
   const { t } = useTranslation()
+  const downloadUrl = pkgDownloadUrl(pkg)
 
   return (
     <article className={styles.pkgItem}>
@@ -44,10 +47,10 @@ export default function PkgListItem({ pkg, actions }: PkgListItemProps) {
         </div>
       </div>
       <Group gap='xs'>
-        {pkg.downloadUrl && (
+        {downloadUrl && (
           <Button
             component='a'
-            href={pkg.downloadUrl}
+            href={downloadUrl}
             leftSection={<DownloadSimpleIcon size={16} />}
             size='xs'
             variant='default'

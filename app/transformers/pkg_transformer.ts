@@ -21,6 +21,8 @@ export default class PkgTransformer extends BaseTransformer<Pkg> {
         'size',
         'installCommand',
       ]),
+      // Uploaded package files are served from the local disk, keyed by their stored path.
+      url: this.resource.path ? `/uploads/${this.resource.path}` : null,
       app: this.resource.app ? { id: this.resource.app.id, name: this.resource.app.name } : null,
     }
   }

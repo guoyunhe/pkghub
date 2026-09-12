@@ -124,7 +124,6 @@ export default class PkgsController {
       checksum: metadata.checksum,
       checksumType: metadata.checksumType,
       path,
-      downloadUrl: `/uploads/${path}`,
     })
 
     await pkg.load('app')

@@ -28,6 +28,7 @@ import {
   resolveDescription,
   selectScreenshots,
 } from '../utils/appstream'
+import { pkgDownloadUrl } from '../utils/pkgs'
 
 import styles from './AppDetailPage.module.css'
 
@@ -334,75 +335,78 @@ export default function AppDetailPage() {
         ) : (
           <>
             <div className={styles.packageList}>
-              {packages?.data.map((pkg) => (
-                <article className={styles.package} key={pkg.id}>
-                  <div>
-                    <Title order={3}>{pkg.name}</Title>
-                    <div className={styles.packageMeta}>
-                      <span className={styles.packageType}>
-                        {packageTypesWithIcons.has(pkg.type) && (
-                          <img
-                            alt=''
-                            className={styles.packageTypeIcon}
-                            src={`/packages/${pkg.type}.svg`}
-                          />
-                        )}
-                        {pkg.type}
-                      </span>
-                      {pkg.version && <span>{pkg.version}</span>}
-                      {pkg.release && <span>{pkg.release}</span>}
-                      {pkg.arch && <span>{pkg.arch}</span>}
-                      {pkg.license && <span>{pkg.license}</span>}
+              {packages?.data.map((pkg) => {
+                const downloadUrl = pkgDownloadUrl(pkg)
+                return (
+                  <article className={styles.package} key={pkg.id}>
+                    <div>
+                      <Title order={3}>{pkg.name}</Title>
+                      <div className={styles.packageMeta}>
+                        <span className={styles.packageType}>
+                          {packageTypesWithIcons.has(pkg.type) && (
+                            <img
+                              alt=''
+                              className={styles.packageTypeIcon}
+                              src={`/packages/${pkg.type}.svg`}
+                            />
+                          )}
+                          {pkg.type}
+                        </span>
+                        {pkg.version && <span>{pkg.version}</span>}
+                        {pkg.release && <span>{pkg.release}</span>}
+                        {pkg.arch && <span>{pkg.arch}</span>}
+                        {pkg.license && <span>{pkg.license}</span>}
+                      </div>
+                      {pkg.summary && (
+                        <Text c='dimmed' size='sm'>
+                          {pkg.summary}
+                        </Text>
+                      )}
+                      {pkg.installCommand && (
+                        <Text className={styles.installCommand} component='code' size='sm'>
+                          {pkg.installCommand}
+                        </Text>
+                      )}
                     </div>
-                    {pkg.summary && (
-                      <Text c='dimmed' size='sm'>
-                        {pkg.summary}
-                      </Text>
-                    )}
-                    {pkg.installCommand && (
-                      <Text className={styles.installCommand} component='code' size='sm'>
-                        {pkg.installCommand}
-                      </Text>
-                    )}
-                  </div>
-                  <Group gap='xs'>
-                    {pkg.downloadUrl && (
-                      <Button
-                        component='a'
-                        href={pkg.downloadUrl}
-                        rel='noreferrer'
-                        target='_blank'
-                        rightSection={<ArrowSquareOutIcon size={18} />}
-                        variant='default'
-                      >
-                        {t('detail.download')}
-                      </Button>
-                    )}
-                    {isAdmin && (
-                      <>
+                    <Group gap='xs'>
+                      {downloadUrl && (
                         <Button
-                          aria-label={t('detail.editPackage')}
-                          component={Link}
-                          href={`/packages/${pkg.id}/edit`}
-                          size='xs'
-                          variant='subtle'
+                          component='a'
+                          href={downloadUrl}
+                          rel='noreferrer'
+                          target='_blank'
+                          rightSection={<ArrowSquareOutIcon size={18} />}
+                          variant='default'
                         >
-                          <PencilSimpleIcon size={16} />
+                          {t('detail.download')}
                         </Button>
-                        <Button
-                          aria-label={t('detail.deletePackage')}
-                          color='red'
-                          size='xs'
-                          variant='subtle'
-                          onClick={() => void handleDeletePkg(pkg)}
-                        >
-                          <TrashIcon size={16} />
-                        </Button>
-                      </>
-                    )}
-                  </Group>
-                </article>
-              ))}
+                      )}
+                      {isAdmin && (
+                        <>
+                          <Button
+                            aria-label={t('detail.editPackage')}
+                            component={Link}
+                            href={`/packages/${pkg.id}/edit`}
+                            size='xs'
+                            variant='subtle'
+                          >
+                            <PencilSimpleIcon size={16} />
+                          </Button>
+                          <Button
+                            aria-label={t('detail.deletePackage')}
+                            color='red'
+                            size='xs'
+                            variant='subtle'
+                            onClick={() => void handleDeletePkg(pkg)}
+                          >
+                            <TrashIcon size={16} />
+                          </Button>
+                        </>
+                      )}
+                    </Group>
+                  </article>
+                )
+              })}
             </div>
             {packages && packages.meta.lastPage > 1 && (
               <Pagination
