@@ -619,7 +619,8 @@ const packagedIconPatterns = ['/usr/share/icons/**/apps/*', '/usr/share/pixmaps/
 /**
  * Icon of a component inside the package payload. The metadata names either the icon file or a
  * themed icon, and packages also name the icon after the application, so those names are matched
- * against the files the package installs and the largest one is used.
+ * against the files the package installs. Vector icons are preferred because they scale, then the
+ * raster icon stored in the largest size.
  */
 function packagedIcon(
   files: Map<string, Buffer>,
@@ -633,11 +634,21 @@ function packagedIcon(
   for (const [path, data] of files) {
     if (!wanted.has(basename(path).toLowerCase())) continue
 
-    const score = iconPathSize(path) + data.length
+    const score = iconScore(path, data)
     if (!best || score > best.score) best = { data, score }
   }
 
   return best?.data ?? null
+}
+
+/**
+ * Ranks an icon by how well it scales: a vector icon beats every raster one, raster icons are
+ * ranked by the size their path declares, and the file size breaks ties between equally sized
+ * ones.
+ */
+function iconScore(path: string, data: Buffer) {
+  if (path.toLowerCase().endsWith('.svg')) return 2_000_000_000
+  return iconPathSize(path) * 1000 + Math.min(data.length, 999)
 }
 
 /** File names the icon may have, taken from the metadata and from the application name. */
@@ -653,6 +664,9 @@ function iconBaseNames(app: ExtractedApp, appstreamId: string, pkgName: string) 
   }
 
   for (const icon of app.icons) add(icon.name)
+  // An application is named either by its full AppStream ID, which is also the name of its desktop
+  // file and often of its icon, or by the last segment of that ID.
+  add(appstreamId)
   add(appstreamId.split('.').pop())
   add(pkgName)
   return names
