@@ -211,7 +211,7 @@ export default function AppDetailPage() {
             <Title order={1}>{name}</Title>
             <FavoriteButton appId={app.id} favorite={app.isFavorite} size='xl' />
           </Group>
-          <AverageRating size='lg' value={app.avgRating} />
+          <AverageRating count={app.reviewCount} size='lg' value={app.avgRating} />
           <Text c='dimmed' size='lg'>
             {localized(app.summary, i18n.language)}
           </Text>

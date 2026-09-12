@@ -11,6 +11,13 @@
   padding: 20px 0;
 }
 
+.iconLink {
+  align-self: start;
+  display: block;
+  height: 56px;
+  width: 56px;
+}
+
 .icon {
   height: 56px;
   object-fit: contain;
@@ -53,6 +60,13 @@
   color: var(--ph-primary);
 }
 
+.badges {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
 .meta {
   display: flex;
   gap: 8px;
@@ -73,6 +87,11 @@
   .item {
     gap: 12px;
     grid-template-columns: 48px minmax(0, 1fr) auto;
+  }
+
+  .iconLink {
+    height: 48px;
+    width: 48px;
   }
 
   .icon {

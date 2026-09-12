@@ -20,23 +20,28 @@ type AppListItemProps = {
 /** A single application row: icon, localized name and summary, categories, rating and metadata. */
 export default function AppListItem({ app, actions }: AppListItemProps) {
   const { i18n } = useTranslation()
+  const name = localized(app.name, i18n.language)
 
   return (
     <article className={styles.item}>
-      {app.icon ? (
-        <img alt='' className={styles.icon} src={app.icon.url} />
-      ) : (
-        <div className={`${styles.icon} ${styles.emptyIcon}`} />
-      )}
+      <Link aria-label={name} className={styles.iconLink} href={`/apps/${app.id}`}>
+        {app.icon ? (
+          <img alt='' className={styles.icon} src={app.icon.url} />
+        ) : (
+          <div className={`${styles.icon} ${styles.emptyIcon}`} />
+        )}
+      </Link>
       <div className={styles.copy}>
         <Title order={3}>
           <Link className={styles.link} href={`/apps/${app.id}`}>
-            {localized(app.name, i18n.language)} <ArrowRightIcon size={18} weight='bold' />
+            {name} <ArrowRightIcon size={18} weight='bold' />
           </Link>
         </Title>
         <Text c='dimmed'>{localized(app.summary, i18n.language)}</Text>
-        <CategoryBadges categories={app.categories} />
-        <AverageRating value={app.avgRating} />
+        <div className={styles.badges}>
+          <AverageRating count={app.reviewCount} value={app.avgRating} />
+          <CategoryBadges categories={app.categories} />
+        </div>
         <div className={styles.meta}>
           {app.version && <span>{app.version}</span>}
           {app.license && <span>{app.license}</span>}

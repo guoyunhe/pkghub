@@ -6,6 +6,7 @@ import ImageTransformer from '#transformers/image_transformer'
 export default class AppTransformer extends BaseTransformer<App> {
   toObject() {
     const avgRating = this.resource.$extras.avgRating
+    const reviewCount = this.resource.$extras.reviewCount
     return {
       ...this.pick(this.resource, [
         'id',
@@ -30,6 +31,7 @@ export default class AppTransformer extends BaseTransformer<App> {
       })),
       isFavorite: this.resource.favoritedBy ? this.resource.favoritedBy.length > 0 : false,
       avgRating: avgRating === null || avgRating === undefined ? null : Number(avgRating),
+      reviewCount: reviewCount === null || reviewCount === undefined ? null : Number(reviewCount),
     }
   }
 }

@@ -4,25 +4,23 @@ import styles from './AverageRating.module.css'
 
 type AverageRatingProps = {
   value: number | null
+  /** Number of ratings, shown in parentheses after the average. `null` hides it. */
+  count?: number | null
   size?: 'sm' | 'md' | 'lg'
-  showValue?: boolean
 }
 
-export default function AverageRating({
-  value,
-  size = 'sm',
-  showValue = true,
-}: AverageRatingProps) {
-  if (value === null || value === undefined || Number.isNaN(value)) {
-    return null
-  }
-
-  const rounded = Math.round(value * 2) / 2
+/** Average rating of an application with the number of ratings in parentheses. */
+export default function AverageRating({ value, count, size = 'sm' }: AverageRatingProps) {
+  const rating = value === null || value === undefined || Number.isNaN(value) ? 0 : value
+  const rounded = Math.round(rating * 2) / 2
 
   return (
     <span className={styles.rating}>
       <Rating count={5} fractions={2} readOnly size={size} value={rounded} />
-      {showValue && <Text className={styles.value}>{value.toFixed(1)}</Text>}
+      <Text className={styles.value}>
+        {rating.toFixed(1)}
+        {count !== null && count !== undefined && ` (${count})`}
+      </Text>
     </span>
   )
 }

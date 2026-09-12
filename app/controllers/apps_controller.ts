@@ -15,6 +15,7 @@ export default class AppsController {
       .preload('icon')
       .preload('categories')
       .withAggregate('reviews', (subQuery) => subQuery.avg('rating').as('avgRating'))
+      .withAggregate('reviews', (subQuery) => subQuery.count('*').as('reviewCount'))
       .orderBy('id', 'desc')
 
     if (auth.isAuthenticated) {
@@ -52,6 +53,7 @@ export default class AppsController {
       .preload('icon')
       .preload('categories')
       .withAggregate('reviews', (subQuery) => subQuery.avg('rating').as('avgRating'))
+      .withAggregate('reviews', (subQuery) => subQuery.count('*').as('reviewCount'))
     if (auth.isAuthenticated) {
       appQuery.preload('favoritedBy', (builder) => builder.where('users.id', auth.user!.id))
     }

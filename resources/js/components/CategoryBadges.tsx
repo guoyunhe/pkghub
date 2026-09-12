@@ -26,8 +26,6 @@ export default function CategoryBadges({ categories, linkTo = '/apps' }: Categor
           component={Link}
           href={`${linkTo}?category=${encodeURIComponent(category.code)}`}
           key={category.id}
-          radius='sm'
-          size='sm'
           variant='light'
         >
           {localized(category.name, i18n.language) ?? category.code}
