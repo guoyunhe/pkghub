@@ -3,16 +3,9 @@ import { Card, Text } from '@mantine/core'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'wouter'
 
-import styles from './HomeCards.module.css'
+import { localized } from '../../utils/appstream'
 
-function localized(translations: Record<string, string>, language: string) {
-  return (
-    translations[language] ??
-    translations[language.split('-')[0]] ??
-    translations.en ??
-    Object.values(translations)[0]
-  )
-}
+import styles from './HomeCards.module.css'
 
 type HomeAppCardProps = {
   app: Data.App

@@ -13,17 +13,9 @@ import CategoryFilter from '../components/CategoryFilter'
 import FavoriteButton from '../components/FavoriteButton'
 import { getApps } from '../services/apps'
 import type { Paginated } from '../types/pagination'
+import { localized } from '../utils/appstream'
 
 import styles from './AppsPage.module.css'
-
-function localized(translations: Record<string, string>, language: string) {
-  return (
-    translations[language] ??
-    translations[language.split('-')[0]] ??
-    translations.en ??
-    Object.values(translations)[0]
-  )
-}
 
 export default function AppsPage() {
   const { t, i18n } = useTranslation()

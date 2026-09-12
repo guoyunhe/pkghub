@@ -12,17 +12,9 @@ import ReviewList from '../components/ReviewList'
 import { deleteReview, getUserReviews } from '../services/reviews'
 import { getUser, getUserFavorites } from '../services/users'
 import type { Paginated } from '../types/pagination'
+import { localized } from '../utils/appstream'
 
 import styles from './UserDetailPage.module.css'
-
-function localized(translations: Record<string, string>, language: string) {
-  return (
-    translations[language] ??
-    translations[language.split('-')[0]] ??
-    translations.en ??
-    Object.values(translations)[0]
-  )
-}
 
 export default function UserDetailPage() {
   const { t, i18n } = useTranslation()

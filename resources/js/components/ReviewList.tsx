@@ -5,17 +5,9 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'wouter'
 
 import type { Paginated } from '../types/pagination'
+import { localized } from '../utils/appstream'
 
 import styles from './ReviewList.module.css'
-
-function localized(translations: Record<string, string>, language: string) {
-  return (
-    translations[language] ??
-    translations[language.split('-')[0]] ??
-    translations.en ??
-    Object.values(translations)[0]
-  )
-}
 
 function formatDate(value: string | null, language: string) {
   if (!value) return null

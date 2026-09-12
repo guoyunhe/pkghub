@@ -12,21 +12,13 @@ import CategoryFilter from '../components/CategoryFilter'
 import PkgFilters, { useStoredPkgFilters } from '../components/PkgFilters'
 import { getApps, searchPackages } from '../services/apps'
 import type { Paginated } from '../types/pagination'
+import { localized } from '../utils/appstream'
 
 import styles from './AppsPage.module.css'
 
 const packageTypesWithIcons = new Set(['rpm', 'deb', 'appimage'])
 
 type SearchTab = 'apps' | 'packages'
-
-function localized(translations: Record<string, string>, language: string) {
-  return (
-    translations[language] ??
-    translations[language.split('-')[0]] ??
-    translations.en ??
-    Object.values(translations)[0]
-  )
-}
 
 function CountBadge({ count, loading }: { count?: number; loading: boolean }) {
   if (loading) {

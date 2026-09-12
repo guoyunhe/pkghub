@@ -22,6 +22,7 @@ import { Redirect, useLocation, useRoute, useSearchParams } from 'wouter'
 import { useAuth } from '../auth'
 import { getApps } from '../services/apps'
 import { createPkg, getPkg, updatePkg } from '../services/pkgs'
+import { localized } from '../utils/appstream'
 import { packageTypes } from '../utils/pkgTypes'
 
 import styles from './AppFormPage.module.css'
@@ -48,15 +49,6 @@ function emptyForm(): PkgFormValues {
     size: null,
     installCommand: '',
   }
-}
-
-function localized(translations: Record<string, string>, language: string) {
-  return (
-    translations[language] ??
-    translations[language.split('-')[0]] ??
-    translations.en ??
-    Object.values(translations)[0]
-  )
 }
 
 export default function PkgFormPage() {
@@ -118,7 +110,7 @@ export default function PkgFormPage() {
     () =>
       apps.map((app) => ({
         value: String(app.id),
-        label: localized(app.name, i18n.language),
+        label: localized(app.name, i18n.language) ?? String(app.id),
       })),
     [apps, i18n.language],
   )
