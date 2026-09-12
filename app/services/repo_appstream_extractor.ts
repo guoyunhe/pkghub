@@ -67,6 +67,19 @@ const appstreamFileDirectories = ['/usr/share/metainfo/', '/usr/share/appdata/']
 const appstreamFileSuffixes = ['.metainfo.xml', '.appdata.xml']
 
 /**
+ * Component ID of a component. Legacy `appdata.xml` files identified a component by the name of its
+ * desktop file, so the `.desktop` suffix they carry is dropped; modern IDs cannot have it.
+ */
+function canonicalAppstreamId(id: string) {
+  return id.endsWith('.desktop') ? id.slice(0, -'.desktop'.length) : id
+}
+
+/** Whether two component IDs name the same component. */
+function isSameAppstreamId(left: string, right: string) {
+  return canonicalAppstreamId(left) === canonicalAppstreamId(right)
+}
+
+/**
  * AppStream ID carried by a metadata file path. Packages name their application in the file name,
  * so `/usr/share/metainfo/org.videolan.vlc.appdata.xml` declares `org.videolan.vlc`. Paths that are
  * not AppStream metadata return `null`.
@@ -79,7 +92,7 @@ function appstreamFileId(path: string): string | null {
   for (const suffix of appstreamFileSuffixes) {
     if (!name.endsWith(suffix)) continue
     const id = name.slice(0, -suffix.length).trim()
-    return id || null
+    return id ? canonicalAppstreamId(id) : null
   }
   return null
 }
@@ -144,6 +157,12 @@ function text(node: XmlNode | undefined): string | null {
   const value = typeof node === 'string' ? node : node['#text']
   const trimmed = value?.trim()
   return trimmed ? trimmed : null
+}
+
+/** Component ID a component declares, or `null` when it declares none. */
+function componentId(node: XmlNode | undefined) {
+  const id = text(node)
+  return id ? canonicalAppstreamId(id) : null
 }
 
 function number(value: string | number | undefined): number | null {
@@ -325,7 +344,7 @@ export default class RepoAppstreamExtractor {
     if (!content) return null
 
     const apps = this.parseAppstreamXml(content.toString('utf8'))
-    const app = apps.find((entry) => entry.appstreamId === appstreamId) ?? null
+    const app = apps.find((entry) => isSameAppstreamId(entry.appstreamId, appstreamId)) ?? null
     if (!app) return null
 
     return { app, icon: packagedIcon(files, app, appstreamId, pkg.name) }
@@ -438,7 +457,7 @@ export default class RepoAppstreamExtractor {
       const component = parsed.component?.[0]
       if (!component) continue
 
-      const appstreamId = text(component.id)
+      const appstreamId = componentId(component.id)
       if (!appstreamId) continue
 
       const releases = component.releases?.release
@@ -501,12 +520,13 @@ export default class RepoAppstreamExtractor {
       const record = parseYaml(document) as Dep11Record | null
       if (!record?.ID) continue
 
+      const appstreamId = canonicalAppstreamId(record.ID)
       const version = Array.isArray(record.Releases)
         ? record.Releases[0]?.version
         : record.Releases?.version
 
       apps.push({
-        appstreamId: record.ID,
+        appstreamId,
         type: record.Type ?? null,
         name: localized(record.Name),
         summary: localized(record.Summary),
@@ -555,7 +575,7 @@ export default class RepoAppstreamExtractor {
 
     const component: Record<string, unknown> = {
       '@_type': record.Type ?? 'desktop-application',
-      id: record.ID,
+      id: canonicalAppstreamId(record.ID ?? ''),
       name: localizedNodes(record.Name),
       summary: localizedNodes(record.Summary),
       description: localizedNodes(record.Description),
