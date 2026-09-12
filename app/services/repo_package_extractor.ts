@@ -80,6 +80,15 @@ function joinUrl(base: string, path: string) {
   return `${base.replace(/\/+$/, '')}/${path.replace(/^\/+/, '')}`
 }
 
+/**
+ * Source and debug packages carry no application and are never installed directly, so they are left
+ * out of the catalog. Debug packages are recognized by the suffix Fedora and openSUSE use, while
+ * source RPMs are published with the `src` architecture.
+ */
+function isSourceOrDebugPackage(name: string | undefined, arch: string | undefined) {
+  return arch === 'src' || /-(debuginfo|debugsource)$/.test(name ?? '')
+}
+
 function parseDebStanzas(content: string): Record<string, string>[] {
   return content
     .split(/\n\s*\n/)
@@ -158,6 +167,7 @@ export default class RepoPackageExtractor {
     const packages = parsedPrimary.metadata?.package ?? []
 
     return packages
+      .filter((entry) => !isSourceOrDebugPackage(entry.name, entry.arch))
       .map((entry): ExtractedPackage | null => {
         const location = entry.location?.['@_href']
         if (!entry.name || !location) return null
