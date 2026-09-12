@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next'
 import { useSearchParams } from 'wouter'
 import { Link } from 'wouter'
 
+import PkgFilters, { useStoredPkgFilters } from '../components/PkgFilters'
 import { getApps, searchPackages } from '../services/apps'
 import type { Paginated } from '../types/pagination'
 
@@ -52,11 +53,16 @@ export default function SearchResultsPage() {
   const [pkgsResult, setPkgsResult] = useState<Paginated<Data.Pkg> | null>(null)
   const [pkgsLoading, setPkgsLoading] = useState(true)
   const [pkgsError, setPkgsError] = useState<string | null>(null)
+  const [filters, setFilters] = useStoredPkgFilters()
 
   useEffect(() => {
     setAppsPage(1)
     setPkgsPage(1)
   }, [query])
+
+  useEffect(() => {
+    setPkgsPage(1)
+  }, [filters])
 
   useEffect(() => {
     let active = true
@@ -83,7 +89,7 @@ export default function SearchResultsPage() {
     let active = true
     setPkgsLoading(true)
     setPkgsError(null)
-    searchPackages(query, pkgsPage)
+    searchPackages(query, pkgsPage, filters)
       .then((result) => {
         if (active) setPkgsResult(result)
       })
@@ -98,7 +104,7 @@ export default function SearchResultsPage() {
     return () => {
       active = false
     }
-  }, [pkgsPage, query, t])
+  }, [filters, pkgsPage, query, t])
 
   return (
     <main className={styles.page}>
@@ -126,6 +132,8 @@ export default function SearchResultsPage() {
           </Tabs.Tab>
         </Tabs.List>
       </Tabs>
+
+      {activeTab === 'packages' && <PkgFilters onChange={setFilters} value={filters} />}
 
       {activeTab === 'apps' &&
         (appsError ? (

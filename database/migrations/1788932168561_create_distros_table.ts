@@ -9,6 +9,8 @@ export default class extends BaseSchema {
 
       table.string('name').notNullable()
       table.string('version').nullable()
+      table.string('pkg_type').nullable()
+      table.json('arch').notNullable().defaultTo('[]')
       table.unique(['name', 'version'])
 
       table.date('release_date').nullable()

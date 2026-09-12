@@ -22,8 +22,16 @@ export type Distro = {
   id: number
   name: string
   version: string | null
+  pkgType: string | null
+  arch: string[]
   releaseDate: string | null
   eolDate: string | null
+}
+
+/** Filters applied to package listings. */
+export type PkgFilters = {
+  distroId: string | null
+  arch: string | null
 }
 
 const api = xior.create({ baseURL: import.meta.env.VITE_API_URL ?? '/api' })
@@ -57,9 +65,18 @@ export async function getAppPackages(id: number, page = 1) {
   return { data: data.data, meta: data.metadata } satisfies Paginated<Data.Pkg>
 }
 
-export async function searchPackages(query = '', page = 1) {
+export async function searchPackages(
+  query = '',
+  page = 1,
+  filters: PkgFilters = { distroId: null, arch: null },
+) {
   const { data } = await api.get<SerializedPaginated<Data.Pkg>>('/pkgs', {
-    params: { page, q: query || undefined },
+    params: {
+      page,
+      q: query || undefined,
+      distro: filters.distroId ?? undefined,
+      arch: filters.arch ?? undefined,
+    },
   })
   return { data: data.data, meta: data.metadata } satisfies Paginated<Data.Pkg>
 }

@@ -66,8 +66,10 @@ export class AuthAccessTokenSchema extends BaseModel {
 }
 
 export class DistroSchema extends BaseModel {
-  static $columns = ['createdAt', 'eolDate', 'id', 'name', 'releaseDate', 'updatedAt', 'version'] as const
+  static $columns = ['arch', 'createdAt', 'eolDate', 'id', 'name', 'pkgType', 'releaseDate', 'updatedAt', 'version'] as const
   $columns = DistroSchema.$columns
+  @column({ prepare: (value)=>value ? JSON.stringify(value) : value, consume: (value)=>typeof value === 'string' ? JSON.parse(value) : value })
+  declare arch: string[]
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
   @column.date()
@@ -76,6 +78,8 @@ export class DistroSchema extends BaseModel {
   declare id: number
   @column()
   declare name: string
+  @column()
+  declare pkgType: string | null
   @column.date()
   declare releaseDate: DateTime | null
   @column.dateTime({ autoCreate: true, autoUpdate: true })

@@ -12,6 +12,7 @@ import app from '@adonisjs/core/services/app'
 import drive from '@adonisjs/drive/services/main'
 
 import App from '#models/app'
+import Distro from '#models/distro'
 import Pkg from '#models/pkg'
 import PackageFileExtractor from '#services/package_file_extractor'
 import PkgTransformer from '#transformers/pkg_transformer'
@@ -43,6 +44,18 @@ export default class PkgsController {
             .orWhereILike('version', pattern)
         })
       }
+
+      const distroId = Number(this.queryValue(request.input('distro')))
+      if (Number.isInteger(distroId) && distroId > 0) {
+        // A distribution matches packages through the package format it uses, while a
+        // distribution without a native package format cannot match any package
+        const distro = await Distro.find(distroId)
+        if (distro?.pkgType) pkgsQuery.where('type', distro.pkgType)
+        else pkgsQuery.whereRaw('0 = 1')
+      }
+
+      const arch = this.queryValue(request.input('arch'))
+      if (arch) pkgsQuery.where('arch', arch)
     }
 
     const paginator = await pkgsQuery.paginate(page, perPage)
@@ -134,6 +147,19 @@ export default class PkgsController {
   private positiveInteger(value: unknown, fallback: number) {
     const parsed = Number(value)
     return Number.isInteger(parsed) && parsed > 0 ? parsed : fallback
+  }
+
+  /**
+   * Single value query parameters are accepted either as a string or as an array (repeated
+   * parameters), and empty values are treated as "no filter".
+   */
+  private queryValue(value: unknown) {
+    if (typeof value === 'string') return value.trim() || null
+    if (Array.isArray(value)) {
+      const first = value.find((item) => typeof item === 'string' && item.trim() !== '')
+      return typeof first === 'string' ? first.trim() : null
+    }
+    return null
   }
 
   /**

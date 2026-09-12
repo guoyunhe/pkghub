@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'wouter'
 
 import { useAuth } from '../auth'
+import PkgFilters, { useStoredPkgFilters } from '../components/PkgFilters'
 import { searchPackages } from '../services/apps'
 import { deletePkg } from '../services/pkgs'
 import type { Paginated } from '../types/pagination'
@@ -22,16 +23,21 @@ export default function PkgsPage() {
   const { ready, user } = useAuth()
   const isAdmin = ready && user?.role === 'admin'
   const [page, setPage] = useState(1)
+  const [filters, setFilters] = useStoredPkgFilters()
   const [result, setResult] = useState<Paginated<Data.Pkg> | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [refresh, setRefresh] = useState(0)
 
   useEffect(() => {
+    setPage(1)
+  }, [filters])
+
+  useEffect(() => {
     let active = true
     setLoading(true)
     setError(null)
-    searchPackages('', page)
+    searchPackages('', page, filters)
       .then((res) => {
         if (active) setResult(res)
       })
@@ -46,7 +52,7 @@ export default function PkgsPage() {
     return () => {
       active = false
     }
-  }, [page, t, refresh])
+  }, [filters, page, t, refresh])
 
   async function remove(pkg: Data.Pkg) {
     if (!window.confirm(t('packages.deleteConfirm', { name: pkg.name }))) return
@@ -76,6 +82,8 @@ export default function PkgsPage() {
           </Button>
         )}
       </header>
+
+      <PkgFilters onChange={setFilters} value={filters} />
 
       {error && (
         <Alert color='red' mb='lg'>
