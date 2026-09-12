@@ -13,6 +13,7 @@ import { useAuth } from '../auth'
 import AverageRating from '../components/AverageRating'
 import FavoriteButton from '../components/FavoriteButton'
 import PackageUpload from '../components/PackageUpload'
+import PkgFilters, { useStoredPkgFilters } from '../components/PkgFilters'
 import ReviewForm from '../components/ReviewForm'
 import ReviewList from '../components/ReviewList'
 import ScreenshotCarousel from '../components/ScreenshotCarousel'
@@ -42,6 +43,7 @@ export default function AppDetailPage() {
   const [packagesPage, setPackagesPage] = useState(1)
   const [packagesRefresh, setPackagesRefresh] = useState(0)
   const [packagesLoading, setPackagesLoading] = useState(true)
+  const [pkgFilters, setPkgFilters] = useStoredPkgFilters()
   const [error, setError] = useState<string | null>(null)
   const [packagesError, setPackagesError] = useState<string | null>(null)
   const [reviews, setReviews] = useState<Paginated<Data.Review> | null>(null)
@@ -68,17 +70,21 @@ export default function AppDetailPage() {
   }, [appId])
 
   useEffect(() => {
+    setPackagesPage(1)
+  }, [pkgFilters])
+
+  useEffect(() => {
     if (!appId) return
 
     setPackagesLoading(true)
     setPackagesError(null)
-    getAppPackages(appId, packagesPage)
+    getAppPackages(appId, packagesPage, pkgFilters)
       .then(setPackages)
       .catch((reason) =>
         setPackagesError(reason instanceof Error ? reason.message : t('detail.loadPackagesError')),
       )
       .finally(() => setPackagesLoading(false))
-  }, [appId, packagesPage, packagesRefresh])
+  }, [appId, packagesPage, packagesRefresh, pkgFilters])
 
   useEffect(() => {
     if (!appId) return
@@ -112,6 +118,8 @@ export default function AppDetailPage() {
   const description = resolveDescription(appstream.description, i18n.language)
   const screenshots = selectScreenshots(appstream.screenshots, i18n.language)
   const isAdmin = user?.role === 'admin'
+  const hasPkgFilters =
+    pkgFilters.distroId !== null || pkgFilters.type !== null || pkgFilters.arch !== null
 
   async function remove() {
     if (!app) return
@@ -307,12 +315,13 @@ export default function AppDetailPage() {
           )}
         </Group>
         {packagesError && <Alert color='red'>{packagesError}</Alert>}
+        <PkgFilters onChange={setPkgFilters} value={pkgFilters} />
         {packagesLoading ? (
           <div className={styles.packagesLoading}>
             <Loader color='orange' size='sm' />
           </div>
         ) : packages?.data.length === 0 ? (
-          <Text c='dimmed'>{t('detail.noPackages')}</Text>
+          <Text c='dimmed'>{hasPkgFilters ? t('packages.notFound') : t('detail.noPackages')}</Text>
         ) : (
           <>
             <div className={styles.packageList}>

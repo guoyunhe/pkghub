@@ -42,6 +42,15 @@ function authHeaders() {
   return token ? { Authorization: `Bearer ${token}` } : {}
 }
 
+/** Query parameters of the package filters; unset filters are omitted from the query. */
+function filterParams(filters: PkgFilters) {
+  return {
+    distro: filters.distroId ?? undefined,
+    type: filters.type ?? undefined,
+    arch: filters.arch ?? undefined,
+  }
+}
+
 export async function getApps(query = '', page = 1, perPage = 12) {
   const { data } = await api.get<SerializedPaginated<Data.App>>('/apps', {
     params: { page, perPage, q: query || undefined },
@@ -59,9 +68,13 @@ export async function getApp(id: number) {
   return data.data
 }
 
-export async function getAppPackages(id: number, page = 1) {
+export async function getAppPackages(
+  id: number,
+  page = 1,
+  filters: PkgFilters = { distroId: null, type: null, arch: null },
+) {
   const { data } = await api.get<SerializedPaginated<Data.Pkg>>(`/apps/${id}/pkgs`, {
-    params: { page },
+    params: { page, ...filterParams(filters) },
   })
   return { data: data.data, meta: data.metadata } satisfies Paginated<Data.Pkg>
 }
@@ -72,13 +85,7 @@ export async function searchPackages(
   filters: PkgFilters = { distroId: null, type: null, arch: null },
 ) {
   const { data } = await api.get<SerializedPaginated<Data.Pkg>>('/pkgs', {
-    params: {
-      page,
-      q: query || undefined,
-      distro: filters.distroId ?? undefined,
-      type: filters.type ?? undefined,
-      arch: filters.arch ?? undefined,
-    },
+    params: { page, q: query || undefined, ...filterParams(filters) },
   })
   return { data: data.data, meta: data.metadata } satisfies Paginated<Data.Pkg>
 }

@@ -44,22 +44,23 @@ export default class PkgsController {
             .orWhereILike('version', pattern)
         })
       }
-
-      const distroId = Number(this.queryValue(request.input('distro')))
-      if (Number.isInteger(distroId) && distroId > 0) {
-        // A distribution matches packages through the package format it uses, while a
-        // distribution without a native package format cannot match any package
-        const distro = await Distro.find(distroId)
-        if (distro?.pkgType) pkgsQuery.where('type', distro.pkgType)
-        else pkgsQuery.whereRaw('0 = 1')
-      }
-
-      const arch = this.queryValue(request.input('arch'))
-      if (arch) pkgsQuery.where('arch', arch)
-
-      const type = this.queryValue(request.input('type'))
-      if (type) pkgsQuery.where('type', type)
     }
+
+    // The filters apply both to the package list and to the packages of a single application
+    const distroId = Number(this.queryValue(request.input('distro')))
+    if (Number.isInteger(distroId) && distroId > 0) {
+      // A distribution matches packages through the package format it uses, while a
+      // distribution without a native package format cannot match any package
+      const distro = await Distro.find(distroId)
+      if (distro?.pkgType) pkgsQuery.where('type', distro.pkgType)
+      else pkgsQuery.whereRaw('0 = 1')
+    }
+
+    const arch = this.queryValue(request.input('arch'))
+    if (arch) pkgsQuery.where('arch', arch)
+
+    const type = this.queryValue(request.input('type'))
+    if (type) pkgsQuery.where('type', type)
 
     const paginator = await pkgsQuery.paginate(page, perPage)
     return serialize(PkgTransformer.paginate(paginator.all(), paginator.getMeta()))
